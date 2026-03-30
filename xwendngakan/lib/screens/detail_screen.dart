@@ -1478,7 +1478,7 @@ class _DetailScreenState extends State<DetailScreen>
     }
   }
 
-  // ═══════════════════════════════════════════
+  // ══════════════════════════════════════════
   //  POSTS SECTION — Facebook Style
   // ═══════════════════════════════════════════
 
