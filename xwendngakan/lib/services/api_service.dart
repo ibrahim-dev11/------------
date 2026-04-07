@@ -166,9 +166,15 @@ class ApiService {
   static Future<Map<String, dynamic>> createInstitution(
     Institution inst, {
     File? logoFile,
+    File? imgFile,
   }) async {
     final uri = Uri.parse('$baseUrl/institutions');
     final request = http.MultipartRequest('POST', uri);
+
+    // If update, Laravel needs _method=PUT to handle multipart
+    if (inst.id != 0) {
+      request.fields['_method'] = 'PUT';
+    }
 
     // Add auth header
     if (_token != null) {
@@ -178,7 +184,8 @@ class ApiService {
 
     // Add all text fields
     final json = inst.toJson();
-    json.remove('logo'); // Don't send local path
+    json.remove('logo'); // Don't send absolute path or server url
+    json.remove('img');
     json.forEach((key, value) {
       request.fields[key] = value?.toString() ?? '';
     });
@@ -187,6 +194,13 @@ class ApiService {
     if (logoFile != null && await logoFile.exists()) {
       request.files.add(
         await http.MultipartFile.fromPath('logo', logoFile.path),
+      );
+    }
+    
+    // Add institution image if provided
+    if (imgFile != null && await imgFile.exists()) {
+      request.files.add(
+        await http.MultipartFile.fromPath('img', imgFile.path),
       );
     }
 
