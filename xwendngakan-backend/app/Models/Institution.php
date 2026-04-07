@@ -33,9 +33,11 @@ class Institution extends Model
         unset($array['kg_fee'], $array['kg_meal'], $array['kg_uniform'], $array['kg_age'], $array['kg_hours']);
         unset($array['fee'], $array['meal'], $array['uniform'], $array['books'], $array['level'], $array['kg_fee'], $array['kg_meal'], $array['kg_uniform']);
 
-        // Ensure logo path starts with /storage/ for API consumers
-        if (!empty($array['logo']) && !str_starts_with($array['logo'], 'http') && !str_starts_with($array['logo'], '/storage/')) {
-            $array['logo'] = '/storage/' . ltrim($array['logo'], '/');
+        // Ensure image paths start with /storage/ for API consumers
+        foreach (['logo', 'img'] as $key) {
+            if (!empty($array[$key]) && !str_starts_with($array[$key], 'http') && !str_starts_with($array[$key], '/storage/')) {
+                $array[$key] = '/storage/' . ltrim($array[$key], '/');
+            }
         }
 
         return $array;

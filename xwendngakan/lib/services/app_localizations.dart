@@ -637,6 +637,20 @@ class S {
       'tr': 'Çevir',
       'fr': 'Traduire',
     },
+    'editPost': {
+      'ku': 'دەستکاریکردنی پۆست',
+      'ar': 'تعديل المنشور',
+      'en': 'Edit Post',
+      'tr': 'Gönderiyi Düzenle',
+      'fr': 'Modifier le message',
+    },
+    'saveChanges': {
+      'ku': 'پاشەکەوتکردنی گۆڕانکارییەکان',
+      'ar': 'حفظ التغييرات',
+      'en': 'Save Changes',
+      'tr': 'Değişiklikleri Kaydet',
+      'fr': 'Enregistrer les modifications',
+    },
 
     'address': {
       'ku': 'ناونیشان',
@@ -679,12 +693,11 @@ class S {
       'fr': 'Après soumission, l\'administrateur approuvera.',
     },
     'mainInfo': {
-      'ku': 'زانیاری سەرەکی',
-      'ar': 'المعلومات الأساسية',
-      'en': 'Main information',
- 
-      'tr': 'Ana Bilgiler',
-      'fr': 'Informations principales',
+      'ku': 'دامەزراوە',
+      'ar': 'المؤسسة',
+      'en': 'Institution',
+      'tr': 'Kurum',
+      'fr': 'Établissement',
     },
     'institutionName': {
       'ku': 'ناوی دامەزراوە *',
@@ -2124,6 +2137,13 @@ class S {
       'tr': 'önce',
       'fr': 'il y a',
     },
+    'postUpdatedSuccess': {
+      'ku': 'پۆستەکە بە سەرکەوتوویی نوێکرایەوە',
+      'ar': 'تم تحديث المنشور بنجاح',
+      'en': 'Post updated successfully',
+      'tr': 'Gönderi başarıyla güncellendi',
+      'fr': 'Message mis à jour avec succès',
+    },
 
     // ─── Admin Dashboard ───
     'adminDashboard': {
@@ -2498,9 +2518,25 @@ class S {
       'ku': 'داتای کەش نیشاندەدرێت. پەیوەندیت بپشکنە.',
       'ar': 'يتم عرض البيانات المخزنة. تحقق من اتصالك.',
       'en': 'Showing cached data. Check your connection.',
- 
       'tr': 'Önbelleğe alınmış veriler gösteriliyor. Bağlantınızı kontrol edin.',
       'fr': 'Affichage des données en cache. Vérifiez votre connexion.',
+    },
+
+    // ─── Posts ───
+    'createPost': {
+      'ku': 'پۆستێکی نوێ',
+      'ar': 'منشور جديد',
+      'en': 'Create Post',
+    },
+    'postCreatedSuccess': {
+      'ku': 'پۆستەکە بە سەرکەوتوویی بڵاوکرایەوە',
+      'ar': 'تم نشر المنشور بنجاح',
+      'en': 'Post published successfully',
+    },
+    'addPostImage': {
+      'ku': 'وێنەیەک بۆ پۆستەکە زیاد بکە',
+      'ar': 'أضف صورة للمنشور',
+      'en': 'Add an image for the post',
     },
   };
 }

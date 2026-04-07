@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import '../models/institution.dart';
+import '../models/post.dart';
+import '../services/api_service.dart';
+import '../services/app_localizations.dart';
 import '../theme/app_theme.dart';
+import '../widgets/app_snackbar.dart';
 import 'register_screen.dart';
-import 'detail_screen.dart';
+import 'create_post_screen.dart';
 
 class InstitutionDashboardScreen extends StatefulWidget {
   final Institution? initialInstitution;
@@ -72,16 +76,15 @@ class _InstitutionDashboardScreenState extends State<InstitutionDashboardScreen>
               ? RegisterScreen(
                   institution: widget.initialInstitution!,
                   hideAppBar: true,
+                  showTabs: false,
                 )
               : RegisterScreen(
                   onSubmitted: widget.onInstitutionCreated,
                 ),
 
-          // Tab 2: Manage Posts (Show inside detail screen view)
+          // Tab 2: Manage Posts (Post Management Interface)
           widget.initialInstitution != null
-              ? DetailScreen(
-                  institution: widget.initialInstitution!,
-                )
+              ? _buildPostsManagementTab(isDark)
               : _buildEmptyPostsState(isDark),
         ],
       ),
@@ -142,5 +145,154 @@ class _InstitutionDashboardScreenState extends State<InstitutionDashboardScreen>
         ),
       ),
     );
+  }
+
+  Widget _buildPostsManagementTab(bool isDark) {
+    if (widget.initialInstitution == null) return const SizedBox();
+
+    return FutureBuilder<List<Post>>(
+      future: ApiService.getInstitutionPosts(widget.initialInstitution!.id),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final posts = snapshot.data ?? [];
+
+        return RefreshIndicator(
+          onRefresh: () async => setState(() {}),
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              // Add Post Button
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CreatePostScreen(institutionId: widget.initialInstitution!.id),
+                      ),
+                    );
+                    if (result == true) setState(() {});
+                  },
+                  icon: const Icon(Iconsax.add_square),
+                  label: Text(S.of(context, 'createPost')),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    side: const BorderSide(color: AppTheme.primary),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              if (posts.isEmpty)
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 60),
+                    child: Column(
+                      children: [
+                        Icon(Iconsax.document_text, size: 60, color: Colors.grey.withValues(alpha: 0.3)),
+                        const SizedBox(height: 16),
+                        Text(S.of(context, 'noPosts'), style: TextStyle(color: Colors.grey[600], fontSize: 16)),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                ...posts.map((p) => _buildPostAdminCard(p, isDark)).toList(),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPostAdminCard(Post p, bool isDark) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0)),
+      ),
+      child: Row(
+        children: [
+          if (p.image.isNotEmpty)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(p.image, width: 80, height: 80, fit: BoxFit.cover),
+            )
+          else
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(12)),
+              child: const Icon(Iconsax.image, color: Colors.grey),
+            ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(p.title.isNotEmpty ? p.title : 'بێ ناونیشان', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                const SizedBox(height: 4),
+                Text(p.content, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                const SizedBox(height: 4),
+                Text(p.formattedDate, style: TextStyle(fontSize: 10, color: Colors.grey[400])),
+              ],
+            ),
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: const Icon(Iconsax.edit, color: Colors.blue, size: 20),
+                onPressed: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CreatePostScreen(
+                        institutionId: widget.initialInstitution!.id,
+                        post: p,
+                      ),
+                    ),
+                  );
+                  if (result == true) setState(() {});
+                },
+              ),
+              IconButton(
+                icon: const Icon(Iconsax.trash, color: Colors.red, size: 20),
+                onPressed: () => _confirmDeletePost(p.id),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _confirmDeletePost(int postId) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('سڕینەوەی پۆست'),
+        content: const Text('دڵنیایت دەتەوێت ئەم پۆستە بسڕیتەوە؟'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('نەخێر')),
+          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('بەڵێ', style: TextStyle(color: Colors.red))),
+        ],
+      ),
+    );
+    if (ok == true) {
+      final success = await ApiService.deletePost(postId);
+      if (success && mounted) {
+        AppSnackbar.success(context, 'پۆستەکە سڕایەوە');
+        setState(() {});
+      }
+    }
   }
 }

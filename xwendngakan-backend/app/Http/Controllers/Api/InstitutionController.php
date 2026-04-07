@@ -79,10 +79,11 @@ class InstitutionController extends Controller
         $request->validate([
             'nku'  => 'required|string|max:255',
             'type' => 'required|string',
-            'logo' => 'nullable|image|max:2048',
+            'logo' => 'nullable|image|max:3072',
+            'img'  => 'nullable|image|max:5120',
         ]);
 
-        $data = $request->except(['logo', 'kgAge', 'kgHours']);
+        $data = $request->except(['logo', 'img', 'kgAge', 'kgHours']);
         // Map camelCase from Flutter to snake_case
         $data['kg_age']     = $request->input('kgAge', '');
         $data['kg_hours']   = $request->input('kgHours', '');
@@ -93,13 +94,26 @@ class InstitutionController extends Controller
         if ($request->hasFile('logo')) {
             $file = $request->file('logo');
             $filename = 'logos/' . uniqid() . '.png';
-
+ 
             $img = Image::read($file)
                 ->contain(400, 400)
                 ->toPng();
 
             Storage::disk('public')->put($filename, (string) $img);
             $data['logo'] = $filename;
+        }
+        
+        // Handle institution main image
+        if ($request->hasFile('img')) {
+            $file = $request->file('img');
+            $filename = 'logos/' . uniqid() . '_img.webp';
+
+            $img = Image::read($file)
+                ->scale(width: 1200)
+                ->toWebp(80);
+
+            Storage::disk('public')->put($filename, (string) $img);
+            $data['img'] = $filename;
         }
 
         $institution = Institution::create($data);
@@ -131,13 +145,13 @@ class InstitutionController extends Controller
     {
         $institution = Institution::findOrFail($id);
 
-        $data = $request->all();
+        $data = $request->except(['logo', 'img']);
         if (isset($data['kgAge']))     $data['kg_age']     = $data['kgAge'];
         if (isset($data['kgHours']))   $data['kg_hours']   = $data['kgHours'];
 
         // Handle logo file upload on update
         if ($request->hasFile('logo')) {
-            $request->validate(['logo' => 'image|max:2048']);
+            $request->validate(['logo' => 'image|max:3072']);
             $file = $request->file('logo');
             $filename = 'logos/' . uniqid() . '.png';
 
@@ -147,6 +161,30 @@ class InstitutionController extends Controller
 
             Storage::disk('public')->put($filename, (string) $img);
             $data['logo'] = $filename;
+            
+            // Delete old logo if it exists
+            if ($institution->logo) {
+                Storage::disk('public')->delete($institution->getRawOriginal('logo'));
+            }
+        }
+        
+        // Handle main image update
+        if ($request->hasFile('img')) {
+            $request->validate(['img' => 'image|max:5120']);
+            $file = $request->file('img');
+            $filename = 'logos/' . uniqid() . '_img.webp';
+
+            $img = Image::read($file)
+                ->scale(width: 1200)
+                ->toWebp(80);
+
+            Storage::disk('public')->put($filename, (string) $img);
+            $data['img'] = $filename;
+
+            // Delete old image if it exists
+            if ($institution->img) {
+                Storage::disk('public')->delete($institution->getRawOriginal('img'));
+            }
         }
 
         $institution->update($data);
