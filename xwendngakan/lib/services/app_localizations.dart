@@ -630,6 +630,37 @@ class S {
       'fr': 'WhatsApp',
     },
 
+    'translate': {
+      'ku': 'وەرگێڕان',
+      'ar': 'ترجمة',
+      'en': 'Translate',
+      'tr': 'Çevir',
+      'fr': 'Traduire',
+    },
+
+    'address': {
+      'ku': 'ناونیشان',
+      'ar': 'العنوان',
+      'en': 'Address',
+      'tr': 'Adres',
+      'fr': 'Adresse',
+    },
+
+    'editInstitution': {
+      'ku': 'دەستکاریکردنی دامەزراوە',
+      'ar': 'تعديل المؤسسة',
+      'en': 'Edit Institution',
+      'tr': 'Kurumu Düzenle',
+      'fr': 'Modifier l\'établissement',
+    },
+    'updateSuccess': {
+      'ku': 'زانیارییەکان بە سەرکەوتوویی نوێکرانەوە.',
+      'ar': 'تم تحديث المعلومات بنجاح.',
+      'en': 'Information updated successfully.',
+      'tr': 'Bilgiler başarıyla güncellendi.',
+      'fr': 'Informations mises à jour avec succès.',
+    },
+
     // ─── Register ───
     'registerInstitution': {
       'ku': 'تۆمارکردنی دامەزراوە',

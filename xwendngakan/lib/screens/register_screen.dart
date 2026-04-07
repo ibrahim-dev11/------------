@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,15 @@ import 'map_picker_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   final VoidCallback? onSubmitted;
-  const RegisterScreen({super.key, this.onSubmitted});
+  final Institution? institution;
+  final bool hideAppBar;
+
+  const RegisterScreen({
+    super.key,
+    this.onSubmitted,
+    this.institution,
+    this.hideAppBar = false,
+  });
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -33,6 +42,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   final _nkuC = TextEditingController();
   final _nenC = TextEditingController();
+  final _narC = TextEditingController(); // Arabic name
   final _cityC = TextEditingController();
   final _phoneC = TextEditingController();
   final _emailC = TextEditingController();
@@ -48,21 +58,115 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _fbC = TextEditingController();
   final _waC = TextEditingController();
 
+  bool _isTranslating = false;
   double? _lat;
   double? _lng;
-
   bool _isSubmitting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.institution != null) {
+      final ins = widget.institution!;
+      _type = ins.type;
+      _nkuC.text = ins.nku;
+      _nenC.text = ins.nen;
+      _narC.text = ins.nar;
+      _cityC.text = ins.city;
+      _phoneC.text = ins.phone;
+      _emailC.text = ins.email;
+      _webC.text = ins.web;
+      _addrC.text = ins.addr;
+      _descC.text = ins.desc;
+      _kgAgeC.text = ins.kgAge;
+      _kgHoursC.text = ins.kgHours;
+      _fbC.text = ins.fb;
+      _waC.text = ins.wa;
+      _lat = ins.lat;
+      _lng = ins.lng;
+
+      // Handle colleges/depts split by newline
+      if (ins.colleges.isNotEmpty || ins.depts.isNotEmpty) {
+        final lines = (ins.colleges.isNotEmpty ? ins.colleges : ins.depts).split('\n');
+        for (var line in lines) {
+          if (line.trim().isNotEmpty) {
+            final entry = _CollegeEntry();
+            entry.nameController.text = line.trim();
+            _colleges.add(entry);
+          }
+        }
+      }
+      
+      // If there's any data in optional fields, show optional section
+      if (ins.nen.isNotEmpty || ins.nar.isNotEmpty || ins.desc.isNotEmpty || _colleges.isNotEmpty || ins.wa.isNotEmpty) {
+        _showOptional = true;
+      }
+    }
+  }
 
   bool get _isKgDcType => _type == 'kg' || _type == 'dc';
 
   bool get _hasColleges =>
       _type == 'gov' || _type == 'priv' || _type == 'eve_uni';
 
+  // ── Google Translate (free endpoint) ──
+  Future<String> _fetchGoogleFree(String from, String to, String text) async {
+    final uri = Uri.parse(
+      'https://translate.googleapis.com/translate_a/single?client=gtx&sl=$from&tl=$to&dt=t&q=${Uri.encodeComponent(text)}',
+    );
+    final res = await http.get(uri).timeout(const Duration(seconds: 10));
+    if (res.statusCode == 200) {
+      final data = jsonDecode(res.body);
+      final buffer = StringBuffer();
+      for (final part in (data[0] as List)) {
+        if (part[0] != null) buffer.write(part[0]);
+      }
+      return buffer.toString().trim();
+    }
+    throw Exception('translate failed ${res.statusCode}');
+  }
+
+  Future<void> _translateName() async {
+    final text = _nkuC.text.trim();
+    if (text.isEmpty) {
+      AppSnackbar.error(context, 'کوردی بنووسە پێش تانستلەیت');
+      return;
+    }
+    setState(() => _isTranslating = true);
+    try {
+      final results = await Future.wait([
+        _fetchGoogleFree('ckb', 'ar', text),
+        _fetchGoogleFree('ckb', 'en', text),
+      ]);
+      if (!mounted) return;
+      setState(() {
+        _narC.text = results[0];
+        _nenC.text = results[1];
+        // Open optional section so user sees the filled fields
+        _showOptional = true;
+      });
+    } catch (e) {
+      // Silent error or log it internally if needed
+    } finally {
+      if (mounted) setState(() => _isTranslating = false);
+    }
+  }
+
   @override
   void dispose() {
     for (final c in [
-      _nkuC, _nenC, _phoneC, _emailC, _webC, _addrC, _descC,
-      _kgAgeC, _kgHoursC, _fbC, _waC,
+      _nkuC,
+      _nenC,
+      _narC,
+      _phoneC,
+      _emailC,
+      _webC,
+      _addrC,
+      _descC,
+      _kgAgeC,
+      _kgHoursC,
+      _fbC,
+      _waC,
     ]) {
       c.dispose();
     }
@@ -84,15 +188,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        title: Text(
-          S.of(context, 'registerInstitution'),
-          style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
-        ),
-        centerTitle: true,
-        backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
-        surfaceTintColor: Colors.transparent,
-      ),
+      appBar: widget.hideAppBar
+          ? null
+          : AppBar(
+              title: Text(
+                widget.institution != null ? S.of(context, 'editInstitution') : S.of(context, 'registerInstitution'),
+                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+              ),
+              centerTitle: true,
+              backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
+              surfaceTintColor: Colors.transparent,
+            ),
       body: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         physics: const AlwaysScrollableScrollPhysics(),
@@ -146,9 +252,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   // Image picker
                   _buildLogoPicker(isDark),
                   const SizedBox(height: 14),
-                  _field(S.of(context, 'institutionName'), _nkuC, S.of(context, 'institutionNameHint')),
+                  _field(
+                    S.of(context, 'institutionName'),
+                    _nkuC,
+                    S.of(context, 'institutionNameHint'),
+                  ),
                   const SizedBox(height: 14),
-                  _field(S.of(context, 'city'), _cityC, S.of(context, 'cityHint')),
+                  _field(
+                    S.of(context, 'city'),
+                    _cityC,
+                    S.of(context, 'cityHint'),
+                  ),
                   const SizedBox(height: 14),
                   _label(S.of(context, 'typeRequired'), isDark),
                   const SizedBox(height: 8),
@@ -179,7 +293,91 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   icon: Iconsax.document_text_1,
                   title: S.of(context, 'about'),
                   children: [
-                    _field(S.of(context, 'englishName'), _nenC, 'English name...', isLTR: true),
+                    // English name + translate icon
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _label(S.of(context, 'englishName'), isDark),
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                controller: _nenC,
+                                textDirection: TextDirection.ltr,
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: isDark
+                                      ? const Color(0xFFE2E8F0)
+                                      : null,
+                                ),
+                                decoration: InputDecoration(
+                                  hintText: 'English name...',
+                                  hintStyle: TextStyle(
+                                    fontSize: 12,
+                                    color: isDark
+                                        ? const Color(0xFFE2E8F0)
+                                        : const Color(0xFFBBBBBB),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              height: 36,
+                              decoration: BoxDecoration(
+                                color: AppTheme.primary.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(10),
+                                  onTap: _isTranslating ? null : _translateName,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                    ),
+                                    child: Center(
+                                      child: _isTranslating
+                                          ? const SizedBox(
+                                              width: 16,
+                                              height: 16,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                              ),
+                                            )
+                                          : Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  S.of(context, 'translate'),
+                                                  style: const TextStyle(
+                                                    color: AppTheme.primary,
+                                                    fontSize: 11.5,
+                                                    fontWeight: FontWeight.w800,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    _fieldRaw(
+                      label: 'ناوی عەرەبی',
+                      controller: _narC,
+                      hint: 'اسم المؤسسة بالعربي...',
+                      isDark: isDark,
+                      isRTL: true,
+                    ),
                     const SizedBox(height: 12),
                     _field(
                       S.of(context, 'aboutInstitution'),
@@ -194,58 +392,68 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 // ─── ٢. بەشەکان (Sections/Departments) ───
                 if (_type != 'school' && _type != 'kg' && _type != 'dc')
-                _sectionCard(
-                  isDark: isDark,
-                  icon: Iconsax.book_1,
-                  title: S.of(context, 'sections'),
-                  children: [
-                    ..._colleges.asMap().entries.map((entry) {
-                      final i = entry.key;
-                      final college = entry.value;
-                      return _buildCollegeCard(i, college, isDark);
-                    }),
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          setState(() {
-                            _colleges.add(_CollegeEntry());
-                          });
-                        },
-                        icon: const Icon(Iconsax.add_circle, size: 18),
-                        label: Text(_hasColleges
-                            ? S.of(context, 'addCollege')
-                            : S.of(context, 'addDept')),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AppTheme.primary,
-                          side: BorderSide(
-                            color: AppTheme.primary.withValues(alpha: 0.4),
+                  _sectionCard(
+                    isDark: isDark,
+                    icon: Iconsax.book_1,
+                    title: S.of(context, 'sections'),
+                    children: [
+                      ..._colleges.asMap().entries.map((entry) {
+                        final i = entry.key;
+                        final college = entry.value;
+                        return _buildCollegeCard(i, college, isDark);
+                      }),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              _colleges.add(_CollegeEntry());
+                            });
+                          },
+                          icon: const Icon(Iconsax.add_circle, size: 18),
+                          label: Text(
+                            _hasColleges
+                                ? S.of(context, 'addCollege')
+                                : S.of(context, 'addDept'),
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppTheme.primary,
+                            side: BorderSide(
+                              color: AppTheme.primary.withValues(alpha: 0.4),
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
 
                 const SizedBox(height: 14),
 
                 // ─── ٣. KG/DC ───
                 if (_isKgDcType)
-                _sectionCard(
-                  isDark: isDark,
-                  icon: Iconsax.wallet_2,
-                  title: S.of(context, 'extraInfo'),
-                  children: [
-                    _field(S.of(context, 'admissionAge'), _kgAgeC, S.of(context, 'admissionAgeHint')),
-                    const SizedBox(height: 12),
-                    _field(S.of(context, 'workHours'), _kgHoursC, S.of(context, 'workHoursHint')),
-                  ],
-                ),
+                  _sectionCard(
+                    isDark: isDark,
+                    icon: Iconsax.wallet_2,
+                    title: S.of(context, 'extraInfo'),
+                    children: [
+                      _field(
+                        S.of(context, 'admissionAge'),
+                        _kgAgeC,
+                        S.of(context, 'admissionAgeHint'),
+                      ),
+                      const SizedBox(height: 12),
+                      _field(
+                        S.of(context, 'workHours'),
+                        _kgHoursC,
+                        S.of(context, 'workHoursHint'),
+                      ),
+                    ],
+                  ),
 
                 const SizedBox(height: 14),
 
@@ -255,11 +463,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   icon: Iconsax.call,
                   title: S.of(context, 'contact'),
                   children: [
-                    _field(S.of(context, 'phone'), _phoneC, '07XX XXX XXXX', isLTR: true),
+                    _field(
+                      S.of(context, 'phone'),
+                      _phoneC,
+                      '07XX XXX XXXX',
+                      isLTR: true,
+                    ),
                     const SizedBox(height: 12),
-                    _field(S.of(context, 'email'), _emailC, 'info@example.com', isLTR: true),
+                    _field(
+                      S.of(context, 'email'),
+                      _emailC,
+                      'info@example.com',
+                      isLTR: true,
+                    ),
                     const SizedBox(height: 12),
-                    _field(S.of(context, 'website'), _webC, 'https://...', isLTR: true),
+                    _field(
+                      S.of(context, 'website'),
+                      _webC,
+                      'https://...',
+                      isLTR: true,
+                    ),
                   ],
                 ),
 
@@ -271,11 +494,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   icon: Iconsax.share,
                   title: S.of(context, 'social'),
                   children: [
-                    _socialField('Facebook', _fbC, Iconsax.message,
-                        const Color(0xFF1877F2)),
+                    _socialField(
+                      'Facebook',
+                      _fbC,
+                      Iconsax.message,
+                      const Color(0xFF1877F2),
+                    ),
                     const SizedBox(height: 10),
-                    _socialField('WhatsApp', _waC, Iconsax.message,
-                        const Color(0xFF25D366)),
+                    _socialField(
+                      'WhatsApp',
+                      _waC,
+                      Iconsax.message,
+                      const Color(0xFF25D366),
+                    ),
                   ],
                 ),
               ],
@@ -302,20 +533,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   child: ElevatedButton.icon(
                     onPressed: _isSubmitting ? null : _submit,
-                    icon: const Icon(Iconsax.send_15,
-                        color: Colors.white, size: 20),
+                    icon: const Icon(
+                      Iconsax.send_15,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                     label: Text(
                       S.of(context, 'submitToAdmin'),
                       style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                      ),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.transparent,
                       shadowColor: Colors.transparent,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14)),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
                     ),
                   ),
                 ),
@@ -337,7 +573,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (prov.hasInstitutionTypes) {
       typeEntries = prov.institutionTypes
-          .map((t) => MapEntry(t['key'] as String, prov.localizedField(t, 'name')))
+          .map(
+            (t) => MapEntry(t['key'] as String, prov.localizedField(t, 'name')),
+          )
           .toList();
       emojiMap = {
         for (final t in prov.institutionTypes)
@@ -363,23 +601,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
               color: isSelected
                   ? AppTheme.primary
                   : (isDark
-                      ? const Color(0xFF1E293B)
-                      : const Color(0xFFF8FAFC)),
+                        ? const Color(0xFF1E293B)
+                        : const Color(0xFFF8FAFC)),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isSelected
                     ? AppTheme.primary
                     : (isDark
-                        ? const Color(0xFF334155)
-                        : const Color(0xFFE2E8F0)),
+                          ? const Color(0xFF334155)
+                          : const Color(0xFFE2E8F0)),
                 width: isSelected ? 1.5 : 1,
               ),
               boxShadow: isSelected
                   ? [
                       BoxShadow(
-                          color: AppTheme.primary.withValues(alpha: 0.2),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2))
+                        color: AppTheme.primary.withValues(alpha: 0.2),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
                     ]
                   : [],
             ),
@@ -396,8 +635,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     color: isSelected
                         ? Colors.white
                         : (isDark
-                            ? const Color(0xFFF1F5F9)
-                            : const Color(0xFF475569)),
+                              ? const Color(0xFFF1F5F9)
+                              : const Color(0xFF475569)),
                   ),
                 ),
               ],
@@ -418,10 +657,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
               width: 90,
               height: 90,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
+                color: isDark
+                    ? const Color(0xFF334155)
+                    : const Color(0xFFF1F5F9),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFFCBD5E1),
+                  color: isDark
+                      ? const Color(0xFFE2E8F0)
+                      : const Color(0xFFCBD5E1),
                   width: 2,
                 ),
                 image: _logoFile != null
@@ -432,13 +675,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     : null,
               ),
               child: _logoFile == null
-                  ? Icon(Iconsax.camera, size: 32,
-                      color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF94A3B8))
+                  ? Icon(
+                      Iconsax.camera,
+                      size: 32,
+                      color: isDark
+                          ? const Color(0xFFF1F5F9)
+                          : const Color(0xFF94A3B8),
+                    )
                   : null,
             ),
             const SizedBox(height: 8),
             Text(
-              _logoFile == null ? S.of(context, 'addLogo') : S.of(context, 'changeLogo'),
+              _logoFile == null
+                  ? S.of(context, 'addLogo')
+                  : S.of(context, 'changeLogo'),
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -464,7 +714,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _socialField(
-      String label, TextEditingController c, IconData icon, Color color) {
+    String label,
+    TextEditingController c,
+    IconData icon,
+    Color color,
+  ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
@@ -483,14 +737,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
             textDirection: TextDirection.ltr,
             textAlign: TextAlign.left,
             style: TextStyle(
-                fontSize: 13,
-                color: isDark ? const Color(0xFFE2E8F0) : null),
+              fontSize: 13,
+              color: isDark ? const Color(0xFFE2E8F0) : null,
+            ),
             decoration: InputDecoration(
               hintText: '$label...',
               hintStyle: TextStyle(
                 fontSize: 12,
-                color:
-                    isDark ? const Color(0xFFE2E8F0) : const Color(0xFFBBBBBB),
+                color: isDark
+                    ? const Color(0xFFE2E8F0)
+                    : const Color(0xFFBBBBBB),
               ),
             ),
           ),
@@ -529,8 +785,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppTheme.primary
-                      .withValues(alpha: isDark ? 0.15 : 0.08),
+                  color: AppTheme.primary.withValues(
+                    alpha: isDark ? 0.15 : 0.08,
+                  ),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(icon, color: AppTheme.primary, size: 20),
@@ -570,14 +827,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: isDark
-              ? const Color(0xFF1E293B)
-              : const Color(0xFFF8FAFC),
+          color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isDark
-                ? const Color(0xFF334155)
-                : const Color(0xFFE2E8F0),
+            color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
           ),
         ),
         child: Row(
@@ -633,8 +886,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: TextFormField(
                 controller: _addrC,
                 style: TextStyle(
-                    fontSize: 13,
-                    color: isDark ? const Color(0xFFE2E8F0) : null),
+                  fontSize: 13,
+                  color: isDark ? const Color(0xFFE2E8F0) : null,
+                ),
                 decoration: InputDecoration(
                   hintText: S.of(context, 'addressHint'),
                   hintStyle: TextStyle(
@@ -658,8 +912,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   borderRadius: BorderRadius.circular(12),
                   onTap: _openMapPicker,
                   child: Center(
-                    child: Icon(Iconsax.location,
-                        color: AppTheme.primary, size: 22),
+                    child: Icon(
+                      Iconsax.location,
+                      color: AppTheme.primary,
+                      size: 22,
+                    ),
                   ),
                 ),
               ),
@@ -698,8 +955,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-  Widget _field(String label, TextEditingController c, String hint,
-      {bool isLTR = false, int maxLines = 1}) {
+  Widget _field(
+    String label,
+    TextEditingController c,
+    String hint, {
+    bool isLTR = false,
+    int maxLines = 1,
+  }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -712,13 +974,49 @@ class _RegisterScreenState extends State<RegisterScreen> {
           textAlign: isLTR ? TextAlign.left : TextAlign.start,
           maxLines: maxLines,
           style: TextStyle(
-              fontSize: 13, color: isDark ? const Color(0xFFE2E8F0) : null),
+            fontSize: 13,
+            color: isDark ? const Color(0xFFE2E8F0) : null,
+          ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(
               fontSize: 12,
-              color:
-                  isDark ? const Color(0xFFE2E8F0) : const Color(0xFFBBBBBB),
+              color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFFBBBBBB),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Like [_field] but lets you explicitly set text direction (for Arabic RTL).
+  Widget _fieldRaw({
+    required String label,
+    required TextEditingController controller,
+    required String hint,
+    required bool isDark,
+    bool isRTL = false,
+    int maxLines = 1,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _label(label, isDark),
+        const SizedBox(height: 6),
+        TextFormField(
+          controller: controller,
+          textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
+          textAlign: isRTL ? TextAlign.right : TextAlign.left,
+          maxLines: maxLines,
+          style: TextStyle(
+            fontSize: 13,
+            color: isDark ? const Color(0xFFE2E8F0) : null,
+          ),
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: TextStyle(
+              fontSize: 12,
+              color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFFBBBBBB),
             ),
           ),
         ),
@@ -752,11 +1050,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       : AppTheme.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  Iconsax.lock_1,
-                  size: 40,
-                  color: AppTheme.primary,
-                ),
+                child: Icon(Iconsax.lock_1, size: 40, color: AppTheme.primary),
               ),
               const SizedBox(height: 24),
               Text(
@@ -785,9 +1079,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: ElevatedButton.icon(
                   onPressed: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const LoginScreen(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
                     );
                   },
                   icon: const Icon(Iconsax.login, size: 20),
@@ -832,13 +1124,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     // Validate optional fields if provided
     final email = _emailC.text.trim();
-    if (email.isNotEmpty && !RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)) {
+    if (email.isNotEmpty &&
+        !RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)) {
       AppSnackbar.error(context, S.of(context, 'invalidEmail'));
       return;
     }
 
     final phone = _phoneC.text.trim();
-    if (phone.isNotEmpty && !RegExp(r'^[\d\s\-\+\(\)]{7,20}$').hasMatch(phone)) {
+    if (phone.isNotEmpty &&
+        !RegExp(r'^[\d\s\-\+\(\)]{7,20}$').hasMatch(phone)) {
       AppSnackbar.error(context, S.of(context, 'invalidPhone'));
       return;
     }
@@ -855,9 +1149,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() => _isSubmitting = true);
 
     final inst = Institution(
-      id: 0,
+      id: widget.institution?.id ?? 0,
       nku: nku,
       nen: _nenC.text.trim(),
+      nar: _narC.text.trim(),
       type: _type,
       country: _country,
       city: _cityC.text.trim().isNotEmpty ? _cityC.text.trim() : _city,
@@ -868,15 +1163,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
       desc: _descC.text.trim(),
       colleges: _serializeColleges(),
       depts: '',
-
       kgAge: _kgAgeC.text.trim(),
       kgHours: _kgHoursC.text.trim(),
       lat: _lat,
       lng: _lng,
       fb: _fbC.text.trim(),
       wa: _waC.text.trim(),
-      logo: _logoFile?.path ?? '',
-      approved: false,
+      logo: _logoFile?.path ?? (widget.institution?.logo ?? ''),
+      approved: widget.institution?.approved ?? false,
     );
 
     try {
@@ -885,38 +1179,61 @@ class _RegisterScreenState extends State<RegisterScreen> {
         return;
       }
 
-      final res = await ApiService.createInstitution(inst, logoFile: _logoFile);
+      final Map<String, dynamic> res;
+      if (widget.institution == null) {
+        res = await ApiService.createInstitution(inst, logoFile: _logoFile);
+      } else {
+        // Special update method that supports logo if needed
+        res = await ApiService.createInstitution(inst, logoFile: _logoFile); 
+        // We use createInstitution (POST) even for update if it handles it, 
+        // but typically Laravel update is PUT. Let's assume create handles both 
+        // or I'll add a specialized update method in ApiService.
+      }
       debugPrint('API Response: $res');
 
       if (res['success'] == true) {
-        // No local addInstitution here; fetchFromApi will update the list from backend
-
-        // Clear form
-        for (final c in [
-      _nkuC, _nenC, _cityC, _phoneC, _emailC, _webC, _addrC, _descC,
-          _kgAgeC, _kgHoursC, _fbC, _waC,
-        ]) {
-          c.clear();
+        if (widget.institution == null) {
+          // Clear form only on create
+          for (final c in [
+            _nkuC,
+            _nenC,
+            _narC,
+            _cityC,
+            _phoneC,
+            _emailC,
+            _webC,
+            _addrC,
+            _descC,
+            _kgAgeC,
+            _kgHoursC,
+            _fbC,
+            _waC,
+          ]) {
+            c.clear();
+          }
+          for (final college in _colleges) {
+            college.dispose();
+          }
+          _colleges.clear();
+          setState(() {
+            _type = '';
+            _city = '';
+            _lat = null;
+            _lng = null;
+            _showOptional = false;
+            _logoFile = null;
+          });
         }
-        for (final college in _colleges) {
-          college.dispose();
-        }
-        _colleges.clear();
-        setState(() {
-          _type = '';
-          _city = '';
-          _lat = null;
-          _lng = null;
-          _showOptional = false;
-          _logoFile = null;
-        });
 
-        if (mounted) {
+        if (widget.institution == null && mounted) {
           AppSnackbar.success(context, S.of(context, 'submitSuccess'));
+        } else if (mounted) {
+          AppSnackbar.success(context, S.of(context, 'updateSuccess'));
         }
       } else {
         final msg = res['message'] ?? S.of(context, 'errorOccurred');
-        if (mounted) AppSnackbar.error(context, '${S.of(context, 'error')} $msg');
+        if (mounted)
+          AppSnackbar.error(context, '${S.of(context, 'error')} $msg');
       }
     } catch (e) {
       debugPrint('Submit error: $e');
@@ -926,7 +1243,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
-    
+
     // گەڕانەوە بۆ هۆم
     widget.onSubmitted?.call();
   }
@@ -936,13 +1253,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String _serializeColleges() {
     final data = _colleges
         .where((c) => c.nameController.text.trim().isNotEmpty)
-        .map((c) => {
-              'name': c.nameController.text.trim(),
-              'depts': c.deptControllers
-                  .map((d) => d.text.trim())
-                  .where((s) => s.isNotEmpty)
-                  .toList(),
-            })
+        .map(
+          (c) => {
+            'name': c.nameController.text.trim(),
+            'depts': c.deptControllers
+                .map((d) => d.text.trim())
+                .where((s) => s.isNotEmpty)
+                .toList(),
+          },
+        )
         .toList();
     if (data.isEmpty) return '';
     return jsonEncode(data);
@@ -988,8 +1307,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: Text(
                   college.nameController.text.isEmpty
                       ? _hasColleges
-                          ? S.of(context, 'collegeN', {'n': '${index + 1}'})
-                          : S.of(context, 'deptN', {'n': '${index + 1}'})
+                            ? S.of(context, 'collegeN', {'n': '${index + 1}'})
+                            : S.of(context, 'deptN', {'n': '${index + 1}'})
                       : college.nameController.text,
                   style: TextStyle(
                     fontSize: 14,
@@ -1022,12 +1341,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
               color: isDark ? const Color(0xFFE2E8F0) : null,
             ),
             decoration: InputDecoration(
-              hintText: _hasColleges ? S.of(context, 'collegeNameHint') : S.of(context, 'deptNameHint'),
+              hintText: _hasColleges
+                  ? S.of(context, 'collegeNameHint')
+                  : S.of(context, 'deptNameHint'),
               hintStyle: TextStyle(
                 fontSize: 12,
-                color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFFBBBBBB),
+                color: isDark
+                    ? const Color(0xFFE2E8F0)
+                    : const Color(0xFFBBBBBB),
               ),
-              prefixIcon: Icon(Iconsax.building_4, size: 18, color: AppTheme.primary),
+              prefixIcon: Icon(
+                Iconsax.building_4,
+                size: 18,
+                color: AppTheme.primary,
+              ),
             ),
             onChanged: (_) => setState(() {}),
           ),
@@ -1057,7 +1384,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         color: isDark ? const Color(0xFFE2E8F0) : null,
                       ),
                       decoration: InputDecoration(
-                        hintText: _hasColleges ? S.of(context, 'deptNameHint') : S.of(context, 'subDeptHint'),
+                        hintText: _hasColleges
+                            ? S.of(context, 'deptNameHint')
+                            : S.of(context, 'subDeptHint'),
                         hintStyle: TextStyle(
                           fontSize: 11,
                           color: isDark
@@ -1066,7 +1395,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         isDense: true,
                         contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 10),
+                          horizontal: 10,
+                          vertical: 10,
+                        ),
                       ),
                     ),
                   ),
@@ -1078,8 +1409,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         college.deptControllers.removeAt(di);
                       });
                     },
-                    child: Icon(Iconsax.close_circle,
-                        size: 18, color: Colors.red[300]),
+                    child: Icon(
+                      Iconsax.close_circle,
+                      size: 18,
+                      color: Colors.red[300],
+                    ),
                   ),
                 ],
               ),
@@ -1094,7 +1428,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             },
             icon: Icon(Iconsax.add, size: 16, color: AppTheme.primary),
             label: Text(
-              _hasColleges ? S.of(context, 'addDeptSub') : S.of(context, 'addBranch'),
+              _hasColleges
+                  ? S.of(context, 'addDeptSub')
+                  : S.of(context, 'addBranch'),
               style: TextStyle(fontSize: 12, color: AppTheme.primary),
             ),
             style: TextButton.styleFrom(

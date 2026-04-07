@@ -131,21 +131,25 @@ class _DetailScreenState extends State<DetailScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
                 children: [
-                   Row(
+                    Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Flexible(
                         child: Text(
                           d.nameForLang(context.read<AppProvider>().language),
-                          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
+                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                           textAlign: TextAlign.center,
                         ),
                       ),
                       const SizedBox(width: 4),
-                      Icon(Icons.verified, size: 18, color: primaryColor),
+                      Icon(Icons.verified, size: 20, color: primaryColor),
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  if (d.nen.isNotEmpty && context.read<AppProvider>().language != 'en')
+                    Text(d.nen, style: TextStyle(fontSize: 14, color: Colors.grey[500], fontWeight: FontWeight.w600)),
+                  if (d.nar.isNotEmpty && context.read<AppProvider>().language != 'ar')
+                    Text(d.nar, style: TextStyle(fontSize: 14, color: Colors.grey[500], fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 12),
                   Wrap(
                     alignment: WrapAlignment.center,
                     spacing: 8,
@@ -278,11 +282,49 @@ class _DetailScreenState extends State<DetailScreen> {
   Widget _renderActiveTab(Institution d, bool isDark, Color primaryColor, Color surfaceColor) {
     switch (_activeTab) {
       case 0:
-        return _contentContainer(surfaceColor, [
-          Text(S.of(context, 'aboutTab'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
-          const SizedBox(height: 12),
-          Text(d.desc.isEmpty ? S.of(context, 'noAboutInfo') : d.desc, style: const TextStyle(fontSize: 15, height: 1.7)),
-        ]);
+        return Column(
+          children: [
+            _contentContainer(surfaceColor, [
+              Text(S.of(context, 'aboutTab'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
+              const SizedBox(height: 12),
+              Text(d.desc.isEmpty ? S.of(context, 'noAboutInfo') : d.desc, style: const TextStyle(fontSize: 15, height: 1.7)),
+              if (d.kgAge.isNotEmpty || d.kgHours.isNotEmpty) ...[
+                const SizedBox(height: 20),
+                const Divider(),
+                const SizedBox(height: 10),
+                if (d.kgAge.isNotEmpty) _infoRow(Iconsax.user, S.of(context, 'admissionAge'), d.kgAge, primaryColor),
+                if (d.kgHours.isNotEmpty) _infoRow(Iconsax.clock, S.of(context, 'workHours'), d.kgHours, primaryColor),
+              ],
+            ]),
+            const SizedBox(height: 16),
+            _contentContainer(surfaceColor, [
+              Text(S.of(context, 'contactTab'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
+              const SizedBox(height: 16),
+              if (d.phone.isNotEmpty) _infoRow(Iconsax.call, S.of(context, 'phone'), d.phone, primaryColor, onTap: () => _launchUrl('tel:${d.phone}')),
+              if (d.email.isNotEmpty) _infoRow(Iconsax.sms, S.of(context, 'email'), d.email, primaryColor, onTap: () => _launchUrl('mailto:${d.email}')),
+              if (d.web.isNotEmpty) _infoRow(Iconsax.global, S.of(context, 'website'), d.web, primaryColor, onTap: () => _launchUrl(d.web)),
+              if (d.addr.isNotEmpty) _infoRow(Iconsax.map, S.of(context, 'address'), d.addr, primaryColor, onTap: () => _openMap(d)),
+              
+              // Social Media Grid
+              if (d.fb.isNotEmpty || d.wa.isNotEmpty || d.ig.isNotEmpty || d.yt.isNotEmpty || d.tk.isNotEmpty || d.tg.isNotEmpty) ...[
+                const SizedBox(height: 20),
+                const Divider(),
+                const SizedBox(height: 16),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: [
+                    if (d.fb.isNotEmpty) _socialIcon(Icons.facebook, const Color(0xFF1877F2), () => _launchUrl(d.fb)),
+                    if (d.wa.isNotEmpty) _socialIcon(Iconsax.message, const Color(0xFF25D366), () => _launchUrl('https://wa.me/${d.wa}')),
+                    if (d.ig.isNotEmpty) _socialIcon(Icons.camera_alt, const Color(0xFFE4405F), () => _launchUrl(d.ig)),
+                    if (d.yt.isNotEmpty) _socialIcon(Iconsax.video_circle, const Color(0xFFFF0000), () => _launchUrl(d.yt)),
+                    if (d.tg.isNotEmpty) _socialIcon(Iconsax.send_1, const Color(0xFF0088CC), () => _launchUrl(d.tg)),
+                  ],
+                ),
+              ],
+            ]),
+          ],
+        );
       case 1:
         if (_isLoadingPosts) return const Center(child: CircularProgressIndicator());
         if (_posts.isEmpty) return Center(child: Text(S.of(context, 'noPosts')));
@@ -352,6 +394,49 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
+  Widget _infoRow(IconData icon, String label, String value, Color primaryColor, {VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(color: primaryColor.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+              child: Icon(icon, size: 18, color: primaryColor),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[500], fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 2),
+                  Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, height: 1.4)),
+                ],
+              ),
+            ),
+            if (onTap != null) Icon(Iconsax.arrow_left_2, size: 16, color: Colors.grey[400]),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _socialIcon(IconData icon, Color color, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+        child: Icon(icon, color: color, size: 24),
+      ),
+    );
+  }
+
   void _shareInstitution(Institution d) {
     final name = d.nameForLang(context.read<AppProvider>().language);
     Share.share('$name\n${d.web}\n${d.phone}');
@@ -364,7 +449,11 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   void _openMap(Institution d) {
-    final name = d.nameForLang('en');
-    _launchUrl('https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(name)}');
+    if (d.lat != null && d.lng != null) {
+      _launchUrl('https://www.google.com/maps/search/?api=1&query=${d.lat},${d.lng}');
+    } else {
+      final name = d.nameForLang('en');
+      _launchUrl('https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(name)}');
+    }
   }
 }
