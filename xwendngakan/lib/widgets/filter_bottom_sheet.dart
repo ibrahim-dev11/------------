@@ -31,7 +31,7 @@ class FilterBottomSheet extends StatelessWidget {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
+            color: Colors.black.withOpacity(0.2),
             blurRadius: 30,
             offset: const Offset(0, -10),
           ),
@@ -63,8 +63,8 @@ class FilterBottomSheet extends StatelessWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        AppTheme.primary.withValues(alpha: 0.15),
-                        AppTheme.accent.withValues(alpha: 0.08),
+                        AppTheme.primary.withOpacity(0.15),
+                        AppTheme.accent.withOpacity(0.08),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(16),
@@ -102,9 +102,9 @@ class FilterBottomSheet extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       decoration: BoxDecoration(
-                        color: AppTheme.danger.withValues(alpha: 0.1),
+                        color: AppTheme.danger.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: AppTheme.danger.withValues(alpha: 0.2)),
+                        border: Border.all(color: AppTheme.danger.withOpacity(0.2)),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -258,7 +258,7 @@ class FilterBottomSheet extends StatelessWidget {
                   borderRadius: BorderRadius.circular(18),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.primary.withValues(alpha: 0.4),
+                      color: AppTheme.primary.withOpacity(0.4),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),

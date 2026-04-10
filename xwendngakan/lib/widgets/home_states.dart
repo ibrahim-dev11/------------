@@ -27,8 +27,8 @@ class HomeEmptyState extends StatelessWidget {
               padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(
                 gradient: LinearGradient(colors: [
-                  AppTheme.primary.withValues(alpha: isDark ? 0.12 : 0.06),
-                  AppTheme.accent.withValues(alpha: isDark ? 0.08 : 0.03),
+                  AppTheme.primary.withOpacity(isDark ? 0.12 : 0.06),
+                  AppTheme.accent.withOpacity(isDark ? 0.08 : 0.03),
                 ]),
                 shape: BoxShape.circle,
               ),
@@ -72,7 +72,7 @@ class HomeEmptyState extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.primary.withValues(alpha: 0.3),
+                      color: AppTheme.primary.withOpacity(0.3),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),
@@ -122,7 +122,7 @@ class HomeErrorState extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(
-                color: AppTheme.danger.withValues(alpha: isDark ? 0.12 : 0.06),
+                color: AppTheme.danger.withOpacity(isDark ? 0.12 : 0.06),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -162,7 +162,7 @@ class HomeErrorState extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.primary.withValues(alpha: 0.3),
+                      color: AppTheme.primary.withOpacity(0.3),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),

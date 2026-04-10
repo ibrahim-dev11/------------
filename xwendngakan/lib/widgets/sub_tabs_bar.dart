@@ -56,7 +56,7 @@ class SubTabsBar extends StatelessWidget {
                         boxShadow: isOn
                             ? [
                                 BoxShadow(
-                                  color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
+                                  color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
                                   blurRadius: 6,
                                   offset: const Offset(0, 2),
                                 ),
@@ -81,7 +81,7 @@ class SubTabsBar extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
                                 color: isOn
-                                    ? AppTheme.primary.withValues(alpha: 0.1)
+                                    ? AppTheme.primary.withOpacity(0.1)
                                     : (isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0)),
                                 borderRadius: BorderRadius.circular(6),
                               ),

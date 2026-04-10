@@ -559,7 +559,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget _translateButton(bool isDark) {
     return Container(
       height: 36,
-      decoration: BoxDecoration(color: AppTheme.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
+      decoration: BoxDecoration(color: AppTheme.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -587,7 +587,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         label: Text(_hasColleges ? S.of(context, 'addCollege') : S.of(context, 'addDept')),
         style: OutlinedButton.styleFrom(
           foregroundColor: AppTheme.primary,
-          side: BorderSide(color: AppTheme.primary.withValues(alpha: 0.4)),
+          side: BorderSide(color: AppTheme.primary.withOpacity(0.4)),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           padding: const EdgeInsets.symmetric(vertical: 12),
         ),
@@ -603,7 +603,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         decoration: BoxDecoration(
           gradient: const LinearGradient(colors: [AppTheme.success, AppTheme.success2]),
           borderRadius: BorderRadius.circular(14),
-          boxShadow: [BoxShadow(color: AppTheme.success.withValues(alpha: 0.3), blurRadius: 12, offset: const Offset(0, 4))],
+          boxShadow: [BoxShadow(color: AppTheme.success.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 4))],
         ),
         child: ElevatedButton.icon(
           onPressed: _isSubmitting ? null : _submit,
@@ -777,7 +777,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 width: 28,
                 height: 28,
                 decoration: BoxDecoration(
-                  color: AppTheme.primary.withValues(alpha: 0.15),
+                  color: AppTheme.primary.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Center(
@@ -953,7 +953,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: AppTheme.primary.withValues(alpha: 0.2),
+                        color: AppTheme.primary.withOpacity(0.2),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -1078,7 +1078,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
+            color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, color: color, size: 18),
@@ -1121,7 +1121,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.06),
+            color: Colors.black.withOpacity(isDark ? 0.25 : 0.06),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
@@ -1260,7 +1260,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               height: 48,
               width: 48,
               child: Material(
-                color: AppTheme.primary.withValues(alpha: 0.1),
+                color: AppTheme.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(12),
@@ -1400,8 +1400,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 height: 90,
                 decoration: BoxDecoration(
                   color: isDark
-                      ? AppTheme.primary.withValues(alpha: 0.15)
-                      : AppTheme.primary.withValues(alpha: 0.1),
+                      ? AppTheme.primary.withOpacity(0.15)
+                      : AppTheme.primary.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(Iconsax.lock_1, size: 40, color: AppTheme.primary),
@@ -1467,13 +1467,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       alignment: alignment,
       padding: const EdgeInsets.symmetric(horizontal: 25),
       decoration: BoxDecoration(
-        color: Colors.redAccent.withValues(alpha: 0.15),
+        color: Colors.redAccent.withOpacity(0.15),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.redAccent.withValues(alpha: 0.2),
+          color: Colors.redAccent.withOpacity(0.2),
           shape: BoxShape.circle,
         ),
         child: const Icon(Iconsax.trash, color: Colors.redAccent, size: 20),

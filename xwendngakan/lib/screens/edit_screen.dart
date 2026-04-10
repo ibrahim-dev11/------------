@@ -260,7 +260,7 @@ class _EditScreenState extends State<EditScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppTheme.danger.withValues(alpha: 0.1),
+                  color: AppTheme.danger.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(Iconsax.trash, color: AppTheme.danger, size: 22),

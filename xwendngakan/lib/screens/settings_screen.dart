@@ -37,8 +37,8 @@ class SettingsScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        AppTheme.primary.withValues(alpha: 0.15),
-                        AppTheme.accent.withValues(alpha: 0.1),
+                        AppTheme.primary.withOpacity(0.15),
+                        AppTheme.accent.withOpacity(0.1),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(16),
@@ -128,7 +128,7 @@ class SettingsScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(14),
                           boxShadow: [
                             BoxShadow(
-                              color: AppTheme.primary.withValues(alpha: 0.3),
+                              color: AppTheme.primary.withOpacity(0.3),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
@@ -155,7 +155,7 @@ class SettingsScreen extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                               decoration: BoxDecoration(
-                                color: AppTheme.success.withValues(alpha: 0.1),
+                                color: AppTheme.success.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
@@ -244,7 +244,7 @@ class SettingsScreen extends StatelessWidget {
         border: Border.all(color: borderColor),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -272,7 +272,7 @@ class SettingsScreen extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: iconBg.withValues(alpha: isDark ? 0.15 : 0.1),
+              color: iconBg.withOpacity(isDark ? 0.15 : 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, color: iconBg, size: 20),
@@ -387,12 +387,12 @@ class SettingsScreen extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                               decoration: BoxDecoration(
                                 color: isSelected
-                                    ? AppTheme.primary.withValues(alpha: isDark ? 0.15 : 0.08)
+                                    ? AppTheme.primary.withOpacity(isDark ? 0.15 : 0.08)
                                     : Colors.transparent,
                                 borderRadius: BorderRadius.circular(14),
                                 border: Border.all(
                                   color: isSelected
-                                      ? AppTheme.primary.withValues(alpha: 0.4)
+                                      ? AppTheme.primary.withOpacity(0.4)
                                       : isDark
                                           ? const Color(0xFF1E293B)
                                           : const Color(0xFFF1F5F9),
@@ -440,7 +440,7 @@ class SettingsScreen extends StatelessWidget {
               width: 42,
               height: 42,
               decoration: BoxDecoration(
-                color: const Color(0xFF0EA5E9).withValues(alpha: isDark ? 0.15 : 0.1),
+                color: const Color(0xFF0EA5E9).withOpacity(isDark ? 0.15 : 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(Iconsax.global, color: Color(0xFF0EA5E9), size: 20),
@@ -548,7 +548,7 @@ class SettingsScreen extends StatelessWidget {
           border: Border.all(color: borderColor),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+              color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
               blurRadius: 16,
               offset: const Offset(0, 4),
             ),
@@ -587,7 +587,7 @@ class SettingsScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: AppTheme.primary.withValues(alpha: 0.3),
+                          color: AppTheme.primary.withOpacity(0.3),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
@@ -628,7 +628,7 @@ class SettingsScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
-                      color: AppTheme.success.withValues(alpha: 0.12),
+                      color: AppTheme.success.withOpacity(0.12),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -675,7 +675,7 @@ class SettingsScreen extends StatelessWidget {
         border: Border.all(color: borderColor),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -704,7 +704,7 @@ class SettingsScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppTheme.primary.withValues(alpha: isDark ? 0.15 : 0.1),
+                    color: AppTheme.primary.withOpacity(isDark ? 0.15 : 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(Iconsax.user, size: 30, color: AppTheme.primary),
@@ -779,7 +779,7 @@ class _LogoutButtonState extends State<_LogoutButton> {
             icon: Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: AppTheme.danger.withValues(alpha: 0.1),
+                color: AppTheme.danger.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(Iconsax.logout, color: AppTheme.danger, size: 30),
@@ -864,10 +864,10 @@ class _LogoutButtonState extends State<_LogoutButton> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          color: AppTheme.danger.withValues(alpha: isDark ? 0.08 : 0.05),
+          color: AppTheme.danger.withOpacity(isDark ? 0.08 : 0.05),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppTheme.danger.withValues(alpha: isDark ? 0.2 : 0.15),
+            color: AppTheme.danger.withOpacity(isDark ? 0.2 : 0.15),
           ),
         ),
         child: Row(

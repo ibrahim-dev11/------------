@@ -153,7 +153,7 @@ class _SplashScreenState extends State<SplashScreen>
                 height: 250,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppTheme.gold.withValues(alpha: 0.05),
+                  color: AppTheme.gold.withOpacity(0.05),
                 ),
               ),
             ),
@@ -165,7 +165,7 @@ class _SplashScreenState extends State<SplashScreen>
                 height: 200,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppTheme.gold.withValues(alpha: 0.04),
+                  color: AppTheme.gold.withOpacity(0.04),
                 ),
               ),
             ),
@@ -177,7 +177,7 @@ class _SplashScreenState extends State<SplashScreen>
                 height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.02),
+                  color: Colors.white.withOpacity(0.02),
                 ),
               ),
             ),
@@ -206,7 +206,7 @@ class _SplashScreenState extends State<SplashScreen>
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppTheme.gold.withValues(alpha: 0.4),
+                                  color: AppTheme.gold.withOpacity(0.4),
                                   blurRadius: 30,
                                   spreadRadius: 5,
                                 ),
@@ -250,7 +250,7 @@ class _SplashScreenState extends State<SplashScreen>
                                 'دلیلی دامەزراوە پەروەردەییەکانی عێراق و کوردستان',
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: Colors.white.withValues(alpha: 0.7),
+                                  color: Colors.white.withOpacity(0.7),
                                   height: 1.5,
                                 ),
                                 textAlign: TextAlign.center,
@@ -265,7 +265,7 @@ class _SplashScreenState extends State<SplashScreen>
                                     value: _progressAnimation.value,
                                     minHeight: 4,
                                     backgroundColor:
-                                        Colors.white.withValues(alpha: 0.1),
+                                        Colors.white.withOpacity(0.1),
                                     valueColor:
                                         const AlwaysStoppedAnimation<Color>(
                                             AppTheme.gold),
@@ -299,7 +299,7 @@ class _SplashScreenState extends State<SplashScreen>
                           width: 40,
                           height: 2,
                           decoration: BoxDecoration(
-                            color: AppTheme.gold.withValues(alpha: 0.3),
+                            color: AppTheme.gold.withOpacity(0.3),
                             borderRadius: BorderRadius.circular(1),
                           ),
                         ),

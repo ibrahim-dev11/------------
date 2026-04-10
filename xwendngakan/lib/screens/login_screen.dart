@@ -156,8 +156,8 @@ class _LoginScreenState extends State<LoginScreen>
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    AppTheme.primary.withValues(alpha: isDark ? 0.15 : 0.1),
-                    AppTheme.accent.withValues(alpha: 0.0),
+                    AppTheme.primary.withOpacity(isDark ? 0.15 : 0.1),
+                    AppTheme.accent.withOpacity(0.0),
                   ],
                 ),
               ),
@@ -175,8 +175,8 @@ class _LoginScreenState extends State<LoginScreen>
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    AppTheme.accent.withValues(alpha: isDark ? 0.12 : 0.08),
-                    AppTheme.primary.withValues(alpha: 0.0),
+                    AppTheme.accent.withOpacity(isDark ? 0.12 : 0.08),
+                    AppTheme.primary.withOpacity(0.0),
                   ],
                 ),
               ),
@@ -269,13 +269,13 @@ class _LoginScreenState extends State<LoginScreen>
         ),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primary.withValues(alpha: 0.35),
+            color: AppTheme.primary.withOpacity(0.35),
             blurRadius: 30,
             offset: const Offset(0, 10),
             spreadRadius: -2,
           ),
           BoxShadow(
-            color: AppTheme.accent.withValues(alpha: 0.2),
+            color: AppTheme.accent.withOpacity(0.2),
             blurRadius: 20,
             offset: const Offset(-5, 5),
           ),
@@ -291,7 +291,7 @@ class _LoginScreenState extends State<LoginScreen>
               height: 40,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.1),
+                color: Colors.white.withOpacity(0.1),
               ),
             ),
           ),
@@ -308,14 +308,14 @@ class _LoginScreenState extends State<LoginScreen>
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: isDark
-            ? const Color(0xFF1E293B).withValues(alpha: 0.8)
-            : Colors.white.withValues(alpha: 0.9),
+            ? const Color(0xFF1E293B).withOpacity(0.8)
+            : Colors.white.withOpacity(0.9),
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
             color: isDark
-                ? Colors.black.withValues(alpha: 0.3)
-                : const Color(0xFF3B82F6).withValues(alpha: 0.06),
+                ? Colors.black.withOpacity(0.3)
+                : const Color(0xFF3B82F6).withOpacity(0.06),
             blurRadius: 30,
             offset: const Offset(0, 10),
             spreadRadius: -5,
@@ -323,8 +323,8 @@ class _LoginScreenState extends State<LoginScreen>
         ],
         border: Border.all(
           color: isDark
-              ? const Color(0xFF334155).withValues(alpha: 0.6)
-              : const Color(0xFFE2E8F0).withValues(alpha: 0.8),
+              ? const Color(0xFF334155).withOpacity(0.6)
+              : const Color(0xFFE2E8F0).withOpacity(0.8),
         ),
       ),
       child: Column(
@@ -338,8 +338,8 @@ class _LoginScreenState extends State<LoginScreen>
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      AppTheme.primary.withValues(alpha: 0.15),
-                      AppTheme.accent.withValues(alpha: 0.08),
+                      AppTheme.primary.withOpacity(0.15),
+                      AppTheme.accent.withOpacity(0.08),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(14),
@@ -402,7 +402,7 @@ class _LoginScreenState extends State<LoginScreen>
                 S.of(context, 'forgotPassword'),
                 style: TextStyle(
                   fontSize: 12,
-                  color: AppTheme.primary.withValues(alpha: 0.8),
+                  color: AppTheme.primary.withOpacity(0.8),
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -452,8 +452,8 @@ class _LoginScreenState extends State<LoginScreen>
             boxShadow: [
               BoxShadow(
                 color: isDark
-                    ? Colors.black.withValues(alpha: 0.15)
-                    : const Color(0xFF3B82F6).withValues(alpha: 0.04),
+                    ? Colors.black.withOpacity(0.15)
+                    : const Color(0xFF3B82F6).withOpacity(0.04),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -481,7 +481,7 @@ class _LoginScreenState extends State<LoginScreen>
                 margin: const EdgeInsets.all(12),
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: AppTheme.primary.withValues(alpha: isDark ? 0.15 : 0.08),
+                  color: AppTheme.primary.withOpacity(isDark ? 0.15 : 0.08),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, color: AppTheme.primary, size: 16),
@@ -498,7 +498,7 @@ class _LoginScreenState extends State<LoginScreen>
                   : null,
               filled: true,
               fillColor: isDark
-                  ? const Color(0xFF0F172A).withValues(alpha: 0.5)
+                  ? const Color(0xFF0F172A).withOpacity(0.5)
                   : const Color(0xFFF8FAFC),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
@@ -510,8 +510,8 @@ class _LoginScreenState extends State<LoginScreen>
                 borderRadius: BorderRadius.circular(16),
                 borderSide: BorderSide(
                   color: isDark
-                      ? const Color(0xFF334155).withValues(alpha: 0.5)
-                      : const Color(0xFFE2E8F0).withValues(alpha: 0.8),
+                      ? const Color(0xFF334155).withOpacity(0.5)
+                      : const Color(0xFFE2E8F0).withOpacity(0.8),
                 ),
               ),
               focusedBorder: OutlineInputBorder(
@@ -546,7 +546,7 @@ class _LoginScreenState extends State<LoginScreen>
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
-              color: gradient[0].withValues(alpha: 0.35),
+              color: gradient[0].withOpacity(0.35),
               blurRadius: 16,
               offset: const Offset(0, 6),
               spreadRadius: -2,
@@ -596,13 +596,13 @@ class _LoginScreenState extends State<LoginScreen>
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       decoration: BoxDecoration(
         color: isDark
-            ? const Color(0xFF1E293B).withValues(alpha: 0.5)
-            : Colors.white.withValues(alpha: 0.6),
+            ? const Color(0xFF1E293B).withOpacity(0.5)
+            : Colors.white.withOpacity(0.6),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
           color: isDark
-              ? const Color(0xFF334155).withValues(alpha: 0.4)
-              : const Color(0xFFE2E8F0).withValues(alpha: 0.6),
+              ? const Color(0xFF334155).withOpacity(0.4)
+              : const Color(0xFFE2E8F0).withOpacity(0.6),
         ),
       ),
       child: Row(
@@ -662,13 +662,13 @@ class _LoginScreenState extends State<LoginScreen>
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       decoration: BoxDecoration(
         color: isDark
-            ? const Color(0xFF1E293B).withValues(alpha: 0.5)
-            : Colors.white.withValues(alpha: 0.6),
+            ? const Color(0xFF1E293B).withOpacity(0.5)
+            : Colors.white.withOpacity(0.6),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
           color: isDark
-              ? const Color(0xFF334155).withValues(alpha: 0.4)
-              : const Color(0xFFE2E8F0).withValues(alpha: 0.6),
+              ? const Color(0xFF334155).withOpacity(0.4)
+              : const Color(0xFFE2E8F0).withOpacity(0.6),
         ),
       ),
       child: Row(

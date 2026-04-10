@@ -87,7 +87,7 @@ class _LanguageScreenState extends State<LanguageScreen>
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.gold.withValues(alpha: 0.3),
+                        color: AppTheme.gold.withOpacity(0.3),
                         blurRadius: 24,
                         spreadRadius: 2,
                       ),
@@ -112,7 +112,7 @@ class _LanguageScreenState extends State<LanguageScreen>
                   'تکایە زمانێک هەڵبژێرە بۆ بەردەوامبوون',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.white.withValues(alpha: 0.6),
+                    color: Colors.white.withOpacity(0.6),
                   ),
                 ),
                 const SizedBox(height: 40),
@@ -242,12 +242,12 @@ class _LanguageCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             color: isSelected
-                ? AppTheme.gold.withValues(alpha: 0.15)
-                : Colors.white.withValues(alpha: 0.07),
+                ? AppTheme.gold.withOpacity(0.15)
+                : Colors.white.withOpacity(0.07),
             border: Border.all(
               color: isSelected
-                  ? AppTheme.gold.withValues(alpha: 0.5)
-                  : Colors.white.withValues(alpha: 0.1),
+                  ? AppTheme.gold.withOpacity(0.5)
+                  : Colors.white.withOpacity(0.1),
               width: isSelected ? 1.5 : 1,
             ),
           ),
@@ -271,7 +271,7 @@ class _LanguageCard extends StatelessWidget {
                       subtitle,
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.white.withValues(alpha: 0.4),
+                        color: Colors.white.withOpacity(0.4),
                       ),
                     ),
                   ],

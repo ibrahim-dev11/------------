@@ -80,7 +80,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.primary.withValues(alpha: 0.1),
+                  color: AppTheme.primary.withOpacity(0.1),
                   blurRadius: 30,
                   spreadRadius: 10,
                 ),
@@ -89,7 +89,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             child: Icon(
               Iconsax.notification_bing,
               size: 70,
-              color: AppTheme.primary.withValues(alpha: 0.8),
+              color: AppTheme.primary.withOpacity(0.8),
             ),
           ),
           const SizedBox(height: 32),
@@ -151,17 +151,17 @@ class _NotificationCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: isRead 
                 ? (isDark ? const Color(0xFF1E293B) : Colors.white)
-                : (isDark ? AppTheme.primary.withValues(alpha: 0.1) : AppTheme.primary.withValues(alpha: 0.08)),
+                : (isDark ? AppTheme.primary.withOpacity(0.1) : AppTheme.primary.withOpacity(0.08)),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
               color: isRead
-                  ? (isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05))
-                  : AppTheme.primary.withValues(alpha: 0.2),
+                  ? (isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05))
+                  : AppTheme.primary.withOpacity(0.2),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+                color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
                 blurRadius: 15,
                 offset: const Offset(0, 8),
               ),
@@ -175,7 +175,7 @@ class _NotificationCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isRead 
                       ? (isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9))
-                      : AppTheme.primary.withValues(alpha: 0.15),
+                      : AppTheme.primary.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(18),
                 ),
                 child: Icon(
@@ -244,7 +244,7 @@ class _NotificationCard extends StatelessWidget {
                                 child: Icon(
                                   Iconsax.arrow_left_1,
                                   size: 16,
-                                  color: AppTheme.primary.withValues(alpha: 0.6),
+                                  color: AppTheme.primary.withOpacity(0.6),
                                 ),
                               ),
                           ],
@@ -268,7 +268,7 @@ class _NotificationCard extends StatelessWidget {
       alignment: alignment,
       padding: const EdgeInsets.symmetric(horizontal: 25),
       decoration: BoxDecoration(
-        color: Colors.redAccent.withValues(alpha: 0.15),
+        color: Colors.redAccent.withOpacity(0.15),
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
@@ -277,7 +277,7 @@ class _NotificationCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.redAccent.withValues(alpha: 0.2),
+              color: Colors.redAccent.withOpacity(0.2),
               shape: BoxShape.circle,
             ),
             child: const Icon(Iconsax.trash, color: Colors.redAccent, size: 24),

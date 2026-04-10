@@ -48,10 +48,10 @@ class ResultsHeader extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: AppTheme.primary.withValues(alpha: isDark ? 0.2 : 0.08),
+              color: AppTheme.primary.withOpacity(isDark ? 0.2 : 0.08),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: AppTheme.primary.withValues(alpha: 0.2),
+                color: AppTheme.primary.withOpacity(0.2),
                 width: 1,
               ),
             ),
@@ -60,7 +60,7 @@ class ResultsHeader extends StatelessWidget {
                 Icon(
                   Icons.layers_rounded,
                   size: 14,
-                  color: AppTheme.primary.withValues(alpha: 0.8),
+                  color: AppTheme.primary.withOpacity(0.8),
                 ),
                 const SizedBox(width: 6),
                 Text(

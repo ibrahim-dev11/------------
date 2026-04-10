@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
 import '../providers/app_provider.dart';
 import '../services/app_localizations.dart';
 import '../theme/app_theme.dart';
@@ -24,7 +23,7 @@ class GreetingHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 10),
+      padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -40,10 +39,24 @@ class GreetingHeader extends StatelessWidget {
                     Text(
                       S.of(context, 'appName'),
                       style: TextStyle(
-                        fontSize: 26,
+                        fontSize: 32,
                         fontWeight: FontWeight.w900,
                         color: isDark ? Colors.white : const Color(0xFF0F172A),
-                        letterSpacing: -0.5,
+                        letterSpacing: -1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      height: 4,
+                      width: 28,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppTheme.primary,
+                            AppTheme.primary.withOpacity(0.2),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(2),
                       ),
                     ),
                   ],
@@ -53,28 +66,25 @@ class GreetingHeader extends StatelessWidget {
               Row(
                 children: [
                   _buildHeaderIcon(
-                    icon: prov.hasUnreadNotifications ? Iconsax.notification_bing : Iconsax.notification,
+                    icon: prov.hasUnreadNotifications ? Icons.notifications_active_rounded : Icons.notifications_none_rounded,
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const NotificationsScreen()),
                     ),
                     iconColor: prov.hasUnreadNotifications ? AppTheme.primary : null,
-                    badge: prov.hasUnreadNotifications,
-                    badgeCount: prov.unreadNotificationsCount,
                   ),
                   const SizedBox(width: 12),
                   _buildHeaderIcon(
-                    icon: favoritesCount > 0 ? Icons.favorite_rounded : Iconsax.heart,
+                    icon: favoritesCount > 0 ? Icons.favorite_rounded : Icons.favorite_outline_rounded,
                     onTap: onShowFavorites,
                     iconColor: favoritesCount > 0 ? Colors.redAccent : null,
-                    badge: true,
+                    badge: favoritesCount > 0,
                     badgeCount: favoritesCount,
                   ),
                 ],
               ),
             ],
           ),
-          const SizedBox(height: 16),
         ],
       ),
     );
@@ -89,60 +99,35 @@ class GreetingHeader extends StatelessWidget {
   }) {
     return GestureDetector(
       onTap: onTap,
-      child: SizedBox(
+      child: Container(
         width: 48,
         height: 48,
+        decoration: BoxDecoration(
+          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
+          borderRadius: BorderRadius.circular(16),
+        ),
         child: Stack(
           alignment: Alignment.center,
           children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-                  width: 1.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Icon(
-                icon,
-                size: 22,
-                color: iconColor ?? (isDark ? const Color(0xFFE2E8F0) : const Color(0xFF475569)),
-              ),
+            Icon(
+              icon,
+              size: 24,
+              color: iconColor ?? (isDark ? Colors.white70 : const Color(0xFF475569)),
             ),
             if (badge && badgeCount != null && badgeCount > 0)
               Positioned(
-                top: -2,
-                right: -2,
+                top: 12,
+                right: 12,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                  constraints: const BoxConstraints(minWidth: 20),
+                  width: 8,
+                  height: 8,
                   decoration: BoxDecoration(
                     color: Colors.redAccent,
-                    borderRadius: BorderRadius.circular(10),
+                    shape: BoxShape.circle,
                     border: Border.all(
-                      color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFF),
-                      width: 2,
+                      color: isDark ? const Color(0xFF0F172A) : Colors.white,
+                      width: 1.5,
                     ),
-                  ),
-                  child: Text(
-                    badgeCount > 99 ? '99+' : '$badgeCount',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      height: 1.1,
-                    ),
-                    textAlign: TextAlign.center,
                   ),
                 ),
               ),

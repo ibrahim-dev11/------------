@@ -59,7 +59,7 @@ class StatsBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
+            color: Colors.black.withOpacity(isDark ? 0.15 : 0.03),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -74,7 +74,7 @@ class StatsBar extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
+              color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, size: 16, color: color),

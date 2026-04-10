@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import '../services/app_localizations.dart';
 import '../theme/app_theme.dart';
@@ -15,21 +16,9 @@ class QuickCategories extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final prov = context.watch<AppProvider>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final tabs = prov.tabs;
-    final typeColors = <String, List<Color>>{
-      'all': [AppTheme.primary, AppTheme.accent],
-      'gov': [const Color(0xFF001d3d), const Color(0xFF003f88)],
-      'priv': [const Color(0xFF3b0764), const Color(0xFF8b5cf6)],
-      'inst5': [const Color(0xFF0c4a6e), const Color(0xFF0ea5e9)],
-      'inst2': [const Color(0xFF134e4a), const Color(0xFF22d3ee)],
-      'school': [const Color(0xFF451a03), const Color(0xFFf59e0b)],
-      'kg': [const Color(0xFF500724), const Color(0xFFf472b6)],
-      'dc': [const Color(0xFF431407), const Color(0xFFfb923c)],
-      'lang': [const Color(0xFF022c22), const Color(0xFF2dd4bf)],
-      'edu': [const Color(0xFF1a2e05), const Color(0xFF84cc16)],
-      'eve_uni': [const Color(0xFF1e1b4b), const Color(0xFF818cf8)],
-      'eve_inst': [const Color(0xFF172554), const Color(0xFF60a5fa)],
-    };
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,10 +31,13 @@ class QuickCategories extends StatelessWidget {
                 width: 4,
                 height: 22,
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
+                  gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [AppTheme.accent, AppTheme.primary],
+                    colors: [
+                      AppTheme.primary,
+                      AppTheme.primary.withOpacity(0.3),
+                    ],
                   ),
                   borderRadius: BorderRadius.circular(4),
                 ),
@@ -55,16 +47,16 @@ class QuickCategories extends StatelessWidget {
                 S.of(context, 'categories'),
                 style: TextStyle(
                   fontSize: 20,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w900,
                   color: isDark ? Colors.white : const Color(0xFF0F172A),
-                  letterSpacing: -0.4,
+                  letterSpacing: -0.6,
                 ),
               ),
             ],
           ),
         ),
         SizedBox(
-          height: 48, // Taller for modern pill shape
+          height: 50,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
@@ -76,60 +68,38 @@ class QuickCategories extends StatelessWidget {
               final isOn = prov.currentTab == key;
               final label = prov.localizedField(tab, 'label');
               final cleanLabel = label.replaceFirst(RegExp(r'^[^\s]+\s'), '').trim();
-              final colors = typeColors[key] ?? [AppTheme.primary, AppTheme.accent];
 
               return Padding(
-                padding: const EdgeInsets.only(left: 8),
+                padding: const EdgeInsets.only(right: 12),
                 child: GestureDetector(
                   onTap: () => prov.setTab(key),
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
+                    duration: const Duration(milliseconds: 300),
                     curve: Curves.easeOutCubic,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
                     decoration: BoxDecoration(
-                      gradient: isOn
-                          ? LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: colors,
-                            )
-                          : null,
-                      color: isOn ? null : (isDark ? const Color(0xFF1E293B) : Colors.white),
-                      borderRadius: BorderRadius.circular(24),
-                      border: isOn
-                          ? null
-                          : Border.all(
-                              color: isDark
-                                  ? const Color(0xFF334155)
-                                  : const Color(0xFFE2E8F0),
-                              width: 1.5,
-                            ),
+                      color: isOn 
+                        ? AppTheme.primary 
+                        : (isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03)),
+                      borderRadius: BorderRadius.circular(25),
                       boxShadow: isOn
                           ? [
                               BoxShadow(
-                                color: colors.first.withValues(alpha: 0.3),
-                                blurRadius: 10,
+                                color: AppTheme.primary.withOpacity(0.3),
+                                blurRadius: 12,
                                 offset: const Offset(0, 4),
                               ),
                             ]
-                          : [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.02),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+                          : [],
                     ),
                     child: Center(
                       child: Text(
                         cleanLabel,
                         style: TextStyle(
                           fontSize: 14,
-                          fontWeight: isOn ? FontWeight.w800 : FontWeight.w600,
-                          color: isOn
-                              ? Colors.white
-                              : (isDark ? const Color(0xFFF1F5F9) : const Color(0xFF475569)),
-                          letterSpacing: 0.1,
+                          fontWeight: isOn ? FontWeight.w900 : FontWeight.w600,
+                          color: isOn ? Colors.white : (isDark ? Colors.white70 : const Color(0xFF475569)),
+                          letterSpacing: -0.2,
                         ),
                       ),
                     ),

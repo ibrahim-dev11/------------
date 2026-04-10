@@ -129,7 +129,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                color: AppTheme.primary.withValues(alpha: 0.1),
+                                color: AppTheme.primary.withOpacity(0.1),
                                 blurRadius: 15,
                                 offset: const Offset(0, 5),
                               ),
@@ -192,7 +192,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             borderRadius: BorderRadius.circular(14),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.08),
+                                color: Colors.black.withOpacity(0.08),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),
@@ -400,7 +400,7 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           boxShadow: [
             BoxShadow(
-              color: colors[1].withValues(alpha: isDark ? 0.08 : 0.06),
+              color: colors[1].withOpacity(isDark ? 0.08 : 0.06),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -417,13 +417,13 @@ class _SearchScreenState extends State<SearchScreen> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    colors[1].withValues(alpha: isDark ? 0.25 : 0.15),
-                    colors[1].withValues(alpha: isDark ? 0.10 : 0.05),
+                    colors[1].withOpacity(isDark ? 0.25 : 0.15),
+                    colors[1].withOpacity(isDark ? 0.10 : 0.05),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: colors[1].withValues(alpha: isDark ? 0.2 : 0.12),
+                  color: colors[1].withOpacity(isDark ? 0.2 : 0.12),
                   width: 1,
                 ),
               ),
@@ -436,7 +436,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     child: Icon(
                       icon,
                       size: 22,
-                      color: colors[0].withValues(alpha: 0.15),
+                      color: colors[0].withOpacity(0.15),
                     ),
                   ),
                   // Main icon
@@ -467,7 +467,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
-                      color: colors[1].withValues(alpha: 0.8),
+                      color: colors[1].withOpacity(0.8),
                     ),
                   ),
                 ],
@@ -476,7 +476,7 @@ class _SearchScreenState extends State<SearchScreen> {
             Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: colors[1].withValues(alpha: isDark ? 0.12 : 0.08),
+                color: colors[1].withOpacity(isDark ? 0.12 : 0.08),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -637,7 +637,7 @@ class _FilterBottomSheet extends StatelessWidget {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
+            color: Colors.black.withOpacity(0.2),
             blurRadius: 30,
             offset: const Offset(0, -10),
           ),
@@ -669,8 +669,8 @@ class _FilterBottomSheet extends StatelessWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        AppTheme.primary.withValues(alpha: 0.15),
-                        AppTheme.accent.withValues(alpha: 0.08),
+                        AppTheme.primary.withOpacity(0.15),
+                        AppTheme.accent.withOpacity(0.08),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(16),
@@ -705,9 +705,9 @@ class _FilterBottomSheet extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       decoration: BoxDecoration(
-                        color: AppTheme.danger.withValues(alpha: 0.1),
+                        color: AppTheme.danger.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: AppTheme.danger.withValues(alpha: 0.2)),
+                        border: Border.all(color: AppTheme.danger.withOpacity(0.2)),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -861,7 +861,7 @@ class _FilterBottomSheet extends StatelessWidget {
                   borderRadius: BorderRadius.circular(18),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.primary.withValues(alpha: 0.4),
+                      color: AppTheme.primary.withOpacity(0.4),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),

@@ -150,7 +150,7 @@ class _TeacherRequestScreenState extends State<TeacherRequestScreen> {
                   style: TextStyle(
                     fontSize: 16,
                     height: 1.5,
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -213,7 +213,7 @@ class _TeacherRequestScreenState extends State<TeacherRequestScreen> {
                   style: TextStyle(
                     fontSize: 16,
                     height: 1.5,
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -247,7 +247,7 @@ class _TeacherRequestScreenState extends State<TeacherRequestScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: AppTheme.primary.withValues(alpha: 0.1),
+                      color: AppTheme.primary.withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -272,7 +272,7 @@ class _TeacherRequestScreenState extends State<TeacherRequestScreen> {
                   style: TextStyle(
                     fontSize: 14,
                     height: 1.5,
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                   ),
                 ),
                 const SizedBox(height: 32),

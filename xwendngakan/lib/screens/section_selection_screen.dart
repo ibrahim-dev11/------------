@@ -83,7 +83,7 @@ class _SectionSelectionScreenState extends State<SectionSelectionScreen>
                 height: 250,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppTheme.primary.withValues(alpha: 0.04),
+                  color: AppTheme.primary.withOpacity(0.04),
                 ),
               ),
             ),
@@ -95,7 +95,7 @@ class _SectionSelectionScreenState extends State<SectionSelectionScreen>
                 height: 260,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppTheme.success.withValues(alpha: 0.04),
+                  color: AppTheme.success.withOpacity(0.04),
                 ),
               ),
             ),
@@ -107,7 +107,7 @@ class _SectionSelectionScreenState extends State<SectionSelectionScreen>
                 height: 120,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppTheme.warning.withValues(alpha: 0.04),
+                  color: AppTheme.warning.withOpacity(0.04),
                 ),
               ),
             ),
@@ -143,7 +143,7 @@ class _SectionSelectionScreenState extends State<SectionSelectionScreen>
                                     borderRadius: BorderRadius.circular(26),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: AppTheme.primary.withValues(alpha: 0.3),
+                                        color: AppTheme.primary.withOpacity(0.3),
                                         blurRadius: 24,
                                         offset: const Offset(0, 10),
                                       ),
@@ -311,12 +311,12 @@ class _SectionSelectionScreenState extends State<SectionSelectionScreen>
           borderRadius: BorderRadius.circular(28),
           boxShadow: [
             BoxShadow(
-              color: color1.withValues(alpha: 0.12),
+              color: color1.withOpacity(0.12),
               blurRadius: 24,
               offset: const Offset(0, 10),
             ),
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
+              color: Colors.black.withOpacity(0.03),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -327,8 +327,8 @@ class _SectionSelectionScreenState extends State<SectionSelectionScreen>
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(28),
-            highlightColor: color1.withValues(alpha: 0.05),
-            splashColor: color1.withValues(alpha: 0.1),
+            highlightColor: color1.withOpacity(0.05),
+            splashColor: color1.withOpacity(0.1),
             child: Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
@@ -352,7 +352,7 @@ class _SectionSelectionScreenState extends State<SectionSelectionScreen>
                       borderRadius: BorderRadius.circular(22),
                       boxShadow: [
                         BoxShadow(
-                          color: color1.withValues(alpha: 0.3),
+                          color: color1.withOpacity(0.3),
                           blurRadius: 16,
                           offset: const Offset(0, 6),
                         ),
@@ -394,7 +394,7 @@ class _SectionSelectionScreenState extends State<SectionSelectionScreen>
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: color1.withValues(alpha: 0.1),
+                      color: color1.withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(

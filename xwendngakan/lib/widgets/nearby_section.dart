@@ -101,7 +101,7 @@ class NearbySection extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF0EA5E9).withValues(alpha: 0.15),
+                        color: const Color(0xFF0EA5E9).withOpacity(0.15),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: const Icon(Iconsax.gps, size: 18, color: Color(0xFF0EA5E9)),
@@ -239,7 +239,7 @@ class NearbySection extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.04),
+              color: Colors.black.withOpacity(isDark ? 0.15 : 0.04),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
