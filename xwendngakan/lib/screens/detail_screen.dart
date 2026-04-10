@@ -14,8 +14,13 @@ import 'package:provider/provider.dart';
 
 class DetailScreen extends StatefulWidget {
   final Institution institution;
+  final int initialTab;
 
-  const DetailScreen({super.key, required this.institution});
+  const DetailScreen({
+    super.key,
+    required this.institution,
+    this.initialTab = 0,
+  });
 
   @override
   State<DetailScreen> createState() => _DetailScreenState();
@@ -30,6 +35,7 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   void initState() {
     super.initState();
+    _activeTab = widget.initialTab;
     final type = widget.institution.type;
     _isUniversity = ['gov', 'priv', 'eve_uni'].contains(type);
     _loadPosts();

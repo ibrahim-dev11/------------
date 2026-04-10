@@ -33,4 +33,13 @@ class NotificationModel {
   }
 
   bool get isRead => readAt != null;
+
+  bool get isPost {
+    if (data.containsKey('type') && data['type'] == 'post') return true;
+    if (data.containsKey('data') && data['data'] is Map) {
+      final nested = data['data'] as Map;
+      if (nested['type'] == 'post') return true;
+    }
+    return false;
+  }
 }

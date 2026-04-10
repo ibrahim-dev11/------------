@@ -10,7 +10,10 @@ import 'notification_service.dart';
 class ApiService {
   // ── Configuration ──
   // بۆ گۆڕینی سێرڤەر: تەنها ئەم دوو هێڵە بگۆڕە
-  static const String _host = '10.0.2.2';
+  static String get _host {
+    if (Platform.isAndroid) return '10.0.2.2';
+    return '127.0.0.1'; // For iOS Simulator
+  }
   static const int _port = 8000;
   static const bool _useHttps = false;
 

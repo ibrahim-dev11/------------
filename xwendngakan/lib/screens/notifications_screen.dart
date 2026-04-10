@@ -5,6 +5,8 @@ import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
 import '../services/app_localizations.dart';
 import 'package:intl/intl.dart';
+import '../services/notification_service.dart';
+import '../models/notification_model.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -119,7 +121,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 }
 
 class _NotificationCard extends StatelessWidget {
-  final dynamic notification;
+  final NotificationModel notification;
 
   const _NotificationCard({required this.notification});
 
@@ -131,22 +133,17 @@ class _NotificationCard extends StatelessWidget {
 
     return Dismissible(
       key: Key(notification.id),
-      direction: DismissDirection.endToStart,
-      background: Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        decoration: BoxDecoration(
-          color: Colors.redAccent.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: const Icon(Iconsax.trash, color: Colors.redAccent),
-      ),
+      direction: DismissDirection.horizontal,
+      background: _buildSwipeBackground(Alignment.centerRight, isDark),
+      secondaryBackground: _buildSwipeBackground(Alignment.centerLeft, isDark),
       onDismissed: (direction) => prov.deleteNotification(notification.id),
       child: GestureDetector(
         onTap: () {
           if (!isRead) {
             prov.markAsRead(notification.id);
           }
+          // Navigate to the post/institution
+          NotificationService.handleNotificationData(notification.data);
         },
         child: Container(
           margin: const EdgeInsets.only(bottom: 16),
@@ -182,7 +179,9 @@ class _NotificationCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(18),
                 ),
                 child: Icon(
-                  isRead ? Iconsax.notification : Iconsax.notification_bing,
+                  notification.isPost 
+                      ? Iconsax.document_text 
+                      : (isRead ? Iconsax.notification : Iconsax.notification_bing),
                   size: 24,
                   color: isRead ? Colors.grey[500] : AppTheme.primary,
                 ),
@@ -237,11 +236,19 @@ class _NotificationCard extends StatelessWidget {
                             color: Colors.grey[500],
                           ),
                         ),
-                        if (isRead)
-                          GestureDetector(
-                            onTap: () => _confirmDelete(context, prov, notification.id),
-                            child: Icon(Iconsax.trash, size: 18, color: Colors.grey[400]),
-                          ),
+                        Row(
+                          children: [
+                            if (notification.isPost)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: Icon(
+                                  Iconsax.arrow_left_1,
+                                  size: 16,
+                                  color: AppTheme.primary.withValues(alpha: 0.6),
+                                ),
+                              ),
+                          ],
+                        ),
                       ],
                     ),
                   ],
@@ -254,21 +261,26 @@ class _NotificationCard extends StatelessWidget {
     );
   }
 
-  void _confirmDelete(BuildContext context, AppProvider prov, String id) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('دڵنیایت؟', textAlign: TextAlign.right),
-        content: const Text('دەتەوێت ئەم ئاگادارییە بسڕیتەوە؟', textAlign: TextAlign.right),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('نەخێر')),
-          TextButton(
-            onPressed: () {
-              prov.deleteNotification(id);
-              Navigator.pop(ctx);
-            },
-            child: const Text('بەڵێ', style: TextStyle(color: Colors.red)),
+
+  Widget _buildSwipeBackground(Alignment alignment, bool isDark) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      alignment: alignment,
+      padding: const EdgeInsets.symmetric(horizontal: 25),
+      decoration: BoxDecoration(
+        color: Colors.redAccent.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.redAccent.withValues(alpha: 0.2),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Iconsax.trash, color: Colors.redAccent, size: 24),
           ),
         ],
       ),

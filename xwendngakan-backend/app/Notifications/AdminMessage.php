@@ -31,15 +31,7 @@ class AdminMessage extends Notification
      */
     public function via(object $notifiable): array
     {
-        // Always send to database
-        $channels = ['database'];
-
-        // If user has FCM token, try to send push notification
-        if ($notifiable->fcm_token) {
-            $this->sendFcmNotification($notifiable->fcm_token);
-        }
-
-        return $channels;
+        return ['database'];
     }
 
     /**

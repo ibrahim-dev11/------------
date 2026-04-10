@@ -35,6 +35,8 @@ void main() async {
 class XwendngakanApp extends StatelessWidget {
   const XwendngakanApp({super.key});
 
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
   @override
   Widget build(BuildContext context) {
     final isDark = context.watch<AppProvider>().isDarkMode;
@@ -43,6 +45,7 @@ class XwendngakanApp extends StatelessWidget {
     final isRtl = prov.isRtl;
 
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'edu book',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,

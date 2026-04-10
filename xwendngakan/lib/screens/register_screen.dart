@@ -483,53 +483,59 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _buildPostAdminCard(Post p, bool isDark) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 14),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0)),
-      ),
-      child: Row(
-        children: [
-          if (p.image.isNotEmpty)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.network(p.image, width: 80, height: 80, fit: BoxFit.cover),
-            )
-          else
-            Container(
-              width: 80, height: 80,
-              decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(12)),
-              child: const Icon(Iconsax.image, color: Colors.grey),
+    return Dismissible(
+      key: Key('post_${p.id}'),
+      direction: DismissDirection.endToStart,
+      background: _buildSwipeBackground(Alignment.centerRight, isDark),
+      confirmDismiss: (direction) => _confirmDeletePost(p.id),
+      onDismissed: (direction) {
+        // Handled by confirmDismiss success
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 14),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0)),
+        ),
+        child: Row(
+          children: [
+            if (p.image.isNotEmpty)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(p.image, width: 80, height: 80, fit: BoxFit.cover),
+              )
+            else
+              Container(
+                width: 80, height: 80,
+                decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(12)),
+                child: const Icon(Iconsax.image, color: Colors.grey),
+              ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(p.title.isNotEmpty ? p.title : 'بێ ناونیشان', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                  const SizedBox(height: 4),
+                  Text(p.content, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                  const SizedBox(height: 4),
+                  Text(p.formattedDate, style: TextStyle(fontSize: 10, color: Colors.grey[400])),
+                ],
+              ),
             ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(p.title.isNotEmpty ? p.title : 'بێ ناونیشان', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                const SizedBox(height: 4),
-                Text(p.content, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
-                const SizedBox(height: 4),
-                Text(p.formattedDate, style: TextStyle(fontSize: 10, color: Colors.grey[400])),
-              ],
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Iconsax.trash, color: Colors.red, size: 20),
-            onPressed: () => _confirmDeletePost(p.id),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Future<void> _confirmDeletePost(int postId) async {
+  Future<bool> _confirmDeletePost(int postId) async {
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: const Text('سڕینەوەی پۆست'),
         content: const Text('دڵنیایت دەتەوێت ئەم پۆستە بسڕیتەوە؟'),
         actions: [
@@ -542,9 +548,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final success = await ApiService.deletePost(postId);
       if (success && mounted) {
         AppSnackbar.success(context, 'پۆستەکە سڕایەوە');
-        setState(() {});
+        return true;
       }
     }
+    return false;
   }
 
 
@@ -740,9 +747,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _buildCollegeCard(int index, _CollegeEntry college, bool isDark) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
+    return Dismissible(
+      key: ObjectKey(college),
+      direction: DismissDirection.endToStart,
+      background: _buildSwipeBackground(Alignment.centerRight, isDark),
+      onDismissed: (direction) {
+        setState(() {
+          _colleges[index].dispose();
+          _colleges.removeAt(index);
+        });
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(14),
@@ -789,18 +806,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    _colleges[index].dispose();
-                    _colleges.removeAt(index);
-                  });
-                },
-                icon: const Icon(Iconsax.trash, size: 18),
-                color: Colors.red[400],
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
               ),
             ],
           ),
@@ -893,8 +898,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildTypeSelector(bool isDark) {
     final prov = context.watch<AppProvider>();
@@ -1451,6 +1457,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSwipeBackground(Alignment alignment, bool isDark) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      alignment: alignment,
+      padding: const EdgeInsets.symmetric(horizontal: 25),
+      decoration: BoxDecoration(
+        color: Colors.redAccent.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.redAccent.withValues(alpha: 0.2),
+          shape: BoxShape.circle,
+        ),
+        child: const Icon(Iconsax.trash, color: Colors.redAccent, size: 20),
       ),
     );
   }

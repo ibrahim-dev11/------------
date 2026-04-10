@@ -8,8 +8,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Laravel\Facades\Image;
 
+use App\Services\FirebaseNotificationService;
+use App\Models\User;
+
 class PostController extends Controller
 {
+    protected FirebaseNotificationService $firebaseService;
+
+    public function __construct(FirebaseNotificationService $firebaseService)
+    {
+        $this->firebaseService = $firebaseService;
+    }
     /**
      * Get posts for a specific institution (only approved ones for public).
      */
@@ -71,11 +80,57 @@ class PostController extends Controller
         $post = Post::create($data);
         $post->load(['user', 'institution']);
 
+        // Send notification to all users who have notifications enabled
+        $this->sendNewPostNotification($post);
+
         return response()->json([
             'success' => true,
-            'message' => 'پۆستەکەت نێردرا بۆ پەسەندکردن.',
+            'message' => 'پۆستەکە بەسەرکەوتوویی بڵاوکرایەوە.',
             'data'    => $post,
         ], 201);
+    }
+
+    /**
+     * Send notification about the new post.
+     */
+    protected function sendNewPostNotification(Post $post)
+    {
+        $institutionName = $post->institution->nku ?? $post->institution->nen ?? 'دامەزراوەکە';
+        
+        $title = "پۆستێکی نوێ بڵاوکرایەوە";
+        $body = "{$institutionName} بابەتێکی نوێی بڵاوکردەوە: " . ($post->title ?: 'پۆستێکی نوێ');
+
+        // We can send to all users with notifications enabled
+        $users = User::where('notifications_enabled', true)
+            ->whereNotNull('fcm_token')
+            ->get();
+ 
+        if ($users->isNotEmpty()) {
+            $tokens = $users->pluck('fcm_token')->toArray();
+            $this->firebaseService->sendToMultipleTokens(
+                $tokens,
+                $title,
+                $body,
+                [
+                    'type' => 'post',
+                    'post_id' => (string) $post->id,
+                    'institution_id' => (string) $post->institution_id,
+                ]
+            );
+
+            // Also save to database notifications for each user
+            foreach ($users as $user) {
+                $user->notify(new \App\Notifications\AdminMessage(
+                    $title,
+                    $body,
+                    [
+                        'type' => 'post',
+                        'post_id' => (string) $post->id,
+                        'institution_id' => (string) $post->institution_id,
+                    ]
+                ));
+            }
+        }
     }
 
     /**
