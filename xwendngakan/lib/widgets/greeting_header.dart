@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax/iconsax.dart';
 import '../providers/app_provider.dart';
-import '../services/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../screens/notifications_screen.dart';
 
@@ -31,32 +32,60 @@ class GreetingHeader extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Welcome Text
+              // Welcome Text (Logo Section)
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
                   children: [
-                    Text(
-                      S.of(context, 'appName'),
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w900,
-                        color: isDark ? Colors.white : const Color(0xFF0F172A),
-                        letterSpacing: -1.5,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
                     Container(
-                      height: 4,
-                      width: 28,
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
                             AppTheme.primary,
-                            AppTheme.primary.withOpacity(0.2),
+                            AppTheme.primary.withOpacity(0.85),
                           ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
-                        borderRadius: BorderRadius.circular(2),
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.primary.withOpacity(0.35),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Iconsax.book_1,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'edu',
+                            style: GoogleFonts.outfit(                           
+                              fontSize: 25,
+                              fontWeight: FontWeight.w600,
+                              color: AppTheme.primary,
+                              letterSpacing: -0.5,
+
+                            ),
+                          ),
+                          TextSpan(
+                            text: 'book',
+                            style: GoogleFonts.outfit(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w400,
+                              color: isDark ? Colors.white : const Color(0xFF0F172A),
+                              letterSpacing: -0.8,                  
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -66,7 +95,7 @@ class GreetingHeader extends StatelessWidget {
               Row(
                 children: [
                   _buildHeaderIcon(
-                    icon: prov.hasUnreadNotifications ? Icons.notifications_active_rounded : Icons.notifications_none_rounded,
+                    icon: prov.hasUnreadNotifications ? Iconsax.notification_bing5 : Iconsax.notification,
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const NotificationsScreen()),
@@ -75,7 +104,7 @@ class GreetingHeader extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   _buildHeaderIcon(
-                    icon: favoritesCount > 0 ? Icons.favorite_rounded : Icons.favorite_outline_rounded,
+                    icon: favoritesCount > 0 ? Iconsax.heart5 : Iconsax.heart,
                     onTap: onShowFavorites,
                     iconColor: favoritesCount > 0 ? Colors.redAccent : null,
                     badge: favoritesCount > 0,

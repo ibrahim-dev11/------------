@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -96,7 +95,9 @@ class _HomeScreenState extends State<HomeScreen>
               child: CustomScrollView(
                 controller: _scrollController,
                 cacheExtent: 200,
-                physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
+                ),
                 slivers: [
                   SliverToBoxAdapter(
                     child: GreetingHeader(
@@ -105,24 +106,45 @@ class _HomeScreenState extends State<HomeScreen>
                       onToggleTheme: () => prov.toggleTheme(),
                       onShowFavorites: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+                        MaterialPageRoute(
+                          builder: (_) => const FavoritesScreen(),
+                        ),
                       ),
                       favoritesCount: prov.favoritesCount,
                     ),
                   ),
-                  SliverToBoxAdapter(child: QuickCategories(prov: prov, isDark: isDark)),
+                  SliverToBoxAdapter(
+                    child: QuickCategories(prov: prov, isDark: isDark),
+                  ),
                   if (!prov.isOnline)
-                    SliverToBoxAdapter(child: _OfflineBanner(isDark: isDark, prov: prov)),
+                    SliverToBoxAdapter(
+                      child: _OfflineBanner(isDark: isDark, prov: prov),
+                    ),
                   if (hasSubTabs)
-                    SliverToBoxAdapter(child: SubTabsBar(prov: prov, isDark: isDark)),
+                    SliverToBoxAdapter(
+                      child: SubTabsBar(prov: prov, isDark: isDark),
+                    ),
                   if (!prov.isLoading && filtered.isNotEmpty)
-                    SliverToBoxAdapter(child: ResultsHeader(count: filtered.length, isDark: isDark)),
+                    SliverToBoxAdapter(
+                      child: ResultsHeader(
+                        count: filtered.length,
+                        isDark: isDark,
+                      ),
+                    ),
                   if (prov.isLoading)
                     SliverToBoxAdapter(child: LoadingShimmer(isDark: isDark))
                   else if (prov.hasError && filtered.isEmpty)
-                    SliverToBoxAdapter(child: HomeErrorState(prov: prov, isDark: isDark))
+                    SliverToBoxAdapter(
+                      child: HomeErrorState(prov: prov, isDark: isDark),
+                    )
                   else if (filtered.isEmpty)
-                    SliverToBoxAdapter(child: HomeEmptyState(prov: prov, isDark: isDark, searchController: _searchController))
+                    SliverToBoxAdapter(
+                      child: HomeEmptyState(
+                        prov: prov,
+                        isDark: isDark,
+                        searchController: _searchController,
+                      ),
+                    )
                   else
                     SliverPadding(
                       padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
@@ -131,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen>
                           crossAxisCount: screenW > 600 ? 3 : 2,
                           mainAxisSpacing: 16,
                           crossAxisSpacing: 16,
-                          childAspectRatio: 0.82,
+                          childAspectRatio: 1.0,
                         ),
                         delegate: SliverChildBuilderDelegate(
                           (context, i) {
@@ -139,8 +161,20 @@ class _HomeScreenState extends State<HomeScreen>
                             return RepaintBoundary(
                               child: InstitutionCard(
                                 institution: inst,
-                                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DetailScreen(institution: inst))),
-                                onEdit: () => Navigator.push(context, MaterialPageRoute(builder: (_) => EditScreen(institution: inst))),
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        DetailScreen(institution: inst),
+                                  ),
+                                ),
+                                onEdit: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        EditScreen(institution: inst),
+                                  ),
+                                ),
                               ),
                             );
                           },
@@ -150,7 +184,9 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                       ),
                     ),
-                  if (!prov.isLoading && filtered.isNotEmpty && prov.hasMoreToShow)
+                  if (!prov.isLoading &&
+                      filtered.isNotEmpty &&
+                      prov.hasMoreToShow)
                     SliverToBoxAdapter(
                       child: _LoadingMoreIndicator(isDark: isDark),
                     ),
@@ -211,7 +247,9 @@ class _OfflineBanner extends StatelessWidget {
                     _S(context, 'noInternetDesc'),
                     style: TextStyle(
                       fontSize: 11,
-                      color: isDark ? Colors.orange.shade200 : Colors.orange.shade800,
+                      color: isDark
+                          ? Colors.orange.shade200
+                          : Colors.orange.shade800,
                     ),
                   ),
                 ],
@@ -238,8 +276,8 @@ class _OfflineBanner extends StatelessWidget {
     return prov.language == 'ar'
         ? _ar[key] ?? key
         : prov.language == 'en'
-            ? _en[key] ?? key
-            : _ku[key] ?? key;
+        ? _en[key] ?? key
+        : _ku[key] ?? key;
   }
 
   static const _ku = {
