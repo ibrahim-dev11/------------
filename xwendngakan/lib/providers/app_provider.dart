@@ -6,10 +6,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/institution.dart';
 import '../models/stats.dart';
+import '../models/notification_model.dart';
 import '../data/constants.dart';
 import '../data/institutions_data.dart';
 import '../services/api_service.dart';
 import '../services/database_service.dart';
+import '../services/notification_service.dart';
 
 enum SortMode { defaultSort, alpha, city }
 
@@ -32,6 +34,8 @@ class AppProvider extends ChangeNotifier {
   Map<String, dynamic>? _currentUser;
   Stats? _stats;
   List<Map<String, dynamic>> _institutionTypes = [];
+  List<NotificationModel> _notifications = [];
+  int _unreadNotificationsCount = 0;
 
   bool _hasSelectedLanguage = false;
   bool _hasCompletedOnboarding = false;
@@ -41,6 +45,9 @@ class AppProvider extends ChangeNotifier {
 
   AppProvider() {
     _init();
+    NotificationService.onNotificationReceived = () {
+      fetchNotifications();
+    };
   }
 
   Future<void> _init() async {
@@ -68,6 +75,7 @@ class AppProvider extends ChangeNotifier {
     if (ApiService.isLoggedIn) {
       _currentUser = await ApiService.getUser();
       await loadFavorites();
+      await fetchNotifications();
       notifyListeners();
     } else {
       // Load local favorites for guests
@@ -169,6 +177,9 @@ class AppProvider extends ChangeNotifier {
   Map<String, dynamic>? get currentUser => _currentUser;
   bool get isAdmin => _currentUser?['is_admin'] == true || _currentUser?['is_admin'] == 1;
   Stats? get stats => _stats;
+  List<NotificationModel> get notifications => _notifications;
+  int get unreadNotificationsCount => _unreadNotificationsCount;
+  bool get hasUnreadNotifications => _unreadNotificationsCount > 0;
 
   /// Pick the right localized value from a map based on current language.
   /// Looks for field_en, field_ar, or falls back to field (Kurdish).
@@ -502,6 +513,7 @@ class AppProvider extends ChangeNotifier {
     if (result['success'] == true) {
       _currentUser = result['data']['user'];
       await fetchFromApi();
+      await fetchNotifications();
       notifyListeners();
     }
     return result;
@@ -518,6 +530,7 @@ class AppProvider extends ChangeNotifier {
     if (result['success'] == true) {
       _currentUser = result['data']['user'];
       await fetchFromApi();
+      await fetchNotifications();
       notifyListeners();
     }
     return result;
@@ -527,7 +540,49 @@ class AppProvider extends ChangeNotifier {
     await ApiService.logout();
     _currentUser = null;
     _favoriteIds.clear();
+    _notifications = [];
+    _unreadNotificationsCount = 0;
     notifyListeners();
+  }
+
+  // ── Notifications ──
+
+  Future<void> fetchNotifications() async {
+    if (!ApiService.isLoggedIn) return;
+    try {
+      final list = await ApiService.getNotifications();
+      _notifications = list.map((j) => NotificationModel.fromJson(j)).toList();
+      _unreadNotificationsCount = _notifications.where((n) => !n.isRead).length;
+      notifyListeners();
+    } catch (_) {}
+  }
+
+  Future<void> markAllNotificationsAsRead() async {
+    if (!ApiService.isLoggedIn) return;
+    final success = await ApiService.markAllNotificationsAsRead();
+    if (success) {
+      await fetchNotifications();
+    }
+  }
+
+  Future<void> markAsRead(String notificationId) async {
+    if (!ApiService.isLoggedIn) return;
+    final success = await ApiService.markNotificationAsRead(notificationId);
+    if (success) {
+      await fetchNotifications();
+    }
+  }
+
+  Future<void> deleteNotification(String notificationId) async {
+    if (!ApiService.isLoggedIn) return;
+    try {
+      final success = await ApiService.deleteNotification(notificationId);
+      if (success) {
+        _notifications.removeWhere((n) => n.id == notificationId);
+        _unreadNotificationsCount = _notifications.where((n) => !n.isRead).length;
+        notifyListeners();
+      }
+    } catch (_) {}
   }
 
   // ── Nearby ──

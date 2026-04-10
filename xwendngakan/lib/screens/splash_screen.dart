@@ -237,7 +237,7 @@ class _SplashScreenState extends State<SplashScreen>
                           child: Column(
                             children: [
                               const Text(
-                                'خوێندنگاکانم',
+                                'edu book',
                                 style: TextStyle(
                                   fontSize: 32,
                                   fontWeight: FontWeight.w900,

@@ -6,9 +6,14 @@ import 'package:provider/provider.dart';
 import 'providers/app_provider.dart';
 import 'screens/splash_screen.dart';
 import 'theme/app_theme.dart';
+import 'services/notification_service.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Notification Service
+  await NotificationService.initialize();
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -38,7 +43,7 @@ class XwendngakanApp extends StatelessWidget {
     final isRtl = prov.isRtl;
 
     return MaterialApp(
-      title: 'خوێندنگاکانم',
+      title: 'edu book',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,

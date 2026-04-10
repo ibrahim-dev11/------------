@@ -3,6 +3,7 @@ import 'package:iconsax/iconsax.dart';
 import '../providers/app_provider.dart';
 import '../services/app_localizations.dart';
 import '../theme/app_theme.dart';
+import '../screens/notifications_screen.dart';
 
 class GreetingHeader extends StatelessWidget {
   final AppProvider prov;
@@ -52,9 +53,14 @@ class GreetingHeader extends StatelessWidget {
               Row(
                 children: [
                   _buildHeaderIcon(
-                    icon: isDark ? Iconsax.sun_1 : Iconsax.moon,
-                    onTap: onToggleTheme,
-                    iconColor: isDark ? const Color(0xFFFBBF24) : AppTheme.primary,
+                    icon: prov.hasUnreadNotifications ? Iconsax.notification_bing : Iconsax.notification,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+                    ),
+                    iconColor: prov.hasUnreadNotifications ? AppTheme.primary : null,
+                    badge: prov.hasUnreadNotifications,
+                    badgeCount: prov.unreadNotificationsCount,
                   ),
                   const SizedBox(width: 12),
                   _buildHeaderIcon(

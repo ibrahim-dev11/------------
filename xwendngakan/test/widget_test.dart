@@ -12,6 +12,6 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('خوێندنگاکانم'), findsWidgets);
+    expect(find.text('edu book'), findsWidgets);
   });
 }

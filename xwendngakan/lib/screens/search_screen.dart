@@ -716,7 +716,7 @@ class _FilterBottomSheet extends StatelessWidget {
                           const SizedBox(width: 6),
                           Text(
                             S.of(context, 'clear'),
-                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppTheme.danger),
+                             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppTheme.danger),
                           ),
                         ],
                       ),

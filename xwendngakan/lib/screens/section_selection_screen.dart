@@ -157,7 +157,7 @@ class _SectionSelectionScreenState extends State<SectionSelectionScreen>
                                 ),
                                 const SizedBox(height: 24),
                                 const Text(
-                                  '📚 خوێندنگاکانم',
+                                  '📚 edu book',
                                   style: TextStyle(
                                     fontSize: 30,
                                     fontWeight: FontWeight.w900,
@@ -216,7 +216,7 @@ class _SectionSelectionScreenState extends State<SectionSelectionScreen>
                           const SizedBox(height: 24),
                           _buildAnimatedCard(
                             index: 2,
-                            title: 'بانکی CV',
+                            title: ' CV',
                             subtitle: 'سیڤی • هەلی کار',
                             icon: Icons.badge_rounded,
                             color1: AppTheme.success,

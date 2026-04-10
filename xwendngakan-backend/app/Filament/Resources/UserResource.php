@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
+use App\Services\FirebaseNotificationService;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -95,6 +96,43 @@ class UserResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->filters([])
             ->actions([
+                Tables\Actions\Action::make('sendNotification')
+                    ->label('ناردنی نۆتیفیکەیشن')
+                    ->icon('heroicon-o-chat-bubble-left-ellipsis')
+                    ->color('success')
+                    ->form([
+                        Forms\Components\TextInput::make('title')
+                            ->label('ناونیشان')
+                            ->required()
+                            ->default('پەیامێک لە لایەن بەڕێوەبەر'),
+                        Forms\Components\Textarea::make('message')
+                            ->label('پەیام')
+                            ->required()
+                            ->rows(3),
+                    ])
+                    ->action(function (User $record, array $data): void {
+                        $firebase = app(FirebaseNotificationService::class);
+                        
+                        // Save to database
+                        $record->notify(new \App\Notifications\AdminMessage(
+                            $data['title'],
+                            $data['message']
+                        ));
+                        
+                        // Send via Firebase if user has FCM token
+                        if ($record->fcm_token && $record->notifications_enabled) {
+                            $firebase->sendToToken(
+                                $record->fcm_token,
+                                $data['title'],
+                                $data['message']
+                            );
+                        }
+                        
+                        \Filament\Notifications\Notification::make()
+                            ->title('نۆتیفیکەیشن بە سەرکەوتوویی نێردرا')
+                            ->success()
+                            ->send();
+                    }),
                 Tables\Actions\EditAction::make()->label('دەستکاری'),
                 Tables\Actions\DeleteAction::make()->label('سڕینەوە'),
             ])

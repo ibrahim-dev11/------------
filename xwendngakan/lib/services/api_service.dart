@@ -5,11 +5,12 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/institution.dart';
 import '../models/post.dart';
+import 'notification_service.dart';
 
 class ApiService {
   // ── Configuration ──
   // بۆ گۆڕینی سێرڤەر: تەنها ئەم دوو هێڵە بگۆڕە
-  static const String _host = '127.0.0.1';
+  static const String _host = '10.0.2.2';
   static const int _port = 8000;
   static const bool _useHttps = false;
 
@@ -49,10 +50,10 @@ class ApiService {
   static bool get isLoggedIn => _token != null;
 
   static Map<String, String> get _headers => {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        if (_token != null) 'Authorization': 'Bearer $_token',
-      };
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    if (_token != null) 'Authorization': 'Bearer $_token',
+  };
 
   // ── Auth ──
 
@@ -62,19 +63,22 @@ class ApiService {
     required String password,
     required String passwordConfirmation,
   }) async {
-    final res = await http.post(
-      Uri.parse('$baseUrl/register'),
-      headers: _headers,
-      body: jsonEncode({
-        'name': name,
-        'email': email,
-        'password': password,
-        'password_confirmation': passwordConfirmation,
-      }),
-    ).timeout(_timeout);
+    final res = await http
+        .post(
+          Uri.parse('$baseUrl/register'),
+          headers: _headers,
+          body: jsonEncode({
+            'name': name,
+            'email': email,
+            'password': password,
+            'password_confirmation': passwordConfirmation,
+          }),
+        )
+        .timeout(_timeout);
     final data = jsonDecode(res.body);
     if (res.statusCode == 201 && data['success'] == true) {
       await saveToken(data['data']['token']);
+      NotificationService.syncToken();
     }
     return data;
   }
@@ -83,27 +87,24 @@ class ApiService {
     required String email,
     required String password,
   }) async {
-    final res = await http.post(
-      Uri.parse('$baseUrl/login'),
-      headers: _headers,
-      body: jsonEncode({
-        'email': email,
-        'password': password,
-      }),
-    ).timeout(_timeout);
+    final res = await http
+        .post(
+          Uri.parse('$baseUrl/login'),
+          headers: _headers,
+          body: jsonEncode({'email': email, 'password': password}),
+        )
+        .timeout(_timeout);
     final data = jsonDecode(res.body);
     if (res.statusCode == 200 && data['success'] == true) {
       await saveToken(data['data']['token']);
+      NotificationService.syncToken();
     }
     return data;
   }
 
   static Future<void> logout() async {
     try {
-      await http.post(
-        Uri.parse('$baseUrl/logout'),
-        headers: _headers,
-      );
+      await http.post(Uri.parse('$baseUrl/logout'), headers: _headers);
     } catch (_) {}
     await clearToken();
   }
@@ -111,10 +112,9 @@ class ApiService {
   static Future<Map<String, dynamic>?> getUser() async {
     if (_token == null) return null;
     try {
-      final res = await http.get(
-        Uri.parse('$baseUrl/user'),
-        headers: _headers,
-      ).timeout(_timeout);
+      final res = await http
+          .get(Uri.parse('$baseUrl/user'), headers: _headers)
+          .timeout(_timeout);
       if (res.statusCode == 200) {
         return jsonDecode(res.body)['data'];
       }
@@ -140,7 +140,9 @@ class ApiService {
     if (search != null && search.isNotEmpty) params['search'] = search;
     params['sort'] = sort;
 
-    final uri = Uri.parse('$baseUrl/institutions').replace(queryParameters: params);
+    final uri = Uri.parse(
+      '$baseUrl/institutions',
+    ).replace(queryParameters: params);
     final res = await http.get(uri, headers: _headers).timeout(_timeout);
 
     if (res.statusCode == 200) {
@@ -152,10 +154,9 @@ class ApiService {
   }
 
   static Future<Institution?> getInstitution(int id) async {
-    final res = await http.get(
-      Uri.parse('$baseUrl/institutions/$id'),
-      headers: _headers,
-    ).timeout(_timeout);
+    final res = await http
+        .get(Uri.parse('$baseUrl/institutions/$id'), headers: _headers)
+        .timeout(_timeout);
     if (res.statusCode == 200) {
       final data = jsonDecode(res.body);
       return Institution.fromJson(data['data']);
@@ -196,41 +197,43 @@ class ApiService {
         await http.MultipartFile.fromPath('logo', logoFile.path),
       );
     }
-    
+
     // Add institution image if provided
     if (imgFile != null && await imgFile.exists()) {
-      request.files.add(
-        await http.MultipartFile.fromPath('img', imgFile.path),
-      );
+      request.files.add(await http.MultipartFile.fromPath('img', imgFile.path));
     }
 
-    final streamedRes = await request.send().timeout(const Duration(seconds: 30));
+    final streamedRes = await request.send().timeout(
+      const Duration(seconds: 30),
+    );
     final resBody = await streamedRes.stream.bytesToString();
     return jsonDecode(resBody);
   }
 
-  static Future<Map<String, dynamic>> updateInstitution(Institution inst) async {
-    final res = await http.put(
-      Uri.parse('$baseUrl/institutions/${inst.id}'),
-      headers: _headers,
-      body: jsonEncode(inst.toJson()),
-    ).timeout(_timeout);
+  static Future<Map<String, dynamic>> updateInstitution(
+    Institution inst,
+  ) async {
+    final res = await http
+        .put(
+          Uri.parse('$baseUrl/institutions/${inst.id}'),
+          headers: _headers,
+          body: jsonEncode(inst.toJson()),
+        )
+        .timeout(_timeout);
     return jsonDecode(res.body);
   }
 
   static Future<bool> deleteInstitution(int id) async {
-    final res = await http.delete(
-      Uri.parse('$baseUrl/institutions/$id'),
-      headers: _headers,
-    ).timeout(_timeout);
+    final res = await http
+        .delete(Uri.parse('$baseUrl/institutions/$id'), headers: _headers)
+        .timeout(_timeout);
     return res.statusCode == 200;
   }
 
   static Future<Map<String, dynamic>> getStats() async {
-    final res = await http.get(
-      Uri.parse('$baseUrl/stats'),
-      headers: _headers,
-    ).timeout(_timeout);
+    final res = await http
+        .get(Uri.parse('$baseUrl/stats'), headers: _headers)
+        .timeout(_timeout);
     if (res.statusCode == 200) {
       return jsonDecode(res.body)['data'];
     }
@@ -250,10 +253,9 @@ class ApiService {
   /// Unified endpoint: returns { types: [...] }
   static Future<Map<String, List<Map<String, dynamic>>>> getAppData() async {
     try {
-      final res = await http.get(
-        Uri.parse('$baseUrl/app-data'),
-        headers: _headers,
-      ).timeout(_timeout);
+      final res = await http
+          .get(Uri.parse('$baseUrl/app-data'), headers: _headers)
+          .timeout(_timeout);
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body)['data'] as Map<String, dynamic>;
         final List types = data['types'] ?? [];
@@ -284,7 +286,9 @@ class ApiService {
     if (search != null && search.isNotEmpty) params['search'] = search;
     params['sort'] = sort;
 
-    final uri = Uri.parse('$baseUrl/institutions').replace(queryParameters: params);
+    final uri = Uri.parse(
+      '$baseUrl/institutions',
+    ).replace(queryParameters: params);
     final res = await http.get(uri, headers: _headers).timeout(_timeout);
 
     if (res.statusCode == 200) {
@@ -303,10 +307,9 @@ class ApiService {
   static Future<List<Institution>> getFavorites() async {
     if (_token == null) return [];
     try {
-      final res = await http.get(
-        Uri.parse('$baseUrl/favorites'),
-        headers: _headers,
-      ).timeout(_timeout);
+      final res = await http
+          .get(Uri.parse('$baseUrl/favorites'), headers: _headers)
+          .timeout(_timeout);
       if (res.statusCode == 200) {
         final List items = jsonDecode(res.body)['data'];
         return items.map((j) => Institution.fromJson(j)).toList();
@@ -318,10 +321,9 @@ class ApiService {
   static Future<List<int>> getFavoriteIds() async {
     if (_token == null) return [];
     try {
-      final res = await http.get(
-        Uri.parse('$baseUrl/favorites/ids'),
-        headers: _headers,
-      ).timeout(_timeout);
+      final res = await http
+          .get(Uri.parse('$baseUrl/favorites/ids'), headers: _headers)
+          .timeout(_timeout);
       if (res.statusCode == 200) {
         final List ids = jsonDecode(res.body)['data'];
         return ids.map((id) => id as int).toList();
@@ -331,46 +333,56 @@ class ApiService {
   }
 
   static Future<Map<String, dynamic>> toggleFavorite(int institutionId) async {
-    final res = await http.post(
-      Uri.parse('$baseUrl/favorites/$institutionId/toggle'),
-      headers: _headers,
-    ).timeout(_timeout);
+    final res = await http
+        .post(
+          Uri.parse('$baseUrl/favorites/$institutionId/toggle'),
+          headers: _headers,
+        )
+        .timeout(_timeout);
     return jsonDecode(res.body);
   }
 
   static Future<bool> addFavorite(int institutionId) async {
-    final res = await http.post(
-      Uri.parse('$baseUrl/favorites/$institutionId'),
-      headers: _headers,
-    ).timeout(_timeout);
+    final res = await http
+        .post(Uri.parse('$baseUrl/favorites/$institutionId'), headers: _headers)
+        .timeout(_timeout);
     return res.statusCode == 201;
   }
 
   static Future<bool> removeFavorite(int institutionId) async {
-    final res = await http.delete(
-      Uri.parse('$baseUrl/favorites/$institutionId'),
-      headers: _headers,
-    ).timeout(_timeout);
+    final res = await http
+        .delete(
+          Uri.parse('$baseUrl/favorites/$institutionId'),
+          headers: _headers,
+        )
+        .timeout(_timeout);
     return res.statusCode == 200;
   }
 
   // ── Password Reset ──
 
   static Future<Map<String, dynamic>> forgotPassword(String email) async {
-    final res = await http.post(
-      Uri.parse('$baseUrl/forgot-password'),
-      headers: _headers,
-      body: jsonEncode({'email': email}),
-    ).timeout(_timeout);
+    final res = await http
+        .post(
+          Uri.parse('$baseUrl/forgot-password'),
+          headers: _headers,
+          body: jsonEncode({'email': email}),
+        )
+        .timeout(_timeout);
     return jsonDecode(res.body);
   }
 
-  static Future<Map<String, dynamic>> verifyResetCode(String email, String code) async {
-    final res = await http.post(
-      Uri.parse('$baseUrl/verify-reset-code'),
-      headers: _headers,
-      body: jsonEncode({'email': email, 'code': code}),
-    ).timeout(_timeout);
+  static Future<Map<String, dynamic>> verifyResetCode(
+    String email,
+    String code,
+  ) async {
+    final res = await http
+        .post(
+          Uri.parse('$baseUrl/verify-reset-code'),
+          headers: _headers,
+          body: jsonEncode({'email': email, 'code': code}),
+        )
+        .timeout(_timeout);
     return jsonDecode(res.body);
   }
 
@@ -380,16 +392,18 @@ class ApiService {
     required String password,
     required String passwordConfirmation,
   }) async {
-    final res = await http.post(
-      Uri.parse('$baseUrl/reset-password'),
-      headers: _headers,
-      body: jsonEncode({
-        'email': email,
-        'reset_token': resetToken,
-        'password': password,
-        'password_confirmation': passwordConfirmation,
-      }),
-    ).timeout(_timeout);
+    final res = await http
+        .post(
+          Uri.parse('$baseUrl/reset-password'),
+          headers: _headers,
+          body: jsonEncode({
+            'email': email,
+            'reset_token': resetToken,
+            'password': password,
+            'password_confirmation': passwordConfirmation,
+          }),
+        )
+        .timeout(_timeout);
     final data = jsonDecode(res.body);
     if (res.statusCode == 200 && data['success'] == true) {
       await saveToken(data['data']['token']);
@@ -401,10 +415,9 @@ class ApiService {
 
   static Future<List<Map<String, dynamic>>> getReportTypes() async {
     try {
-      final res = await http.get(
-        Uri.parse('$baseUrl/report-types'),
-        headers: _headers,
-      ).timeout(_timeout);
+      final res = await http
+          .get(Uri.parse('$baseUrl/report-types'), headers: _headers)
+          .timeout(_timeout);
       if (res.statusCode == 200) {
         final List types = jsonDecode(res.body)['data'];
         return types.map((t) => Map<String, dynamic>.from(t)).toList();
@@ -418,14 +431,13 @@ class ApiService {
     required String type,
     String? description,
   }) async {
-    final res = await http.post(
-      Uri.parse('$baseUrl/institutions/$institutionId/report'),
-      headers: _headers,
-      body: jsonEncode({
-        'type': type,
-        'description': description,
-      }),
-    ).timeout(_timeout);
+    final res = await http
+        .post(
+          Uri.parse('$baseUrl/institutions/$institutionId/report'),
+          headers: _headers,
+          body: jsonEncode({'type': type, 'description': description}),
+        )
+        .timeout(_timeout);
     return jsonDecode(res.body);
   }
 
@@ -436,14 +448,13 @@ class ApiService {
     required int buildNumber,
   }) async {
     try {
-      final res = await http.post(
-        Uri.parse('$baseUrl/check-update'),
-        headers: _headers,
-        body: jsonEncode({
-          'platform': platform,
-          'build': buildNumber,
-        }),
-      ).timeout(_timeout);
+      final res = await http
+          .post(
+            Uri.parse('$baseUrl/check-update'),
+            headers: _headers,
+            body: jsonEncode({'platform': platform, 'build': buildNumber}),
+          )
+          .timeout(_timeout);
       if (res.statusCode == 200) {
         return jsonDecode(res.body)['data'];
       }
@@ -451,26 +462,10 @@ class ApiService {
     return {'update_available': false, 'force_update': false};
   }
 
-  // ── FCM Token ──
-
-  static Future<bool> updateFcmToken(String fcmToken) async {
-    if (_token == null) return false;
-    try {
-      final res = await http.post(
-        Uri.parse('$baseUrl/fcm-token'),
-        headers: _headers,
-        body: jsonEncode({'fcm_token': fcmToken}),
-      ).timeout(_timeout);
-      return res.statusCode == 200;
-    } catch (_) {}
-    return false;
-  }
-
   static Future<Map<String, dynamic>> toggleNotifications() async {
-    final res = await http.post(
-      Uri.parse('$baseUrl/toggle-notifications'),
-      headers: _headers,
-    ).timeout(_timeout);
+    final res = await http
+        .post(Uri.parse('$baseUrl/toggle-notifications'), headers: _headers)
+        .timeout(_timeout);
     return jsonDecode(res.body);
   }
 
@@ -479,10 +474,12 @@ class ApiService {
   /// Get posts for a specific institution
   static Future<List<Post>> getInstitutionPosts(int institutionId) async {
     try {
-      final res = await http.get(
-        Uri.parse('$baseUrl/institutions/$institutionId/posts'),
-        headers: _headers,
-      ).timeout(_timeout);
+      final res = await http
+          .get(
+            Uri.parse('$baseUrl/institutions/$institutionId/posts'),
+            headers: _headers,
+          )
+          .timeout(_timeout);
       if (res.statusCode == 200) {
         final List items = jsonDecode(res.body)['data'] ?? [];
         return items.map((j) => Post.fromJson(j)).toList();
@@ -515,7 +512,9 @@ class ApiService {
       );
     }
 
-    final streamedRes = await request.send().timeout(const Duration(seconds: 30));
+    final streamedRes = await request.send().timeout(
+      const Duration(seconds: 30),
+    );
     final resBody = await streamedRes.stream.bytesToString();
     return jsonDecode(resBody);
   }
@@ -526,23 +525,21 @@ class ApiService {
     required String title,
     required String content,
   }) async {
-    final res = await http.put(
-      Uri.parse('$baseUrl/posts/$postId'),
-      headers: _headers,
-      body: jsonEncode({
-        'title': title,
-        'content': content,
-      }),
-    ).timeout(_timeout);
+    final res = await http
+        .put(
+          Uri.parse('$baseUrl/posts/$postId'),
+          headers: _headers,
+          body: jsonEncode({'title': title, 'content': content}),
+        )
+        .timeout(_timeout);
     return jsonDecode(res.body);
   }
 
   /// Delete a post
   static Future<bool> deletePost(int postId) async {
-    final res = await http.delete(
-      Uri.parse('$baseUrl/posts/$postId'),
-      headers: _headers,
-    ).timeout(_timeout);
+    final res = await http
+        .delete(Uri.parse('$baseUrl/posts/$postId'), headers: _headers)
+        .timeout(_timeout);
     return res.statusCode == 200;
   }
 
@@ -554,7 +551,9 @@ class ApiService {
       final params = <String, String>{};
       if (approved != null) params['approved'] = approved ? '1' : '0';
 
-      final uri = Uri.parse('$baseUrl/admin/posts').replace(queryParameters: params.isNotEmpty ? params : null);
+      final uri = Uri.parse(
+        '$baseUrl/admin/posts',
+      ).replace(queryParameters: params.isNotEmpty ? params : null);
       final res = await http.get(uri, headers: _headers).timeout(_timeout);
       if (res.statusCode == 200) {
         final List items = jsonDecode(res.body)['data'] ?? [];
@@ -566,10 +565,12 @@ class ApiService {
 
   /// Approve/reject a post (admin)
   static Future<Map<String, dynamic>> togglePostApproval(int postId) async {
-    final res = await http.post(
-      Uri.parse('$baseUrl/admin/posts/$postId/toggle-approval'),
-      headers: _headers,
-    ).timeout(_timeout);
+    final res = await http
+        .post(
+          Uri.parse('$baseUrl/admin/posts/$postId/toggle-approval'),
+          headers: _headers,
+        )
+        .timeout(_timeout);
     return jsonDecode(res.body);
   }
 
@@ -634,13 +635,13 @@ class ApiService {
 
     // Add photo if provided
     if (photo != null && await photo.exists()) {
-      request.files.add(
-        await http.MultipartFile.fromPath('photo', photo.path),
-      );
+      request.files.add(await http.MultipartFile.fromPath('photo', photo.path));
     }
 
     try {
-      final streamedRes = await request.send().timeout(const Duration(seconds: 30));
+      final streamedRes = await request.send().timeout(
+        const Duration(seconds: 30),
+      );
       final resBody = await streamedRes.stream.bytesToString();
       return jsonDecode(resBody);
     } catch (e) {
@@ -664,9 +665,9 @@ class ApiService {
       }
       if (search != null && search.isNotEmpty) params['search'] = search;
 
-      final uri = Uri.parse('$baseUrl/cvs').replace(
-        queryParameters: params.isNotEmpty ? params : null,
-      );
+      final uri = Uri.parse(
+        '$baseUrl/cvs',
+      ).replace(queryParameters: params.isNotEmpty ? params : null);
       final res = await http.get(uri, headers: _headers).timeout(_timeout);
 
       if (res.statusCode == 200) {
@@ -680,10 +681,9 @@ class ApiService {
   /// Get CV details
   static Future<Map<String, dynamic>?> getCv(int id) async {
     try {
-      final res = await http.get(
-        Uri.parse('$baseUrl/cvs/$id'),
-        headers: _headers,
-      ).timeout(_timeout);
+      final res = await http
+          .get(Uri.parse('$baseUrl/cvs/$id'), headers: _headers)
+          .timeout(_timeout);
       if (res.statusCode == 200) {
         return jsonDecode(res.body)['data'];
       }
@@ -694,10 +694,9 @@ class ApiService {
   /// Get CV stats
   static Future<Map<String, dynamic>> getCvStats() async {
     try {
-      final res = await http.get(
-        Uri.parse('$baseUrl/cv-stats'),
-        headers: _headers,
-      ).timeout(_timeout);
+      final res = await http
+          .get(Uri.parse('$baseUrl/cv-stats'), headers: _headers)
+          .timeout(_timeout);
       if (res.statusCode == 200) {
         return jsonDecode(res.body)['data'];
       }
@@ -708,7 +707,10 @@ class ApiService {
   // ── Institution Requests ──
   static Future<Map<String, dynamic>?> getInstitutionRequestStatus() async {
     try {
-      final res = await http.get(Uri.parse('$baseUrl/my-institution-request'), headers: _headers);
+      final res = await http.get(
+        Uri.parse('$baseUrl/my-institution-request'),
+        headers: _headers,
+      );
       if (res.statusCode == 200) {
         return jsonDecode(res.body)['data'];
       }
@@ -718,7 +720,10 @@ class ApiService {
 
   static Future<Institution?> getMyInstitution() async {
     try {
-      final res = await http.get(Uri.parse('$baseUrl/my-institution'), headers: _headers);
+      final res = await http.get(
+        Uri.parse('$baseUrl/my-institution'),
+        headers: _headers,
+      );
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body)['data'];
         if (data != null) {
@@ -731,10 +736,12 @@ class ApiService {
 
   static Future<void> clearInstitutionRequest() async {
     try {
-      await http.delete(
-        Uri.parse('$baseUrl/institution-requests/clear'),
-        headers: _headers,
-      ).timeout(_timeout);
+      await http
+          .delete(
+            Uri.parse('$baseUrl/institution-requests/clear'),
+            headers: _headers,
+          )
+          .timeout(_timeout);
     } catch (_) {}
   }
 
@@ -744,15 +751,17 @@ class ApiService {
     required String message,
   }) async {
     try {
-      final res = await http.post(
-        Uri.parse('$baseUrl/institution-requests'),
-        headers: _headers,
-        body: jsonEncode({
-          'name': name,
-          'phone': phone,
-          'message': message,
-        }),
-      ).timeout(_timeout);
+      final res = await http
+          .post(
+            Uri.parse('$baseUrl/institution-requests'),
+            headers: _headers,
+            body: jsonEncode({
+              'name': name,
+              'phone': phone,
+              'message': message,
+            }),
+          )
+          .timeout(_timeout);
       return jsonDecode(res.body);
     } catch (_) {}
     return {'success': false};
@@ -762,10 +771,9 @@ class ApiService {
 
   static Future<Map<String, dynamic>?> getTeacherRequestStatus() async {
     try {
-      final res = await http.get(
-        Uri.parse('$baseUrl/my-teacher-request'),
-        headers: _headers,
-      ).timeout(_timeout);
+      final res = await http
+          .get(Uri.parse('$baseUrl/my-teacher-request'), headers: _headers)
+          .timeout(_timeout);
       if (res.statusCode == 200) {
         return jsonDecode(res.body)['data'];
       }
@@ -775,10 +783,12 @@ class ApiService {
 
   static Future<void> clearTeacherRequest() async {
     try {
-      await http.delete(
-        Uri.parse('$baseUrl/teacher-requests/clear'),
-        headers: _headers,
-      ).timeout(_timeout);
+      await http
+          .delete(
+            Uri.parse('$baseUrl/teacher-requests/clear'),
+            headers: _headers,
+          )
+          .timeout(_timeout);
     } catch (_) {}
   }
 
@@ -788,15 +798,17 @@ class ApiService {
     String? message,
   }) async {
     try {
-      final res = await http.post(
-        Uri.parse('$baseUrl/teacher-requests'),
-        headers: _headers,
-        body: jsonEncode({
-          'name': name,
-          'phone': phone,
-          'message': message,
-        }),
-      ).timeout(_timeout);
+      final res = await http
+          .post(
+            Uri.parse('$baseUrl/teacher-requests'),
+            headers: _headers,
+            body: jsonEncode({
+              'name': name,
+              'phone': phone,
+              'message': message,
+            }),
+          )
+          .timeout(_timeout);
       return jsonDecode(res.body);
     } catch (e) {
       return {'success': false, 'message': 'هەڵەیەک ڕوویدا: $e'};
@@ -833,9 +845,7 @@ class ApiService {
     if (about != null && about.isNotEmpty) request.fields['about'] = about;
 
     if (photo != null && await photo.exists()) {
-      request.files.add(
-        await http.MultipartFile.fromPath('photo', photo.path),
-      );
+      request.files.add(await http.MultipartFile.fromPath('photo', photo.path));
     }
 
     if (subjectPhoto != null && await subjectPhoto.exists()) {
@@ -845,7 +855,9 @@ class ApiService {
     }
 
     try {
-      final streamedRes = await request.send().timeout(const Duration(seconds: 30));
+      final streamedRes = await request.send().timeout(
+        const Duration(seconds: 30),
+      );
       final resBody = await streamedRes.stream.bytesToString();
       return jsonDecode(resBody);
     } catch (e) {
@@ -865,9 +877,9 @@ class ApiService {
       if (city != null && city.isNotEmpty) params['city'] = city;
       if (search != null && search.isNotEmpty) params['search'] = search;
 
-      final uri = Uri.parse('$baseUrl/teachers').replace(
-        queryParameters: params.isNotEmpty ? params : null,
-      );
+      final uri = Uri.parse(
+        '$baseUrl/teachers',
+      ).replace(queryParameters: params.isNotEmpty ? params : null);
       final res = await http.get(uri, headers: _headers).timeout(_timeout);
 
       if (res.statusCode == 200) {
@@ -881,10 +893,9 @@ class ApiService {
   /// Get teacher stats
   static Future<Map<String, dynamic>> getTeacherStats() async {
     try {
-      final res = await http.get(
-        Uri.parse('$baseUrl/teacher-stats'),
-        headers: _headers,
-      ).timeout(_timeout);
+      final res = await http
+          .get(Uri.parse('$baseUrl/teacher-stats'), headers: _headers)
+          .timeout(_timeout);
       if (res.statusCode == 200) {
         return jsonDecode(res.body)['data'];
       }
@@ -894,10 +905,13 @@ class ApiService {
 
   // ── Admin: Institutions ──
 
-  static Future<Map<String, dynamic>> getAdminInstitutions({String status = 'pending'}) async {
+  static Future<Map<String, dynamic>> getAdminInstitutions({
+    String status = 'pending',
+  }) async {
     try {
-      final uri = Uri.parse('$baseUrl/admin/institutions')
-          .replace(queryParameters: {'status': status});
+      final uri = Uri.parse(
+        '$baseUrl/admin/institutions',
+      ).replace(queryParameters: {'status': status});
       final res = await http.get(uri, headers: _headers).timeout(_timeout);
       if (res.statusCode == 200) {
         final body = jsonDecode(res.body);
@@ -912,34 +926,39 @@ class ApiService {
   }
 
   static Future<Map<String, dynamic>> toggleInstitutionApproval(int id) async {
-    final res = await http.post(
-      Uri.parse('$baseUrl/admin/institutions/$id/toggle-approval'),
-      headers: _headers,
-    ).timeout(_timeout);
+    final res = await http
+        .post(
+          Uri.parse('$baseUrl/admin/institutions/$id/toggle-approval'),
+          headers: _headers,
+        )
+        .timeout(_timeout);
     return jsonDecode(res.body);
   }
 
   static Future<bool> adminDeleteInstitution(int id) async {
-    final res = await http.delete(
-      Uri.parse('$baseUrl/admin/institutions/$id'),
-      headers: _headers,
-    ).timeout(_timeout);
+    final res = await http
+        .delete(Uri.parse('$baseUrl/admin/institutions/$id'), headers: _headers)
+        .timeout(_timeout);
     return res.statusCode == 200;
   }
 
   // ── Admin: Reports ──
 
-  static Future<Map<String, dynamic>> getAdminReports({String status = 'pending'}) async {
+  static Future<Map<String, dynamic>> getAdminReports({
+    String status = 'pending',
+  }) async {
     try {
       final params = status == 'all' ? <String, String>{} : {'status': status};
-      final uri = Uri.parse('$baseUrl/admin/reports')
-          .replace(queryParameters: params.isNotEmpty ? params : null);
+      final uri = Uri.parse(
+        '$baseUrl/admin/reports',
+      ).replace(queryParameters: params.isNotEmpty ? params : null);
       final res = await http.get(uri, headers: _headers).timeout(_timeout);
       if (res.statusCode == 200) {
         final body = jsonDecode(res.body);
         return {
           'reports': List<Map<String, dynamic>>.from(
-              (body['data'] as List).map((e) => Map<String, dynamic>.from(e))),
+            (body['data'] as List).map((e) => Map<String, dynamic>.from(e)),
+          ),
           'meta': body['meta'] ?? {},
         };
       }
@@ -947,20 +966,24 @@ class ApiService {
     return {'reports': [], 'meta': {}};
   }
 
-  static Future<Map<String, dynamic>> updateReportStatus(int id, String status) async {
-    final res = await http.patch(
-      Uri.parse('$baseUrl/admin/reports/$id/status'),
-      headers: _headers,
-      body: jsonEncode({'status': status}),
-    ).timeout(_timeout);
+  static Future<Map<String, dynamic>> updateReportStatus(
+    int id,
+    String status,
+  ) async {
+    final res = await http
+        .patch(
+          Uri.parse('$baseUrl/admin/reports/$id/status'),
+          headers: _headers,
+          body: jsonEncode({'status': status}),
+        )
+        .timeout(_timeout);
     return jsonDecode(res.body);
   }
 
   static Future<bool> deleteReport(int id) async {
-    final res = await http.delete(
-      Uri.parse('$baseUrl/admin/reports/$id'),
-      headers: _headers,
-    ).timeout(_timeout);
+    final res = await http
+        .delete(Uri.parse('$baseUrl/admin/reports/$id'), headers: _headers)
+        .timeout(_timeout);
     return res.statusCode == 200;
   }
 
@@ -970,14 +993,16 @@ class ApiService {
     try {
       final params = <String, String>{};
       if (reviewed != null) params['reviewed'] = reviewed;
-      final uri = Uri.parse('$baseUrl/admin/cvs')
-          .replace(queryParameters: params.isNotEmpty ? params : null);
+      final uri = Uri.parse(
+        '$baseUrl/admin/cvs',
+      ).replace(queryParameters: params.isNotEmpty ? params : null);
       final res = await http.get(uri, headers: _headers).timeout(_timeout);
       if (res.statusCode == 200) {
         final body = jsonDecode(res.body);
         return {
           'cvs': List<Map<String, dynamic>>.from(
-              (body['data'] as List).map((e) => Map<String, dynamic>.from(e))),
+            (body['data'] as List).map((e) => Map<String, dynamic>.from(e)),
+          ),
           'meta': body['meta'] ?? {},
         };
       }
@@ -986,19 +1011,89 @@ class ApiService {
   }
 
   static Future<Map<String, dynamic>> toggleCvReview(int id) async {
-    final res = await http.post(
-      Uri.parse('$baseUrl/admin/cvs/$id/toggle-review'),
-      headers: _headers,
-    ).timeout(_timeout);
+    final res = await http
+        .post(
+          Uri.parse('$baseUrl/admin/cvs/$id/toggle-review'),
+          headers: _headers,
+        )
+        .timeout(_timeout);
     return jsonDecode(res.body);
   }
 
   static Future<bool> adminDeleteCv(int id) async {
-    final res = await http.delete(
-      Uri.parse('$baseUrl/admin/cvs/$id'),
-      headers: _headers,
-    ).timeout(_timeout);
+    final res = await http
+        .delete(Uri.parse('$baseUrl/admin/cvs/$id'), headers: _headers)
+        .timeout(_timeout);
     return res.statusCode == 200;
   }
-}
 
+  // ── Notifications ──
+
+  static Future<List<Map<String, dynamic>>> getNotifications() async {
+    if (_token == null) return [];
+    try {
+      final res = await http
+          .get(Uri.parse('$baseUrl/notifications'), headers: _headers)
+          .timeout(_timeout);
+      if (res.statusCode == 200) {
+        final List items = jsonDecode(res.body)['data'];
+        return items.map((t) => Map<String, dynamic>.from(t)).toList();
+      }
+    } catch (_) {}
+    return [];
+  }
+
+  static Future<bool> markAllNotificationsAsRead() async {
+    if (_token == null) return false;
+    try {
+      final res = await http
+          .post(
+            Uri.parse('$baseUrl/notifications/mark-read'),
+            headers: _headers,
+          )
+          .timeout(_timeout);
+      return res.statusCode == 200;
+    } catch (_) {}
+    return false;
+  }
+
+  static Future<bool> markNotificationAsRead(String id) async {
+    if (_token == null) return false;
+    try {
+      final res = await http
+          .post(
+            Uri.parse('$baseUrl/notifications/$id/mark-read'),
+            headers: _headers,
+          )
+          .timeout(_timeout);
+      return res.statusCode == 200;
+    } catch (_) {}
+    return false;
+  }
+
+  static Future<bool> updateFcmToken(String token) async {
+    if (_token == null) return false;
+    try {
+      final res = await http
+          .post(
+            Uri.parse('$baseUrl/fcm-token'),
+            headers: _headers,
+            body: jsonEncode({'fcm_token': token}),
+          )
+          .timeout(_timeout);
+      return res.statusCode == 200;
+    } catch (_) {}
+    return false;
+  }
+
+  static Future<bool> deleteNotification(String id) async {
+    if (_token == null) return false;
+    try {
+      final res = await http
+          .delete(Uri.parse('$baseUrl/notifications/$id'), headers: _headers)
+          .timeout(_timeout);
+      return res.statusCode == 200;
+    } catch (_) {}
+    return false;
+  }
+}

@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\AppVersionController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\CvController;
 use App\Http\Controllers\Api\TeacherController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Models\InstitutionType;
 use Illuminate\Support\Facades\Route;
 
@@ -212,5 +213,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin/teachers', [TeacherController::class, 'adminIndex']);
     Route::post('/admin/teachers/{id}/toggle-approval', [TeacherController::class, 'toggleApproval']);
     Route::delete('/admin/teachers/{id}', [TeacherController::class, 'adminDestroy']);
+
+    // Notifications
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::post('/notifications/mark-read', [NotificationController::class, 'markAllAsRead']);
+    Route::post('/notifications/{id}/mark-read', [NotificationController::class, 'markAsRead']);
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
+
+    // Admin: Send Notifications via Firebase
+    Route::post('/admin/notifications/send-to-user', [NotificationController::class, 'sendToUser']);
+    Route::post('/admin/notifications/send-to-users', [NotificationController::class, 'sendToMultipleUsers']);
+    Route::post('/admin/notifications/broadcast', [NotificationController::class, 'broadcastNotification']);
+    Route::post('/admin/notifications/subscribe-topic', [NotificationController::class, 'subscribeTopic']);
+    Route::post('/admin/notifications/send-to-topic', [NotificationController::class, 'sendToTopic']);
 });
-  

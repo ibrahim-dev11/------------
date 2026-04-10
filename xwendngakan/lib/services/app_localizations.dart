@@ -25,11 +25,11 @@ class S {
   static const Map<String, Map<String, String>> _translations = {
     // ─── App ───
     'appName': {
-      'ku': 'خوێندنگاکانم',
-      'ar': 'مؤسساتي التعليمية',
-      'en': 'My Schools',
-      'tr': 'Okullarım',
-      'fr': 'Mes Écoles',
+      'ku': 'edu book',
+      'ar': 'edu book',
+      'en': 'edu book',
+      'tr': 'edu book',
+      'fr': 'edu book',
     },
 
     // ─── Nav ───
@@ -277,6 +277,36 @@ class S {
       'en': '{count} results',
       'tr': '{count} sonuç',
       'fr': '{count} résultats',
+    },
+
+    // ─── Notifications ───
+    'notifications': {
+      'ku': 'ئاگادارییەکان',
+      'ar': 'الإشعارات',
+      'en': 'Notifications',
+      'tr': 'Bildirimler',
+      'fr': 'Notifications',
+    },
+    'markAllRead': {
+      'ku': 'هەمووی وەک بینراو',
+      'ar': 'تحديد الكل كمقروء',
+      'en': 'Mark all as read',
+      'tr': 'Tümünü okundu işaretle',
+      'fr': 'Tout marquer comme lu',
+    },
+    'noNotifications': {
+      'ku': 'هیچ ئاگادارییەک نییە',
+      'ar': 'لا توجد إشعارات',
+      'en': 'No notifications',
+      'tr': 'Bildirim yok',
+      'fr': 'Pas de notifications',
+    },
+    'notificationEmptyDesc': {
+      'ku': 'لێرەدا دەتوانیت ئاگاداری و پەیامە گرنگەکان لە لایەن بەڕێوەبەرەوە ببینی',
+      'ar': 'هنا يمكنك رؤية الإشعارات والرسائل الهامة من الإدارة',
+      'en': 'Here you can see important notifications and messages from admin',
+      'tr': 'Burada yöneticiden gelen önemli bildirimleri ve mesajları görebilirsiniz',
+      'fr': 'Ici, vous pouvez voir les notifications et messages importants de l\'administrateur',
     },
 
     // ─── Settings ───

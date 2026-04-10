@@ -27,7 +27,10 @@ class Post {
   /// Convert a relative storage path to full URL
   static String _resolveUrl(String? path) {
     if (path == null || path.isEmpty) return '';
-    if (path.startsWith('http')) return path;
+    if (path.startsWith('http')) {
+      // For Android emulator, replace 127.0.0.1 with 10.0.2.2
+      return path.replaceFirst('http://127.0.0.1', 'http://10.0.2.2');
+    }
     return '$_serverBase${path.startsWith('/') ? '' : '/'}$path';
   }
 

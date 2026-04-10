@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "246674529767",
+    "project_id": "xwendgakanedu",
+    "storage_bucket": "xwendgakanedu.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:246674529767:android:13d424c7bdf6e6bcbfb142",
+        "android_client_info": {
+          "package_name": "com.koshsh.xwendngakan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJDgQvBAuz64JAuGQDOTDkLI-_clRAPhs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
