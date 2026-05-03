@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\InstitutionResource\Pages;
+use App\Filament\Resources\InstitutionResource\RelationManagers;
 use App\Models\Institution;
 use App\Models\InstitutionType;
 use Filament\Forms;
@@ -332,7 +333,9 @@ class InstitutionResource extends Resource
 
     public static function getRelations(): array
     {
-        return [];
+        return [
+            RelationManagers\PostsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

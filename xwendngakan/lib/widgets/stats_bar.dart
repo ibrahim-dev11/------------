@@ -13,10 +13,11 @@ class StatsBar extends StatelessWidget {
     return Consumer<AppProvider>(
       builder: (context, prov, _) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
             child: Row(
               children: [
                 _statCard('${prov.totalApproved}', S.of(context, 'total'), isDark,
@@ -38,7 +39,7 @@ class StatsBar extends StatelessWidget {
                     icon: Iconsax.building, color: const Color(0xFFF97316)),
                 const SizedBox(width: 8),
                 _statCard('${prov.countByType('kg')}', S.of(context, 'kindergarten'), isDark,
-                    icon: Iconsax.lovely, color: const Color(0xFFEC4899)),
+                    icon: Iconsax.lovely, color: AppTheme.accent),
                 const SizedBox(width: 8),
                 _statCard('${prov.totalCities}', S.of(context, 'city'), isDark,
                     icon: Iconsax.location, color: AppTheme.success),
@@ -55,18 +56,12 @@ class StatsBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        color: isDark ? AppTheme.darkCard : Colors.white,
         borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.15 : 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
         border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
+          color: isDark ? AppTheme.darkBorder.withValues(alpha: 0.5) : AppTheme.lightBorder,
         ),
+        boxShadow: AppTheme.softShadow(isDark),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -74,10 +69,10 @@ class StatsBar extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: isDark ? 0.12 : 0.08),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, size: 16, color: color),
+            child: Icon(icon, size: 15, color: color),
           ),
           const SizedBox(width: 8),
           Column(
@@ -87,17 +82,17 @@ class StatsBar extends StatelessWidget {
               Text(
                 num,
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w900,
-                  color: color,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: isDark ? AppTheme.textPrimary : AppTheme.lightText,
                 ),
               ),
               Text(
                 label,
                 style: TextStyle(
                   fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF94A3B8),
+                  fontWeight: FontWeight.w500,
+                  color: isDark ? AppTheme.textSecondary : AppTheme.lightTextSub,
                 ),
               ),
             ],

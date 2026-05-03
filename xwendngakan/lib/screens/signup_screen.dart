@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
@@ -154,8 +155,8 @@ class _SignupScreenState extends State<SignupScreen>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: isDark
-                    ? [const Color(0xFF0F172A), const Color(0xFF1E293B), const Color(0xFF0F172A)]
-                    : [const Color(0xFFF8FAFC), const Color(0xFFF1F5F9), Colors.white],
+                    ? [AppTheme.darkBg, AppTheme.darkSurface, AppTheme.darkBg]
+                    : [AppTheme.lightBg, AppTheme.lightBg, Colors.white],
                 stops: const [0.0, 0.5, 1.0],
               ),
             ),
@@ -163,17 +164,17 @@ class _SignupScreenState extends State<SignupScreen>
 
           // Decorative blob top-left
           Positioned(
-            top: -60,
-            left: -80,
+            top: -80,
+            left: -100,
             child: Container(
-              width: 200,
-              height: 200,
+              width: 260,
+              height: 260,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    AppTheme.primary.withOpacity(isDark ? 0.15 : 0.1),
-                    AppTheme.accent.withOpacity(0.0),
+                    AppTheme.primary.withValues(alpha: isDark ? 0.22 : 0.15),
+                    Colors.transparent,
                   ],
                 ),
               ),
@@ -182,17 +183,17 @@ class _SignupScreenState extends State<SignupScreen>
 
           // Decorative blob bottom-right
           Positioned(
-            bottom: -80,
-            right: -60,
+            bottom: -100,
+            right: -80,
             child: Container(
-              width: 240,
-              height: 240,
+              width: 300,
+              height: 300,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    AppTheme.accent.withOpacity(isDark ? 0.12 : 0.08),
-                    AppTheme.primary.withOpacity(0.0),
+                    AppTheme.accent.withValues(alpha: isDark ? 0.18 : 0.12),
+                    Colors.transparent,
                   ],
                 ),
               ),
@@ -208,10 +209,10 @@ class _SignupScreenState extends State<SignupScreen>
                 child: SlideTransition(
                   position: _slideAnim,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 28),
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Column(
                       children: [
-                        SizedBox(height: screenH * 0.06),
+                        SizedBox(height: screenH * 0.08),
 
                         // Logo
                         _buildLogo(isDark),
@@ -219,45 +220,46 @@ class _SignupScreenState extends State<SignupScreen>
                         const SizedBox(height: 28),
 
                         // Title
-                        Text(
+                        ShaderMask(
+                          shaderCallback: (b) => AppTheme.primaryGradient.createShader(b),
+                          child: Text(
                             S.of(context, 'signupTitle'),
-                            style: TextStyle(
-                              fontSize: 28,
+                            style: const TextStyle(
+                              fontSize: 32,
                               fontWeight: FontWeight.w900,
-                              foreground: Paint()
-                                ..shader = const LinearGradient(
-                                  colors: [AppTheme.primary, AppTheme.accent],
-                                ).createShader(const Rect.fromLTWH(0, 0, 250, 40)),
+                              color: Colors.white,
+                              letterSpacing: -1,
                             ),
+                          ),
                         ),
                         const SizedBox(height: 8),
                         Text(
-                            S.of(context, 'signupSubtitle'),
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: isDark
-                                  ? const Color(0xFF94A3B8)
-                                  : const Color(0xFF64748B),
-                              height: 1.5,
-                            ),
+                          S.of(context, 'signupSubtitle'),
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.grey[400] : AppTheme.lightTextSub,
+                            height: 1.5,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
 
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 40),
 
                         // Form card
                         _buildFormCard(isDark),
 
-                        const SizedBox(height: 28),
+                        const SizedBox(height: 24),
 
                         // Login link
                         _buildLoginRow(isDark),
 
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 14),
 
                         // Teacher registration
                         _buildTeacherRegisterCard(isDark),
 
-                        const SizedBox(height: 30),
+                        const SizedBox(height: 50),
                       ],
                     ),
                   ),
@@ -272,74 +274,50 @@ class _SignupScreenState extends State<SignupScreen>
 
   Widget _buildLogo(bool isDark) {
     return Container(
-      width: 90,
-      height: 90,
+      width: 84,
+      height: 84,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppTheme.primary, AppTheme.accent],
-        ),
+        borderRadius: BorderRadius.circular(24),
+        gradient: AppTheme.primaryGradient,
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primary.withOpacity(0.35),
+            color: AppTheme.primary.withValues(alpha: 0.35),
             blurRadius: 30,
-            offset: const Offset(0, 10),
-            spreadRadius: -2,
+            offset: const Offset(0, 12),
           ),
           BoxShadow(
-            color: AppTheme.accent.withOpacity(0.2),
-            blurRadius: 20,
-            offset: const Offset(-5, 5),
+            color: AppTheme.accent.withValues(alpha: 0.15),
+            blurRadius: 40,
+            offset: const Offset(8, 16),
           ),
         ],
       ),
-      child: Stack(
-        children: [
-          Positioned(
-            top: -10,
-            right: -10,
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.1),
-              ),
-            ),
-          ),
-          const Center(
-            child: Text('✏️', style: TextStyle(fontSize: 42)),
-          ),
-        ],
+      child: const Center(
+        child: Icon(
+          Iconsax.teacher5,
+          color: Colors.white,
+          size: 44,
+        ),
       ),
     );
   }
 
   Widget _buildFormCard(bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: isDark
-            ? const Color(0xFF1E293B).withOpacity(0.8)
-            : Colors.white.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(28),
+        color: isDark ? AppTheme.darkCard : Colors.white,
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(
+          color: isDark ? Colors.white.withValues(alpha: 0.06) : AppTheme.lightBorder,
+        ),
         boxShadow: [
           BoxShadow(
-            color: isDark
-                ? Colors.black.withOpacity(0.3)
-                : const Color(0xFF3B82F6).withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 30,
-            offset: const Offset(0, 10),
-            spreadRadius: -5,
+            offset: const Offset(0, 15),
           ),
         ],
-        border: Border.all(
-          color: isDark
-              ? const Color(0xFF334155).withOpacity(0.6)
-              : const Color(0xFFE2E8F0).withOpacity(0.8),
-        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -348,59 +326,55 @@ class _SignupScreenState extends State<SignupScreen>
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppTheme.primary.withOpacity(0.15),
-                      AppTheme.accent.withOpacity(0.08),
-                    ],
-                  ),
+                  color: AppTheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(Iconsax.user_add, color: AppTheme.primary, size: 20),
+                child: const Icon(Iconsax.user_add5, color: AppTheme.primary, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 14),
               Text(
                 S.of(context, 'signupFormHeader'),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
-                  color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFF1E293B),
+                  color: isDark ? Colors.white : AppTheme.darkSurface,
+                  letterSpacing: -0.5,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 28),
+          const SizedBox(height: 32),
 
           // Name
           _buildInputField(
             controller: _nameC,
             label: S.of(context, 'fullName'),
             hint: S.of(context, 'fullNameHint'),
-            icon: Iconsax.user,
+            icon: Iconsax.user5,
             isDark: isDark,
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 20),
 
           // Email
           _buildInputField(
             controller: _emailC,
             label: S.of(context, 'email'),
             hint: 'name@example.com',
-            icon: Iconsax.sms,
+            icon: Iconsax.sms5,
             isDark: isDark,
             isLtr: true,
             keyboardType: TextInputType.emailAddress,
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 20),
 
           // Password
           _buildInputField(
             controller: _passC,
             label: S.of(context, 'password'),
             hint: '••••••••',
-            icon: Iconsax.lock,
+            icon: Iconsax.lock5,
             isDark: isDark,
             isLtr: true,
             isPassword: true,
@@ -408,33 +382,36 @@ class _SignupScreenState extends State<SignupScreen>
             onToggleObscure: () => setState(() => _obscure = !_obscure),
           ),
 
-          const SizedBox(height: 6),
+          const SizedBox(height: 12),
 
           // Password hint
-          Row(
-            children: [
-              Icon(Iconsax.info_circle, size: 12,
-                  color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFFBBBBBB)),
-              const SizedBox(width: 4),
-              Text(
-                S.of(context, 'minChars'),
-                style: TextStyle(
-                  fontSize: 11,
-                  color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFFBBBBBB),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Row(
+              children: [
+                Icon(Iconsax.info_circle5, size: 14, color: AppTheme.primary.withValues(alpha: 0.7)),
+                const SizedBox(width: 6),
+                Text(
+                  S.of(context, 'minChars'),
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white54 : Colors.grey[600],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
 
           // Signup button
           _buildGradientButton(
             onPressed: _isLoading ? null : _signup,
             isLoading: _isLoading,
             label: S.of(context, 'signupTitle'),
-            icon: Iconsax.user_add,
-            gradient: const [AppTheme.primary, AppTheme.accent],
+            icon: Iconsax.user_add5,
+            gradient: [AppTheme.primary, AppTheme.primary2],
           ),
         ],
       ),
@@ -456,89 +433,72 @@ class _SignupScreenState extends State<SignupScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF64748B),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              color: isDark ? Colors.white70 : AppTheme.lightTextSub,
+              letterSpacing: -0.2,
+            ),
           ),
         ),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: isDark
-                    ? Colors.black.withOpacity(0.15)
-                    : const Color(0xFF3B82F6).withOpacity(0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: controller,
+          textDirection: isLtr ? TextDirection.ltr : null,
+          textAlign: isLtr ? TextAlign.left : TextAlign.start,
+          obscureText: isPassword ? (obscureState ?? true) : false,
+          keyboardType: keyboardType,
+          style: TextStyle(
+            fontSize: 15,
+            color: isDark ? Colors.white : AppTheme.darkSurface,
+            fontWeight: FontWeight.w700,
           ),
-          child: TextFormField(
-            controller: controller,
-            textDirection: isLtr ? TextDirection.ltr : null,
-            textAlign: isLtr ? TextAlign.left : TextAlign.start,
-            obscureText: isPassword ? (obscureState ?? true) : false,
-            keyboardType: keyboardType,
-            style: TextStyle(
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: TextStyle(
               fontSize: 14,
-              color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFF1E293B),
-              fontWeight: FontWeight.w500,
+              color: isDark ? Colors.white38 : Colors.grey[400],
             ),
-            decoration: InputDecoration(
-              hintText: hint,
-              hintStyle: TextStyle(
-                fontSize: 13,
-                color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFFBBBBBB),
-                fontWeight: FontWeight.w400,
+            prefixIcon: Container(
+              margin: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppTheme.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
               ),
-              prefixIcon: Container(
-                margin: const EdgeInsets.all(12),
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: AppTheme.primary.withOpacity(isDark ? 0.15 : 0.08),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(icon, color: AppTheme.primary, size: 16),
-              ),
-              suffixIcon: isPassword
-                  ? IconButton(
-                      icon: Icon(
-                        (obscureState ?? true) ? Iconsax.eye_slash : Iconsax.eye,
-                        color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF94A3B8),
-                        size: 20,
-                      ),
-                      onPressed: onToggleObscure,
-                    )
-                  : null,
-              filled: true,
-              fillColor: isDark
-                  ? const Color(0xFF0F172A).withOpacity(0.5)
-                  : const Color(0xFFF8FAFC),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide(
-                  color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide(
-                  color: isDark
-                      ? const Color(0xFF334155).withOpacity(0.5)
-                      : const Color(0xFFE2E8F0).withOpacity(0.8),
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: AppTheme.primary, width: 1.5),
-              ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: Icon(icon, color: AppTheme.primary, size: 18),
             ),
+            suffixIcon: isPassword
+                ? IconButton(
+                    icon: Icon(
+                      (obscureState ?? true) ? Iconsax.eye_slash : Iconsax.eye,
+                      color: isDark ? Colors.white30 : Colors.grey[400],
+                      size: 22,
+                    ),
+                    onPressed: onToggleObscure,
+                  )
+                : null,
+            filled: true,
+            fillColor: isDark ? Colors.white.withValues(alpha: 0.04) : const Color(0xFFF9FAFB),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(18),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(18),
+              borderSide: BorderSide(
+                color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFE5E7EB),
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(18),
+              borderSide: const BorderSide(color: AppTheme.primary, width: 2),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
           ),
         ),
       ],
@@ -552,76 +512,72 @@ class _SignupScreenState extends State<SignupScreen>
     required IconData icon,
     required List<Color> gradient,
   }) {
-    return SizedBox(
+    return Container(
       width: double.infinity,
-      height: 54,
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            colors: gradient,
-          ),
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-              color: gradient[0].withOpacity(0.35),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-              spreadRadius: -2,
-            ),
-          ],
+      height: 58,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: gradient,
         ),
-        child: ElevatedButton(
-          onPressed: onPressed,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
-            ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: gradient[0].withValues(alpha: 0.35),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
-          child: isLoading
-              ? const SizedBox(
-                  width: 22,
-                  height: 22,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(icon, color: Colors.white, size: 20),
-                    const SizedBox(width: 10),
-                    Text(
-                      label,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
+        ],
+      ),
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+        child: isLoading
+            ? const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 3,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
-        ),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(icon, color: Colors.white, size: 22),
+                  const SizedBox(width: 12),
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
+              ),
       ),
     );
   }
 
   Widget _buildLoginRow(bool isDark) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
         color: isDark
-            ? const Color(0xFF1E293B).withOpacity(0.5)
-            : Colors.white.withOpacity(0.6),
+            ? Colors.white.withValues(alpha: 0.03)
+            : Colors.white,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: isDark
-              ? const Color(0xFF334155).withOpacity(0.4)
-              : const Color(0xFFE2E8F0).withOpacity(0.6),
+          color: isDark ? Colors.white.withValues(alpha: 0.06) : const Color(0xFFE5E7EB),
         ),
       ),
       child: Row(
@@ -630,22 +586,24 @@ class _SignupScreenState extends State<SignupScreen>
           Text(
             S.of(context, 'haveAccount'),
             style: TextStyle(
-              fontSize: 13,
-              color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF64748B),
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: isDark ? Colors.white60 : AppTheme.lightTextSub,
             ),
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: 8),
           GestureDetector(
-            onTap: () => Navigator.of(context).pop(),
+            onTap: () {
+              HapticFeedback.lightImpact();
+              Navigator.of(context).pop();
+            },
             child: ShaderMask(
-              shaderCallback: (bounds) => const LinearGradient(
-                colors: [AppTheme.primary, AppTheme.accent],
-              ).createShader(bounds),
+              shaderCallback: (bounds) => AppTheme.primaryGradient.createShader(bounds),
               child: Text(
                 S.of(context, 'goToLoginLink'),
                 style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w800,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
                   color: Colors.white,
                 ),
               ),
@@ -658,16 +616,14 @@ class _SignupScreenState extends State<SignupScreen>
 
   Widget _buildTeacherRegisterCard(bool isDark) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
         color: isDark
-            ? const Color(0xFF1E293B).withOpacity(0.5)
-            : Colors.white.withOpacity(0.6),
+            ? Colors.white.withValues(alpha: 0.03)
+            : Colors.white,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: isDark
-              ? const Color(0xFF334155).withOpacity(0.4)
-              : const Color(0xFFE2E8F0).withOpacity(0.6),
+          color: isDark ? Colors.white.withValues(alpha: 0.06) : const Color(0xFFE5E7EB),
         ),
       ),
       child: Row(
@@ -676,13 +632,15 @@ class _SignupScreenState extends State<SignupScreen>
           Text(
             'ماموستایت؟',
             style: TextStyle(
-              fontSize: 13,
-              color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF64748B),
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: isDark ? Colors.white60 : AppTheme.lightTextSub,
             ),
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: 8),
           GestureDetector(
             onTap: () {
+              HapticFeedback.lightImpact();
               Navigator.of(context).push(
                 PageRouteBuilder(
                   pageBuilder: (_, __, ___) => const TeacherFormView(),
@@ -704,14 +662,12 @@ class _SignupScreenState extends State<SignupScreen>
               );
             },
             child: ShaderMask(
-              shaderCallback: (bounds) => const LinearGradient(
-                colors: [AppTheme.primary, AppTheme.accent],
-              ).createShader(bounds),
+              shaderCallback: (bounds) => AppTheme.accentGradient.createShader(bounds),
               child: const Text(
                 'خۆت تۆمار بکە',
                 style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w800,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
                   color: Colors.white,
                 ),
               ),

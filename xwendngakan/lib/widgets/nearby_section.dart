@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:xwendngakan/theme/app_theme.dart';
 import '../data/constants.dart';
 import '../models/institution.dart';
 import '../providers/app_provider.dart';
@@ -50,7 +51,7 @@ class NearbySection extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : const Color(0xFF0F172A),
+                  color: isDark ? Colors.white : AppTheme.darkBg,
                 ),
               ),
             ],
@@ -87,12 +88,12 @@ class NearbySection extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: isDark
-                        ? [const Color(0xFF1E293B), const Color(0xFF0F172A)]
+                        ? [AppTheme.darkSurface, AppTheme.darkBg]
                         : [const Color(0xFFE0F2FE), const Color(0xFFBAE6FD)],
                   ),
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: isDark ? const Color(0xFF334155) : const Color(0xFF7DD3FC),
+                    color: isDark ? AppTheme.darkCard : const Color(0xFF7DD3FC),
                     width: 0.5,
                   ),
                 ),
@@ -101,7 +102,7 @@ class NearbySection extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF0EA5E9).withOpacity(0.15),
+                        color: const Color(0xFF0EA5E9).withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: const Icon(Iconsax.gps, size: 18, color: Color(0xFF0EA5E9)),
@@ -116,7 +117,7 @@ class NearbySection extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
-                              color: isDark ? Colors.white : const Color(0xFF0F172A),
+                              color: isDark ? Colors.white : AppTheme.darkBg,
                             ),
                           ),
                           const SizedBox(height: 1),
@@ -155,12 +156,12 @@ class NearbySection extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: isDark
-                      ? [const Color(0xFF1E293B), const Color(0xFF0F172A)]
+                      ? [AppTheme.darkSurface, AppTheme.darkBg]
                       : [const Color(0xFFE0F2FE), const Color(0xFFBAE6FD)],
                 ),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: isDark ? const Color(0xFF334155) : const Color(0xFF7DD3FC),
+                  color: isDark ? AppTheme.darkCard : const Color(0xFF7DD3FC),
                   width: 0.5,
                 ),
               ),
@@ -191,7 +192,7 @@ class NearbySection extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE0F2FE),
+          color: isDark ? AppTheme.darkSurface : const Color(0xFFE0F2FE),
           borderRadius: BorderRadius.circular(14),
         ),
         child: Row(
@@ -235,17 +236,17 @@ class NearbySection extends StatelessWidget {
         width: 120,
         margin: const EdgeInsets.only(left: 8),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          color: isDark ? AppTheme.darkSurface : Colors.white,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(isDark ? 0.15 : 0.04),
+              color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.04),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
           ],
           border: Border.all(
-            color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE8EDF5),
+            color: isDark ? AppTheme.darkSurface : const Color(0xFFE8EDF5),
           ),
         ),
         child: Padding(
@@ -260,7 +261,7 @@ class NearbySection extends StatelessWidget {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
-                    color: isDark ? const Color(0xFF1E293B) : Colors.grey.shade100,
+                    color: isDark ? AppTheme.darkSurface : Colors.grey.shade100,
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
@@ -290,7 +291,7 @@ class NearbySection extends StatelessWidget {
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   height: 1.2,
-                  color: isDark ? Colors.white : const Color(0xFF1E293B),
+                  color: isDark ? Colors.white : AppTheme.darkSurface,
                 ),
               ),
               // Distance

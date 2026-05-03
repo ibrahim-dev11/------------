@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import '../providers/app_provider.dart';
 import '../services/app_localizations.dart';
@@ -23,36 +24,48 @@ class HomeEmptyState extends StatelessWidget {
       child: Center(
         child: Column(
           children: [
+            // Gradient circle icon
             Container(
-              padding: const EdgeInsets.all(32),
+              padding: const EdgeInsets.all(28),
               decoration: BoxDecoration(
                 gradient: LinearGradient(colors: [
-                  AppTheme.primary.withOpacity(isDark ? 0.12 : 0.06),
-                  AppTheme.accent.withOpacity(isDark ? 0.08 : 0.03),
+                  AppTheme.primary.withValues(alpha: isDark ? 0.15 : 0.08),
+                  AppTheme.accent.withValues(alpha: isDark ? 0.1 : 0.04),
                 ]),
                 shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primary.withValues(alpha: 0.08),
+                    blurRadius: 30,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
               ),
               child: Icon(
                 Iconsax.search_status_1,
-                size: 52,
-                color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFFCBD5E1),
+                size: 48,
+                color: isDark
+                    ? AppTheme.neutral300
+                    : AppTheme.textSecondary,
               ),
             ),
             const SizedBox(height: 28),
             Text(
               S.of(context, 'noResults'),
-              style: TextStyle(
+              style: GoogleFonts.outfit(
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
-                color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF64748B),
+                color: isDark ? Colors.white : AppTheme.neutral600,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               S.of(context, 'changeFilters'),
-              style: TextStyle(
+              style: GoogleFonts.outfit(
                 fontSize: 13,
-                color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF94A3B8),
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.4)
+                    : AppTheme.textSecondary,
               ),
             ),
             const SizedBox(height: 28),
@@ -62,17 +75,22 @@ class HomeEmptyState extends StatelessWidget {
                 prov.clearFilters();
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 28, vertical: 14),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [AppTheme.primary, Color(0xFF6366F1), AppTheme.accent],
+                    colors: [
+                      Color(0xFF6366F1),
+                      Color(0xFF818CF8),
+                      Color(0xFF38BDF8),
+                    ],
                   ),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.primary.withOpacity(0.3),
+                      color: AppTheme.primary.withValues(alpha: 0.35),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),
@@ -81,11 +99,12 @@ class HomeEmptyState extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Iconsax.refresh, size: 16, color: Colors.white),
+                    const Icon(Iconsax.refresh,
+                        size: 16, color: Colors.white),
                     const SizedBox(width: 8),
                     Text(
                       S.of(context, 'clearFilters'),
-                      style: const TextStyle(
+                      style: GoogleFonts.outfit(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
@@ -120,49 +139,68 @@ class HomeErrorState extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.all(32),
+              padding: const EdgeInsets.all(28),
               decoration: BoxDecoration(
-                color: AppTheme.danger.withOpacity(isDark ? 0.12 : 0.06),
+                gradient: LinearGradient(colors: [
+                  AppTheme.danger.withValues(alpha: isDark ? 0.15 : 0.08),
+                  AppTheme.accent.withValues(alpha: isDark ? 0.1 : 0.04),
+                ]),
                 shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.danger.withValues(alpha: 0.08),
+                    blurRadius: 30,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
               ),
               child: Icon(
                 Iconsax.wifi_square,
-                size: 52,
-                color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFFCBD5E1),
+                size: 48,
+                color: isDark
+                    ? AppTheme.neutral300
+                    : AppTheme.textSecondary,
               ),
             ),
             const SizedBox(height: 28),
             Text(
               S.of(context, 'networkError'),
-              style: TextStyle(
+              style: GoogleFonts.outfit(
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
-                color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF64748B),
+                color: isDark ? Colors.white : AppTheme.neutral600,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               S.of(context, 'connectionError'),
-              style: TextStyle(
+              style: GoogleFonts.outfit(
                 fontSize: 13,
-                color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF94A3B8),
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.4)
+                    : AppTheme.textSecondary,
               ),
             ),
             const SizedBox(height: 28),
             GestureDetector(
               onTap: () => prov.fetchFromApi(),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 28, vertical: 14),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [AppTheme.primary, Color(0xFF6366F1), AppTheme.accent],
+                    colors: [
+                      Color(0xFF6366F1),
+                      Color(0xFF818CF8),
+                      Color(0xFF38BDF8),
+                    ],
                   ),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.primary.withOpacity(0.3),
+                      color: AppTheme.primary.withValues(alpha: 0.35),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),
@@ -171,11 +209,12 @@ class HomeErrorState extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Iconsax.refresh, size: 16, color: Colors.white),
+                    const Icon(Iconsax.refresh,
+                        size: 16, color: Colors.white),
                     const SizedBox(width: 8),
                     Text(
                       S.of(context, 'retry'),
-                      style: const TextStyle(
+                      style: GoogleFonts.outfit(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: Colors.white,

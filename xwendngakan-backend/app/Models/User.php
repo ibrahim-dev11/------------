@@ -88,4 +88,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Report::class);
     }
+
+    /**
+     * Get the institution associated with the user.
+     */
+    public function institution(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Institution::class);
+    }
 }

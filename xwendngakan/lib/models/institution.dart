@@ -66,6 +66,8 @@ class Institution {
     this.userId,
   });
 
+  factory Institution.empty() => Institution(id: 0, type: '');
+
   String get displayName => nku.isNotEmpty ? nku : nen;
 
   String nameForLang(String lang) {

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../widgets/cv_form_screen.dart';
 import '../theme/app_theme.dart';
 import '../services/api_service.dart';
+import '../widgets/loading_shimmer.dart';
+import 'package:iconsax/iconsax.dart';
 
 class CvBankScreen extends StatelessWidget {
   const CvBankScreen({super.key});
@@ -57,7 +59,9 @@ class _CvListViewState extends State<CvListView> {
 
     try {
       final cvs = await ApiService.getCvs(
-        search: _searchController.text.trim().isEmpty ? null : _searchController.text.trim(),
+        search: _searchController.text.trim().isEmpty
+            ? null
+            : _searchController.text.trim(),
         city: _selectedCity,
         educationLevel: _selectedEducationLevel,
       );
@@ -88,7 +92,7 @@ class _CvListViewState extends State<CvListView> {
             color: Theme.of(context).cardColor,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -113,8 +117,8 @@ class _CvListViewState extends State<CvListView> {
                       : null,
                   filled: true,
                   fillColor: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white.withOpacity(0.05)
-                      : const Color(0xFFF1F5F9),
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : AppTheme.lightBg,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
                     borderSide: BorderSide.none,
@@ -134,7 +138,8 @@ class _CvListViewState extends State<CvListView> {
                       onTap: () => _showEducationLevelPicker(),
                     ),
                     const SizedBox(width: 8),
-                    if (_selectedCity != null || _selectedEducationLevel != null)
+                    if (_selectedCity != null ||
+                        _selectedEducationLevel != null)
                       ActionChip(
                         avatar: const Icon(Icons.clear, size: 16),
                         label: const Text('پاککردنەوە'),
@@ -158,11 +163,7 @@ class _CvListViewState extends State<CvListView> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
             children: [
-              Icon(
-                Icons.people_alt_rounded,
-                size: 18,
-                color: AppTheme.primary,
-              ),
+              Icon(Icons.people_alt_rounded, size: 18, color: AppTheme.primary),
               const SizedBox(width: 8),
               Text(
                 '${_cvs.length} CV',
@@ -182,17 +183,15 @@ class _CvListViewState extends State<CvListView> {
         ),
 
         // CV List
-        Expanded(
-          child: _buildContent(),
-        ),
+        Expanded(child: _buildContent()),
       ],
     );
   }
 
   Widget _buildContent() {
     if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
+      return LoadingShimmer(
+        isDark: Theme.of(context).brightness == Brightness.dark,
       );
     }
 
@@ -204,13 +203,13 @@ class _CvListViewState extends State<CvListView> {
             Icon(
               Icons.error_outline_rounded,
               size: 64,
-              color: AppTheme.danger.withOpacity(0.5),
+              color: AppTheme.danger.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 16),
             Text(
               _error!,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
             const SizedBox(height: 16),
@@ -232,13 +231,13 @@ class _CvListViewState extends State<CvListView> {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: AppTheme.primary.withOpacity(0.1),
+                color: AppTheme.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.inbox_rounded,
                 size: 64,
-                color: AppTheme.primary.withOpacity(0.5),
+                color: AppTheme.primary.withValues(alpha: 0.5),
               ),
             ),
             const SizedBox(height: 20),
@@ -254,7 +253,7 @@ class _CvListViewState extends State<CvListView> {
             Text(
               'یەکەمین بە بۆ تۆمارکردنی CVت!',
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
           ],
@@ -264,134 +263,106 @@ class _CvListViewState extends State<CvListView> {
 
     return RefreshIndicator(
       onRefresh: _loadCvs,
-      child: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: _cvs.length,
-        itemBuilder: (context, index) {
-          final cv = _cvs[index];
-          return _buildCvCard(cv);
-        },
+      child: Stack(
+        children: [
+          ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: _cvs.length,
+            itemBuilder: (context, index) {
+              final cv = _cvs[index];
+              return _buildCvCard(cv);
+            },
+          ),
+          Positioned(
+            bottom: 24,
+            left: 20,
+            right: 20,
+            child: ElevatedButton.icon(
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const CvFormScreen()),
+              ),
+            icon: Icon(Iconsax.add_circle),
+              label: const Text('دروستکردنی سیڤی'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primary,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildCvCard(Map<String, dynamic> cv) {
     final name = cv['name'] ?? '';
-    final field = cv['field'] ?? '';
-    final city = cv['city'] ?? '';
-    final educationLevel = cv['education_level'] ?? '';
     final photo = cv['photo'];
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: AppTheme.softShadow(),
+        border: Border.all(color: AppTheme.lightBorder),
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => _showCvDetails(cv),
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                // Avatar
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [AppTheme.primary, AppTheme.accent],
+      child: Row(
+        children: [
+          // Avatar
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: AppTheme.primary.withValues(alpha: 0.2), width: 2),
+              image: photo != null && photo.toString().isNotEmpty
+                  ? DecorationImage(
+                      image: NetworkImage('${ApiService.serverBase}$photo'),
+                      fit: BoxFit.cover,
+                    )
+                  : null,
+            ),
+            child: photo == null || photo.toString().isEmpty
+                ? Center(
+                    child: Text(
+                      name.isNotEmpty ? name[0].toUpperCase() : '?',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    borderRadius: BorderRadius.circular(14),
-                    image: photo != null && photo.toString().isNotEmpty
-                        ? DecorationImage(
-                            image: NetworkImage('${ApiService.serverBase}$photo'),
-                            fit: BoxFit.cover,
-                          )
-                        : null,
-                  ),
-                  child: photo == null || photo.toString().isEmpty
-                      ? Center(
-                          child: Text(
-                            name.isNotEmpty ? name[0].toUpperCase() : '?',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        )
-                      : null,
+                  )
+                : null,
+          ),
+          const SizedBox(width: 14),
+          // Info
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
-                const SizedBox(width: 14),
-                // Info
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        name,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.school_rounded,
-                            size: 14,
-                            color: AppTheme.primary.withOpacity(0.7),
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              field,
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Wrap(
-                        spacing: 6,
-                        runSpacing: 4,
-                        children: [
-                          if (city.isNotEmpty)
-                            _buildTag(city, Icons.location_on_rounded, AppTheme.accent),
-                          if (educationLevel.isNotEmpty)
-                            _buildTag(educationLevel, Icons.trending_up_rounded, AppTheme.success),
-                        ],
-                      ),
-                    ],
+                const SizedBox(height: 4),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF1F5F9),
+                    borderRadius: BorderRadius.circular(6),
                   ),
-                ),
-                const Icon(
-                  Icons.chevron_right_rounded,
-                  color: Colors.grey,
+                  child: const Text(
+                    'DV',
+                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blueGrey),
+                  ),
                 ),
               ],
             ),
           ),
-        ),
+          IconButton(
+            icon: const Icon(Icons.more_vert_rounded, color: Colors.grey),
+            onPressed: () {},
+          ),
+        ],
       ),
     );
   }
@@ -400,7 +371,7 @@ class _CvListViewState extends State<CvListView> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -431,7 +402,9 @@ class _CvListViewState extends State<CvListView> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primary : AppTheme.primary.withOpacity(0.1),
+          color: isSelected
+              ? AppTheme.primary
+              : AppTheme.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
@@ -488,23 +461,25 @@ class _CvListViewState extends State<CvListView> {
             children: [
               const Text(
                 'ئاستی خوێندن',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
-              ...levels.map((level) => ListTile(
-                title: Text(level),
-                trailing: _selectedEducationLevel == level
-                    ? const Icon(Icons.check_circle_rounded, color: AppTheme.primary)
-                    : null,
-                onTap: () {
-                  setState(() => _selectedEducationLevel = level);
-                  Navigator.pop(context);
-                  _loadCvs();
-                },
-              )),
+              ...levels.map(
+                (level) => ListTile(
+                  title: Text(level),
+                  trailing: _selectedEducationLevel == level
+                      ? const Icon(
+                          Icons.check_circle_rounded,
+                          color: AppTheme.primary,
+                        )
+                      : null,
+                  onTap: () {
+                    setState(() => _selectedEducationLevel = level);
+                    Navigator.pop(context);
+                    _loadCvs();
+                  },
+                ),
+              ),
             ],
           ),
         );
@@ -525,7 +500,9 @@ class _CvListViewState extends State<CvListView> {
           return Container(
             decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(24),
+              ),
             ),
             child: Column(
               children: [
@@ -535,7 +512,7 @@ class _CvListViewState extends State<CvListView> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.3),
+                    color: Colors.grey.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -556,11 +533,24 @@ class _CvListViewState extends State<CvListView> {
                           color: AppTheme.primary,
                           items: [
                             if (cv['phone'] != null)
-                              _buildInfoRow(Icons.phone_rounded, 'تەلەفۆن', cv['phone']),
-                            if (cv['email'] != null && cv['email'].toString().isNotEmpty)
-                              _buildInfoRow(Icons.email_rounded, 'ئیمەیڵ', cv['email']),
+                              _buildInfoRow(
+                                Icons.phone_rounded,
+                                'تەلەفۆن',
+                                cv['phone'],
+                              ),
+                            if (cv['email'] != null &&
+                                cv['email'].toString().isNotEmpty)
+                              _buildInfoRow(
+                                Icons.email_rounded,
+                                'ئیمەیڵ',
+                                cv['email'],
+                              ),
                             if (cv['city'] != null)
-                              _buildInfoRow(Icons.location_city_rounded, 'شار', cv['city']),
+                              _buildInfoRow(
+                                Icons.location_city_rounded,
+                                'شار',
+                                cv['city'],
+                              ),
                           ],
                         ),
                         const SizedBox(height: 16),
@@ -571,16 +561,31 @@ class _CvListViewState extends State<CvListView> {
                           color: AppTheme.success,
                           items: [
                             if (cv['field'] != null)
-                              _buildInfoRow(Icons.auto_stories_rounded, 'بوار', cv['field']),
-                            if (cv['education_level'] != null && cv['education_level'].toString().isNotEmpty)
-                              _buildInfoRow(Icons.trending_up_rounded, 'ئاست', cv['education_level']),
-                            if (cv['graduation_year'] != null && cv['graduation_year'].toString().isNotEmpty)
-                              _buildInfoRow(Icons.calendar_month_rounded, 'ساڵی دەرچوون', cv['graduation_year']),
+                              _buildInfoRow(
+                                Icons.auto_stories_rounded,
+                                'بوار',
+                                cv['field'],
+                              ),
+                            if (cv['education_level'] != null &&
+                                cv['education_level'].toString().isNotEmpty)
+                              _buildInfoRow(
+                                Icons.trending_up_rounded,
+                                'ئاست',
+                                cv['education_level'],
+                              ),
+                            if (cv['graduation_year'] != null &&
+                                cv['graduation_year'].toString().isNotEmpty)
+                              _buildInfoRow(
+                                Icons.calendar_month_rounded,
+                                'ساڵی دەرچوون',
+                                cv['graduation_year'],
+                              ),
                           ],
                         ),
                         const SizedBox(height: 16),
                         // Skills & Experience
-                        if (cv['skills'] != null && cv['skills'].toString().isNotEmpty) ...[
+                        if (cv['skills'] != null &&
+                            cv['skills'].toString().isNotEmpty) ...[
                           _buildTextSection(
                             title: 'بەهرەکان',
                             icon: Icons.psychology_rounded,
@@ -589,7 +594,8 @@ class _CvListViewState extends State<CvListView> {
                           ),
                           const SizedBox(height: 16),
                         ],
-                        if (cv['experience'] != null && cv['experience'].toString().isNotEmpty) ...[
+                        if (cv['experience'] != null &&
+                            cv['experience'].toString().isNotEmpty) ...[
                           _buildTextSection(
                             title: 'ئەزموون',
                             icon: Icons.work_rounded,
@@ -598,7 +604,8 @@ class _CvListViewState extends State<CvListView> {
                           ),
                           const SizedBox(height: 16),
                         ],
-                        if (cv['notes'] != null && cv['notes'].toString().isNotEmpty) ...[
+                        if (cv['notes'] != null &&
+                            cv['notes'].toString().isNotEmpty) ...[
                           _buildTextSection(
                             title: 'تێبینی',
                             icon: Icons.note_rounded,
@@ -637,7 +644,7 @@ class _CvListViewState extends State<CvListView> {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.primary.withOpacity(0.3),
+                color: AppTheme.primary.withValues(alpha: 0.3),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -665,25 +672,21 @@ class _CvListViewState extends State<CvListView> {
         const SizedBox(height: 16),
         Text(
           name,
-          style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 4),
         Text(
           field,
           style: TextStyle(
             fontSize: 15,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
         const SizedBox(height: 12),
         Wrap(
           spacing: 8,
           children: [
-            if (age != null)
-              _buildHeaderTag('$age ساڵ', Icons.cake_rounded),
+            if (age != null) _buildHeaderTag('$age ساڵ', Icons.cake_rounded),
             if (genderLabel.isNotEmpty)
               _buildHeaderTag(genderLabel, Icons.person_rounded),
           ],
@@ -696,7 +699,7 @@ class _CvListViewState extends State<CvListView> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: AppTheme.primary.withOpacity(0.1),
+        color: AppTheme.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -731,7 +734,7 @@ class _CvListViewState extends State<CvListView> {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -741,7 +744,7 @@ class _CvListViewState extends State<CvListView> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(icon, color: color, size: 18),
@@ -774,17 +777,14 @@ class _CvListViewState extends State<CvListView> {
           Text(
             '$label: ',
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
               fontSize: 13,
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
             ),
           ),
         ],
@@ -804,7 +804,7 @@ class _CvListViewState extends State<CvListView> {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -814,7 +814,7 @@ class _CvListViewState extends State<CvListView> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(icon, color: color, size: 18),
@@ -836,7 +836,7 @@ class _CvListViewState extends State<CvListView> {
             style: TextStyle(
               fontSize: 14,
               height: 1.6,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
             ),
           ),
         ],

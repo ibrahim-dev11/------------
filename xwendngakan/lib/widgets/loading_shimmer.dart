@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import '../theme/app_theme.dart';
 
 class LoadingShimmer extends StatelessWidget {
   final bool isDark;
@@ -8,19 +9,20 @@ class LoadingShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final base = isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0);
-    final highlight = isDark ? const Color(0xFF64748B) : const Color(0xFFF8FAFC);
+    final base = isDark ? AppTheme.darkCard : const Color(0xFFF1F1F5);
+    final highlight = isDark ? AppTheme.darkElevated : const Color(0xFFF9F9FC);
+    final screenW = MediaQuery.of(context).size.width;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20),
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 14,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: screenW > 600 ? 3 : 2,
+          mainAxisSpacing: 20,
           crossAxisSpacing: 14,
-          childAspectRatio: 0.78,
+          childAspectRatio: 0.68,
         ),
         itemCount: 6,
         itemBuilder: (context, index) {
@@ -29,17 +31,21 @@ class LoadingShimmer extends StatelessWidget {
             highlightColor: highlight,
             child: Container(
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                borderRadius: BorderRadius.circular(24),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Container(
-                    height: 110,
-                    decoration: BoxDecoration(
-                      color: base,
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                        ),
+                      ),
                     ),
                   ),
                   Padding(
@@ -50,29 +56,20 @@ class LoadingShimmer extends StatelessWidget {
                         Container(
                           height: 14,
                           width: double.infinity,
-                          decoration: BoxDecoration(color: base, borderRadius: BorderRadius.circular(8)),
+                          margin: const EdgeInsets.only(right: 30),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 8),
                         Container(
                           height: 10,
                           width: 80,
-                          decoration: BoxDecoration(color: base, borderRadius: BorderRadius.circular(6)),
-                        ),
-                        const SizedBox(height: 14),
-                        Row(
-                          children: [
-                            Container(
-                              height: 22,
-                              width: 48,
-                              decoration: BoxDecoration(color: base, borderRadius: BorderRadius.circular(11)),
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              height: 22,
-                              width: 36,
-                              decoration: BoxDecoration(color: base, borderRadius: BorderRadius.circular(11)),
-                            ),
-                          ],
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
                         ),
                       ],
                     ),

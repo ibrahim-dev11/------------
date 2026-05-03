@@ -223,7 +223,7 @@ class _ReportScreenState extends State<ReportScreen> {
                           height: 40,
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? AppTheme.primary.withOpacity(0.1)
+                                ? AppTheme.primary.withValues(alpha: 0.1)
                                 : (isDark ? Colors.white12 : Colors.grey[100]),
                             borderRadius: BorderRadius.circular(10),
                           ),

@@ -1,6 +1,9 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
 import '../services/app_localizations.dart';
@@ -26,28 +29,120 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   Widget build(BuildContext context) {
     final prov = context.watch<AppProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? AppTheme.darkBg : AppTheme.lightBg;
     final notifications = prov.notifications;
+    final unreadCount = notifications.where((n) => !n.isRead).length;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      backgroundColor: bgColor,
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.transparent,
+        backgroundColor: bgColor.withValues(alpha: 0.85),
         elevation: 0,
-        title: Text(
-          S.of(context, 'notifications'),
-          style: TextStyle(
-            fontWeight: FontWeight.w900,
-            fontSize: 22,
-            color: isDark ? Colors.white : AppTheme.navy,
+        flexibleSpace: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+            child: Container(color: Colors.transparent),
           ),
+        ),
+        leading: GestureDetector(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            Navigator.pop(context);
+          },
+          child: Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? AppTheme.darkElevated.withValues(alpha: 0.7)
+                  : AppTheme.lightSurface,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: isDark
+                    ? AppTheme.darkBorder.withValues(alpha: 0.5)
+                    : AppTheme.lightBorder,
+              ),
+            ),
+            child: Icon(
+              Iconsax.arrow_left,
+              color: isDark ? Colors.white : AppTheme.darkText,
+              size: 18,
+            ),
+          ),
+        ),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Iconsax.notification_bing, color: AppTheme.primary, size: 18),
+            const SizedBox(width: 8),
+            Text(
+              S.of(context, 'notifications'),
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 18,
+                color: isDark ? Colors.white : AppTheme.darkText,
+              ),
+            ),
+            if (unreadCount > 0) ...[
+              const SizedBox(width: 8),
+              TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0, end: 1),
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.elasticOut,
+                builder: (_, value, child) =>
+                    Transform.scale(scale: value, child: child),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primary.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    '$unreadCount',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.primary,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ],
         ),
         actions: [
           if (notifications.any((n) => !n.isRead))
-            IconButton(
-              onPressed: () => prov.markAllNotificationsAsRead(),
-              icon: const Icon(Iconsax.tick_circle),
-              tooltip: S.of(context, 'markAllRead'),
+            GestureDetector(
+              onTap: () {
+                HapticFeedback.mediumImpact();
+                prov.markAllNotificationsAsRead();
+              },
+              child: Container(
+                margin: const EdgeInsets.only(right: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppTheme.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Iconsax.tick_circle,
+                        size: 14, color: AppTheme.primary),
+                    const SizedBox(width: 4),
+                    Text(
+                      S.of(context, 'markAllRead'),
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
         ],
       ),
@@ -56,49 +151,106 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           : RefreshIndicator(
               onRefresh: () => prov.fetchNotifications(),
               color: AppTheme.primary,
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                itemCount: notifications.length,
-                itemBuilder: (context, index) {
-                  final n = notifications[index];
-                  return _NotificationCard(notification: n);
-                },
+              child: AnimationLimiter(
+                child: ListView.builder(
+                  physics: const BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics(),
+                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                  itemCount: notifications.length,
+                  itemBuilder: (context, index) {
+                    final n = notifications[index];
+                    return AnimationConfiguration.staggeredList(
+                      position: index,
+                      duration: const Duration(milliseconds: 450),
+                      child: SlideAnimation(
+                        verticalOffset: 30,
+                        child: FadeInAnimation(
+                          child: _NotificationCard(notification: n),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
     );
   }
 
   Widget _buildEmptyState(BuildContext context, bool isDark) {
+    return _NotifEmptyState(isDark: isDark);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// ANIMATED EMPTY STATE
+// ═══════════════════════════════════════════════════════
+class _NotifEmptyState extends StatefulWidget {
+  final bool isDark;
+  const _NotifEmptyState({required this.isDark});
+  @override
+  State<_NotifEmptyState> createState() => _NotifEmptyStateState();
+}
+
+class _NotifEmptyStateState extends State<_NotifEmptyState>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _floatCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _floatCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _floatCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            padding: const EdgeInsets.all(30),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E293B) : Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: AppTheme.primary.withOpacity(0.1),
-                  blurRadius: 30,
-                  spreadRadius: 10,
-                ),
-              ],
+          AnimatedBuilder(
+            animation: _floatCtrl,
+            builder: (_, child) => Transform.translate(
+              offset: Offset(0, -6 * _floatCtrl.value),
+              child: child,
             ),
-            child: Icon(
-              Iconsax.notification_bing,
-              size: 70,
-              color: AppTheme.primary.withOpacity(0.8),
+            child: Container(
+              padding: const EdgeInsets.all(30),
+              decoration: BoxDecoration(
+                color: widget.isDark ? AppTheme.darkSurface : Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primary.withValues(alpha: 0.1),
+                    blurRadius: 40,
+                    spreadRadius: 10,
+                  ),
+                ],
+              ),
+              child: Icon(
+                Iconsax.notification_bing,
+                size: 56,
+                color: AppTheme.primary.withValues(alpha: 0.5),
+              ),
             ),
           ),
           const SizedBox(height: 32),
           Text(
             S.of(context, 'noNotifications'),
             style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w900,
-              color: isDark ? Colors.white : AppTheme.navy,
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+              color: widget.isDark ? Colors.white : AppTheme.lightText,
             ),
           ),
           const SizedBox(height: 12),
@@ -108,8 +260,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               S.of(context, 'notificationEmptyDesc'),
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 15,
-                color: isDark ? Colors.grey[400] : Colors.grey[600],
+                fontSize: 14,
+                color: widget.isDark
+                    ? AppTheme.textSecondary
+                    : AppTheme.lightTextSub,
                 height: 1.6,
               ),
             ),
@@ -136,9 +290,13 @@ class _NotificationCard extends StatelessWidget {
       direction: DismissDirection.horizontal,
       background: _buildSwipeBackground(Alignment.centerRight, isDark),
       secondaryBackground: _buildSwipeBackground(Alignment.centerLeft, isDark),
-      onDismissed: (direction) => prov.deleteNotification(notification.id),
+      onDismissed: (direction) {
+        HapticFeedback.mediumImpact();
+        prov.deleteNotification(notification.id);
+      },
       child: GestureDetector(
         onTap: () {
+          HapticFeedback.lightImpact();
           if (!isRead) {
             prov.markAsRead(notification.id);
           }
@@ -150,18 +308,18 @@ class _NotificationCard extends StatelessWidget {
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
             color: isRead 
-                ? (isDark ? const Color(0xFF1E293B) : Colors.white)
-                : (isDark ? AppTheme.primary.withOpacity(0.1) : AppTheme.primary.withOpacity(0.08)),
+                ? (isDark ? AppTheme.darkSurface : Colors.white)
+                : (isDark ? AppTheme.primary.withValues(alpha: 0.1) : AppTheme.primary.withValues(alpha: 0.08)),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
               color: isRead
-                  ? (isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05))
-                  : AppTheme.primary.withOpacity(0.2),
+                  ? (isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05))
+                  : AppTheme.primary.withValues(alpha: 0.2),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
+                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
                 blurRadius: 15,
                 offset: const Offset(0, 8),
               ),
@@ -174,8 +332,8 @@ class _NotificationCard extends StatelessWidget {
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
                   color: isRead 
-                      ? (isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9))
-                      : AppTheme.primary.withOpacity(0.15),
+                      ? (isDark ? AppTheme.darkCard : AppTheme.lightBg)
+                      : AppTheme.primary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(18),
                 ),
                 child: Icon(
@@ -200,7 +358,7 @@ class _NotificationCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 17,
                               fontWeight: isRead ? FontWeight.w600 : FontWeight.w900,
-                              color: isDark ? Colors.white : AppTheme.navy,
+                              color: isDark ? Colors.white : AppTheme.darkSurface,
                             ),
                           ),
                         ),
@@ -244,7 +402,7 @@ class _NotificationCard extends StatelessWidget {
                                 child: Icon(
                                   Iconsax.arrow_left_1,
                                   size: 16,
-                                  color: AppTheme.primary.withOpacity(0.6),
+                                  color: AppTheme.primary.withValues(alpha: 0.6),
                                 ),
                               ),
                           ],
@@ -268,7 +426,7 @@ class _NotificationCard extends StatelessWidget {
       alignment: alignment,
       padding: const EdgeInsets.symmetric(horizontal: 25),
       decoration: BoxDecoration(
-        color: Colors.redAccent.withOpacity(0.15),
+        color: Colors.redAccent.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
@@ -277,7 +435,7 @@ class _NotificationCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.redAccent.withOpacity(0.2),
+              color: Colors.redAccent.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: const Icon(Iconsax.trash, color: Colors.redAccent, size: 24),

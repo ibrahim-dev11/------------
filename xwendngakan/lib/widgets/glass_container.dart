@@ -29,13 +29,13 @@ class GlassContainer extends StatelessWidget {
 
     final bg = glassColor ??
         (isDark
-            ? Colors.white.withOpacity(0.08)
-            : Colors.white.withOpacity(0.55));
+            ? Colors.white.withValues(alpha: 0.08)
+            : Colors.white.withValues(alpha: 0.55));
 
     final border = borderColor ??
         (isDark
-            ? Colors.white.withOpacity(0.12)
-            : Colors.white.withOpacity(0.7));
+            ? Colors.white.withValues(alpha: 0.12)
+            : Colors.white.withValues(alpha: 0.7));
 
     return Container(
       margin: margin,

@@ -53,7 +53,7 @@ class _InstitutionDashboardScreenState extends State<InstitutionDashboardScreen>
           controller: _tabController,
           indicatorColor: AppTheme.primary,
           labelColor: AppTheme.primary,
-          unselectedLabelColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          unselectedLabelColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
           indicatorWeight: 3,
           labelStyle: const TextStyle(fontWeight: FontWeight.bold),
           tabs: const [
@@ -101,7 +101,7 @@ class _InstitutionDashboardScreenState extends State<InstitutionDashboardScreen>
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: AppTheme.primary.withOpacity(0.1),
+                color: AppTheme.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -125,7 +125,7 @@ class _InstitutionDashboardScreenState extends State<InstitutionDashboardScreen>
               style: TextStyle(
                 fontSize: 16,
                 height: 1.5,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
             ),
@@ -194,7 +194,7 @@ class _InstitutionDashboardScreenState extends State<InstitutionDashboardScreen>
                     padding: const EdgeInsets.symmetric(vertical: 60),
                     child: Column(
                       children: [
-                        Icon(Iconsax.document_text, size: 60, color: Colors.grey.withOpacity(0.3)),
+                        Icon(Iconsax.document_text, size: 60, color: Colors.grey.withValues(alpha: 0.3)),
                         const SizedBox(height: 16),
                         Text(S.of(context, 'noPosts'), style: TextStyle(color: Colors.grey[600], fontSize: 16)),
                       ],
@@ -281,13 +281,13 @@ class _InstitutionDashboardScreenState extends State<InstitutionDashboardScreen>
       alignment: alignment,
       padding: const EdgeInsets.symmetric(horizontal: 25),
       decoration: BoxDecoration(
-        color: Colors.redAccent.withOpacity(0.15),
+        color: Colors.redAccent.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.redAccent.withOpacity(0.2),
+          color: Colors.redAccent.withValues(alpha: 0.2),
           shape: BoxShape.circle,
         ),
         child: const Icon(Iconsax.trash, color: Colors.redAccent, size: 20),

@@ -1,9 +1,11 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:xwendngakan/theme/app_theme.dart';
 import '../data/constants.dart';
 import '../models/institution.dart';
 import '../models/post.dart';
@@ -58,9 +60,9 @@ class _DetailScreenState extends State<DetailScreen> {
     final d = widget.institution;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor =
-        AppConstants.typeGradients[d.type]?[0] ?? const Color(0xFF6366F1);
-    final bgColor = isDark ? const Color(0xFF0B1120) : const Color(0xFFF1F5F9);
-    final surfaceColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+        AppConstants.typeGradients[d.type]?[0] ?? AppTheme.primary;
+    final bgColor = isDark ? AppTheme.darkBg : const Color(0xFFF1F5F9);
+    final surfaceColor = isDark ? AppTheme.darkSurface : Colors.white;
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -69,7 +71,9 @@ class _DetailScreenState extends State<DetailScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: _buildHeaderBtn(
-          Iconsax.arrow_right_3,
+          context.read<AppProvider>().isRtl
+              ? Iconsax.arrow_right_3
+              : Iconsax.arrow_left_2,
           () => Navigator.pop(context),
           isDark,
         ),
@@ -81,7 +85,7 @@ class _DetailScreenState extends State<DetailScreen> {
             () => context.read<AppProvider>().toggleFavorite(d.id),
             isDark,
             iconColor: context.watch<AppProvider>().isFavorite(d.id)
-                ? Colors.red
+                ? AppTheme.danger
                 : Colors.white,
           ),
           _buildHeaderBtn(Iconsax.share, () => _shareInstitution(d), isDark),
@@ -98,23 +102,23 @@ class _DetailScreenState extends State<DetailScreen> {
               children: [
                 // Banner background
                 Container(
-                  height: 180,
+                  height: 200,
                   width: double.infinity,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [primaryColor, primaryColor.withOpacity(0.7)],
+                      colors: [AppTheme.primary, AppTheme.primary2],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(40),
-                      bottomRight: Radius.circular(40),
+                      bottomLeft: Radius.circular(32),
+                      bottomRight: Radius.circular(32),
                     ),
                   ),
                   child: ClipRRect(
                     borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(40),
-                      bottomRight: Radius.circular(40),
+                      bottomLeft: Radius.circular(32),
+                      bottomRight: Radius.circular(32),
                     ),
                     child: Stack(
                       fit: StackFit.expand,
@@ -124,10 +128,19 @@ class _DetailScreenState extends State<DetailScreen> {
                           CachedNetworkImage(
                             imageUrl: d.img,
                             fit: BoxFit.cover,
-                            placeholder: (context, url) =>
-                                Container(color: primaryColor.withOpacity(0.3)),
-                            errorWidget: (context, url, error) =>
-                                const SizedBox(),
+                            placeholder: (context, url) => Container(
+                              color: AppTheme.primary.withValues(alpha: 0.3),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              color: AppTheme.primary.withValues(alpha: 0.1),
+                              child: Center(
+                                child: Icon(
+                                  Iconsax.image,
+                                  color: Colors.white.withValues(alpha: 0.5),
+                                  size: 40,
+                                ),
+                              ),
+                            ),
                           ),
                         // Dark overlay for readability
                         Container(
@@ -135,21 +148,13 @@ class _DetailScreenState extends State<DetailScreen> {
                             gradient: LinearGradient(
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
+                              stops: const [0.0, 0.4, 1.0],
                               colors: [
-                                Colors.black.withOpacity(0.4),
+                                Colors.black.withValues(alpha: 0.4),
                                 Colors.transparent,
-                                Colors.black.withOpacity(0.2),
+                                Colors.black.withValues(alpha: 0.6),
                               ],
                             ),
-                          ),
-                        ),
-                        // Pattern overlay
-                        Opacity(
-                          opacity: 0.1,
-                          child: Icon(
-                            Iconsax.building_3,
-                            size: 200,
-                            color: Colors.white.withOpacity(0.2),
                           ),
                         ),
                       ],
@@ -161,31 +166,45 @@ class _DetailScreenState extends State<DetailScreen> {
                   child: Hero(
                     tag: 'inst_logo_${d.id}',
                     child: Container(
-                      padding: const EdgeInsets.all(4),
+                      padding: const EdgeInsets.all(5),
                       decoration: BoxDecoration(
                         color: bgColor,
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 10,
-                            offset: const Offset(0, 5),
+                            color: Colors.black.withValues(alpha: 0.15),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
                           ),
                         ],
                       ),
                       child: CircleAvatar(
-                        radius: 50,
+                        radius: 52,
                         backgroundColor: surfaceColor,
-                        backgroundImage: d.logo.isNotEmpty
-                            ? CachedNetworkImageProvider(d.logo)
-                            : null,
-                        child: d.logo.isEmpty
-                            ? Icon(
-                                Iconsax.teacher,
-                                color: primaryColor,
-                                size: 35,
-                              )
-                            : null,
+                        child: ClipOval(
+                          child: d.logo.isNotEmpty
+                              ? CachedNetworkImage(
+                                  imageUrl: d.logo,
+                                  width: 104,
+                                  height: 104,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => const Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) => Icon(
+                                    Iconsax.teacher,
+                                    color: AppTheme.primary,
+                                    size: 38,
+                                  ),
+                                )
+                              : Icon(
+                                  Iconsax.teacher,
+                                  color: AppTheme.primary,
+                                  size: 38,
+                                ),
+                        ),
                       ),
                     ),
                   ),
@@ -207,51 +226,32 @@ class _DetailScreenState extends State<DetailScreen> {
                         child: Text(
                           d.nameForLang(context.read<AppProvider>().language),
                           style: const TextStyle(
-                            fontSize: 24,
+                            fontSize: 26,
                             fontWeight: FontWeight.w900,
+                            letterSpacing: -0.5,
                           ),
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      const SizedBox(width: 4),
-                      Icon(Icons.verified, size: 20, color: primaryColor),
+                      const SizedBox(width: 6),
+                      Icon(Icons.verified, size: 22, color: AppTheme.primary),
                     ],
                   ),
-                  if (d.nen.isNotEmpty &&
-                      context.read<AppProvider>().language != 'en')
-                    Text(
-                      d.nen,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[500],
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  if (d.nar.isNotEmpty &&
-                      context.read<AppProvider>().language != 'ar')
-                    Text(
-                      d.nar,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[500],
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
                   const SizedBox(height: 12),
                   Wrap(
                     alignment: WrapAlignment.center,
-                    spacing: 8,
+                    spacing: 10,
                     children: [
                       _badgeChip(
                         d.city,
-                        Iconsax.location,
+                        Iconsax.location5,
                         Colors.grey[600]!,
                         isDark,
                       ),
                       _badgeChip(
                         context.read<AppProvider>().typeLabel(d.type),
-                        Iconsax.category,
-                        primaryColor,
+                        Iconsax.category5,
+                        AppTheme.primary,
                         isDark,
                       ),
                     ],
@@ -260,35 +260,70 @@ class _DetailScreenState extends State<DetailScreen> {
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 28),
 
             // --- INTERACTIVE ACTION GRID ---
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
-                  _buildActionTile(
-                    Iconsax.call,
-                    S.of(context, 'call'),
-                    const Color(0xFF10B981),
-                    () => _launchUrl('tel:${d.phone}'),
-                    surfaceColor,
-                  ),
+                  _buildCircularAction(Iconsax.call, () => _launchUrl('tel:${d.phone}')),
                   const SizedBox(width: 12),
-                  _buildActionTile(
-                    Iconsax.global,
-                    S.of(context, 'website'),
-                    const Color(0xFF3B82F6),
-                    () => _launchUrl(d.web),
-                    surfaceColor,
-                  ),
+                  _buildCircularAction(Iconsax.sms, () => _launchUrl('sms:${d.phone}')),
                   const SizedBox(width: 12),
-                  _buildActionTile(
-                    Iconsax.map_1,
-                    S.of(context, 'locationTab'),
-                    const Color(0xFFF59E0B),
-                    () => _openMap(d),
-                    surfaceColor,
+                  _buildCircularAction(Iconsax.message, () => _launchUrl('https://wa.me/${d.wa}')),
+                  const SizedBox(width: 12),
+                  _buildCircularAction(Iconsax.global, () => _launchUrl(d.web)),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 28),
+
+            // Map Location Button
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ElevatedButton.icon(
+                onPressed: () => _openMap(d),
+                icon: const Icon(Iconsax.map_1),
+                label: const Text('Map location'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primary,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 56),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 28),
+
+            // --- PREMIUM SEGMENTED TAB BAR ---
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              height: 54,
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  _buildTab(0, S.of(context, 'aboutTab'), AppTheme.primary),
+                  _buildTab(1, S.of(context, 'postsTab'), AppTheme.primary),
+                  _buildTab(
+                    2,
+                    _isUniversity
+                        ? S.of(context, 'college')
+                        : S.of(context, 'department'),
+                    AppTheme.primary,
                   ),
                 ],
               ),
@@ -296,37 +331,15 @@ class _DetailScreenState extends State<DetailScreen> {
 
             const SizedBox(height: 24),
 
-            // --- PREMIUM SEGMENTED TAB BAR ---
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: surfaceColor,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Row(
-                  children: [
-                    _buildTab(0, S.of(context, 'aboutTab'), primaryColor),
-                    _buildTab(1, S.of(context, 'postsTab'), primaryColor),
-                    _buildTab(
-                      2,
-                      _isUniversity
-                          ? S.of(context, 'college')
-                          : S.of(context, 'department'),
-                      primaryColor,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
             // --- DYNAMIC CONTENT ---
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: _renderActiveTab(d, isDark, primaryColor, surfaceColor),
+              child: _renderActiveTab(
+                d,
+                isDark,
+                AppTheme.primary,
+                surfaceColor,
+              ),
             ),
 
             const SizedBox(height: 100),
@@ -344,38 +357,74 @@ class _DetailScreenState extends State<DetailScreen> {
   }) {
     return Container(
       margin: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.2),
-        shape: BoxShape.circle,
-      ),
-      child: IconButton(
-        icon: Icon(icon, color: iconColor ?? Colors.white, size: 20),
-        onPressed: onTap,
+      child: ClipOval(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.3),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.15),
+                width: 1,
+              ),
+            ),
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              icon: Icon(icon, color: iconColor ?? Colors.white, size: 20),
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                onTap();
+              },
+            ),
+          ),
+        ),
       ),
     );
   }
 
   Widget _badgeChip(String label, IconData icon, Color color, bool isDark) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color.withValues(alpha: 0.1), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: color),
-          const SizedBox(width: 6),
+          Icon(icon, size: 15, color: color),
+          const SizedBox(width: 8),
           Text(
             label,
             style: TextStyle(
               color: color,
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCircularAction(IconData icon, VoidCallback onTap) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          height: 56,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: AppTheme.softShadow(),
+            border: Border.all(color: AppTheme.lightBorder),
+          ),
+          child: Icon(icon, color: AppTheme.primary, size: 24),
+        ),
       ),
     );
   }
@@ -388,35 +437,12 @@ class _DetailScreenState extends State<DetailScreen> {
     Color surfaceColor,
   ) {
     return Expanded(
-      child: GestureDetector(
+      child: _PressableActionTile(
+        icon: icon,
+        label: label,
+        color: color,
         onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          decoration: BoxDecoration(
-            color: surfaceColor,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: color.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              Icon(icon, color: color, size: 22),
-              const SizedBox(height: 6),
-              Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ],
-          ),
-        ),
+        surfaceColor: surfaceColor,
       ),
     );
   }
@@ -425,23 +451,36 @@ class _DetailScreenState extends State<DetailScreen> {
     final active = _activeTab == index;
     return Expanded(
       child: GestureDetector(
-        onTap: () => setState(() => _activeTab = index),
+        onTap: () {
+          HapticFeedback.mediumImpact();
+          setState(() => _activeTab = index);
+        },
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 250),
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOutQuart,
           decoration: BoxDecoration(
             color: active ? primaryColor : Colors.transparent,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: active
+                ? [
+                    BoxShadow(
+                      color: primaryColor.withValues(alpha: 0.3),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : [],
           ),
           child: Center(
-            child: Text(
-              label,
+            child: AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 250),
               style: TextStyle(
                 color: active ? Colors.white : Colors.grey[500],
-                fontWeight: FontWeight.w900,
+                fontWeight: active ? FontWeight.w900 : FontWeight.w600,
                 fontSize: 13,
+                fontFamily: 'AppFont',
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
             ),
           ),
         ),
@@ -591,7 +630,6 @@ class _DetailScreenState extends State<DetailScreen> {
 
         return Column(
           children: [
-
             if (_posts.isEmpty)
               Center(
                 child: Padding(
@@ -636,9 +674,11 @@ class _DetailScreenState extends State<DetailScreen> {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: primaryColor.withOpacity(0.1),
+                      color: primaryColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: primaryColor.withOpacity(0.2)),
+                      border: Border.all(
+                        color: primaryColor.withValues(alpha: 0.2),
+                      ),
                     ),
                     child: Text(
                       it.trim(),
@@ -678,7 +718,7 @@ class _DetailScreenState extends State<DetailScreen> {
             child: Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: primaryColor.withOpacity(0.1),
+                  backgroundColor: primaryColor.withValues(alpha: 0.1),
                   child: Text(
                     d.nameForLang('en')[0].toUpperCase(),
                     style: TextStyle(color: primaryColor),
@@ -692,8 +732,12 @@ class _DetailScreenState extends State<DetailScreen> {
                       d.nameForLang(context.read<AppProvider>().language),
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    Text(p.formattedDate, style: TextStyle(fontSize: 11, color: Colors.grey[500])),
-                ]),
+                    Text(
+                      p.formattedDate,
+                      style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -704,6 +748,19 @@ class _DetailScreenState extends State<DetailScreen> {
                 width: double.infinity,
                 height: 240,
                 fit: BoxFit.cover,
+                placeholder: (context, url) =>
+                    Container(color: Colors.grey[200]),
+                errorWidget: (context, url, error) => Container(
+                  height: 200,
+                  color: Colors.grey[100],
+                  child: Center(
+                    child: Icon(
+                      Iconsax.image5,
+                      color: Colors.grey[300],
+                      size: 40,
+                    ),
+                  ),
+                ),
               ),
             ),
           Padding(
@@ -737,12 +794,14 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Widget _contentContainer(Color surfaceColor, List<Widget> children) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: surfaceColor,
         borderRadius: BorderRadius.circular(24),
+        boxShadow: AppTheme.softShadow(isDark),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -768,7 +827,7 @@ class _DetailScreenState extends State<DetailScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: primaryColor.withOpacity(0.1),
+                color: primaryColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(icon, size: 18, color: primaryColor),
@@ -807,18 +866,7 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Widget _socialIcon(IconData icon, Color color, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Icon(icon, color: color, size: 24),
-      ),
-    );
+    return _PressableSocialIcon(icon: icon, color: color, onTap: onTap);
   }
 
   void _shareInstitution(Institution d) {
@@ -843,5 +891,176 @@ class _DetailScreenState extends State<DetailScreen> {
         'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(name)}',
       );
     }
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// PRESSABLE ACTION TILE — scale on press
+// ═══════════════════════════════════════════════════════
+class _PressableActionTile extends StatefulWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+  final Color surfaceColor;
+
+  const _PressableActionTile({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+    required this.surfaceColor,
+  });
+
+  @override
+  State<_PressableActionTile> createState() => _PressableActionTileState();
+}
+
+class _PressableActionTileState extends State<_PressableActionTile>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _ctrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 80),
+      reverseDuration: const Duration(milliseconds: 200),
+      upperBound: 1.0,
+    );
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => _ctrl.forward(),
+      onTapUp: (_) {
+        _ctrl.reverse();
+        HapticFeedback.lightImpact();
+        widget.onTap();
+      },
+      onTapCancel: () => _ctrl.reverse(),
+      child: AnimatedBuilder(
+        animation: _ctrl,
+        builder: (_, child) =>
+            Transform.scale(scale: 1.0 - _ctrl.value * 0.05, child: child),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 18),
+          decoration: BoxDecoration(
+            color: widget.surfaceColor,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: widget.color.withValues(alpha: 0.1),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: widget.color.withValues(alpha: 0.08),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: widget.color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(widget.icon, color: widget.color, size: 22),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                widget.label,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// PRESSABLE SOCIAL ICON — scale + haptic
+// ═══════════════════════════════════════════════════════
+class _PressableSocialIcon extends StatefulWidget {
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _PressableSocialIcon({
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  State<_PressableSocialIcon> createState() => _PressableSocialIconState();
+}
+
+class _PressableSocialIconState extends State<_PressableSocialIcon>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _ctrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 80),
+      reverseDuration: const Duration(milliseconds: 200),
+      upperBound: 1.0,
+    );
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => _ctrl.forward(),
+      onTapUp: (_) {
+        _ctrl.reverse();
+        HapticFeedback.lightImpact();
+        widget.onTap();
+      },
+      onTapCancel: () => _ctrl.reverse(),
+      child: AnimatedBuilder(
+        animation: _ctrl,
+        builder: (_, child) =>
+            Transform.scale(scale: 1.0 - _ctrl.value * 0.1, child: child),
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: widget.color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: widget.color.withValues(alpha: 0.08),
+              width: 1,
+            ),
+          ),
+          child: Icon(widget.icon, color: widget.color, size: 24),
+        ),
+      ),
+    );
   }
 }

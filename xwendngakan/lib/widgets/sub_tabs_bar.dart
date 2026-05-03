@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../providers/app_provider.dart';
 import '../data/constants.dart';
 import '../theme/app_theme.dart';
@@ -25,90 +26,90 @@ class SubTabsBar extends StatelessWidget {
     if (subs == null) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: Center(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Container(
+        height: 44,
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E293B).withValues(alpha: 0.5) : const Color(0xFFF1F5F9),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFE2E8F0),
+            width: 1,
+          ),
+        ),
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           physics: const BouncingScrollPhysics(),
-          child: Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: subs.map((sub) {
-                final subId = sub['id'] as String;
-                final isOn = prov.currentSub == subId || (prov.currentSub.isEmpty && subId.contains('_all'));
-                final cnt = prov.subTabCount(subId);
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: GestureDetector(
-                    onTap: () => prov.setSub(subId),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: isOn ? (isDark ? const Color(0xFF334155) : Colors.white) : Colors.transparent,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: isOn
-                            ? [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                            : [],
-                      ),
-                      child: Row(
-                        children: [
-                          Text(
-                            prov.localizedField(sub, 'label'),
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: isOn ? FontWeight.w700 : FontWeight.w600,
+          child: Row(
+            children: subs.map((sub) {
+              final subId = sub['id'] as String;
+              final isOn = prov.currentSub == subId || (prov.currentSub.isEmpty && subId.contains('_all'));
+              final cnt = prov.subTabCount(subId);
+              
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                child: GestureDetector(
+                  onTap: () => prov.setSub(subId),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: isOn 
+                        ? (isDark ? AppTheme.primary.withValues(alpha: 0.2) : Colors.white) 
+                        : Colors.transparent,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: isOn && !isDark ? [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        )
+                      ] : [],
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          prov.localizedField(sub, 'label'),
+                          style: GoogleFonts.outfit(
+                            fontSize: 12,
+                            fontWeight: isOn ? FontWeight.w800 : FontWeight.w600,
+                            color: isOn
+                                ? (isDark ? AppTheme.primary : AppTheme.primary)
+                                : (isDark ? Colors.white54 : const Color(0xFF64748B)),
+                          ),
+                        ),
+                        if (cnt > 0) ...[
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
                               color: isOn
-                                  ? AppTheme.primary
-                                  : (isDark ? const Color(0xFFF1F5F9) : const Color(0xFF94A3B8)),
+                                  ? AppTheme.primary.withValues(alpha: 0.1)
+                                  : (isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFE2E8F0)),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              '$cnt',
+                              style: GoogleFonts.outfit(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w900,
+                                color: isOn
+                                    ? AppTheme.primary
+                                    : (isDark ? Colors.white54 : const Color(0xFF64748B)),
+                              ),
                             ),
                           ),
-                          if (cnt > 0) ...[
-                            const SizedBox(width: 6),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: isOn
-                                    ? AppTheme.primary.withOpacity(0.1)
-                                    : (isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0)),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                '$cnt',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                  color: isOn
-                                      ? AppTheme.primary
-                                      : (isDark ? const Color(0xFFF1F5F9) : const Color(0xFF64748B)),
-                                ),
-                              ),
-                            ),
-                          ],
                         ],
-                      ),
+                      ],
                     ),
                   ),
-                );
-              }).toList(),
-            ),
+                ),
+              );
+            }).toList(),
           ),
         ),
       ),
     );
   }
-
-  bool hasSubTabs(String tabId) => _getSubTabs(tabId) != null;
 }

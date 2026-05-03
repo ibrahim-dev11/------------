@@ -162,7 +162,7 @@ class _EditScreenState extends State<EditScreen> {
                         style: const TextStyle(
                             fontWeight: FontWeight.w900, color: Colors.white)),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.green,
+                      backgroundColor: AppTheme.primary2,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
                     ),
@@ -260,7 +260,7 @@ class _EditScreenState extends State<EditScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppTheme.danger.withOpacity(0.1),
+                  color: AppTheme.danger.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(Iconsax.trash, color: AppTheme.danger, size: 22),

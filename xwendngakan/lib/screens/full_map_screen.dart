@@ -281,10 +281,10 @@ class _FullMapScreenState extends State<FullMapScreen>
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: color.withOpacity(0.4 * (1 - _pulseAnimation.value) + 0.1),
+                                  color: color.withValues(alpha: 0.4 * (1 - _pulseAnimation.value) + 0.1),
                                   width: 2,
                                 ),
-                                color: color.withOpacity(0.08),
+                                color: color.withValues(alpha: 0.08),
                               ),
                             ),
                           ),
@@ -346,8 +346,8 @@ class _FullMapScreenState extends State<FullMapScreen>
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      (isDark ? const Color(0xFF0F172A) : Colors.white).withOpacity(0.8),
-                      (isDark ? const Color(0xFF0F172A) : Colors.white).withOpacity(0.0),
+                      (isDark ? const Color(0xFF0F172A) : Colors.white).withValues(alpha: 0.8),
+                      (isDark ? const Color(0xFF0F172A) : Colors.white).withValues(alpha: 0.0),
                     ],
                   ),
                 ),
@@ -366,10 +366,10 @@ class _FullMapScreenState extends State<FullMapScreen>
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
-                      color: (isDark ? const Color(0xFF1E293B) : Colors.white).withOpacity(0.75),
+                      color: (isDark ? const Color(0xFF1E293B) : Colors.white).withValues(alpha: 0.75),
                       borderRadius: BorderRadius.circular(18),
                       border: Border.all(
-                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+                        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
                       ),
                     ),
                     child: Row(
@@ -512,21 +512,21 @@ class _FullMapScreenState extends State<FullMapScreen>
           padding: EdgeInsets.symmetric(horizontal: isOn ? 14 : 10, vertical: 8),
           decoration: BoxDecoration(
             gradient: isOn
-                ? LinearGradient(colors: [color, color.withOpacity(0.8)])
+                ? LinearGradient(colors: [color, color.withValues(alpha: 0.8)])
                 : null,
-            color: isOn ? null : (isDark ? const Color(0xFF1E293B) : Colors.white).withOpacity(0.85),
+            color: isOn ? null : (isDark ? const Color(0xFF1E293B) : Colors.white).withValues(alpha: 0.85),
             borderRadius: BorderRadius.circular(14),
             border: isOn ? null : Border.all(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
             ),
             boxShadow: [
               if (isOn) BoxShadow(
-                color: color.withOpacity(0.35),
+                color: color.withValues(alpha: 0.35),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 6,
                 offset: const Offset(0, 2),
               ),
@@ -555,7 +555,7 @@ class _FullMapScreenState extends State<FullMapScreen>
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.25),
+                    color: Colors.white.withValues(alpha: 0.25),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -587,15 +587,15 @@ class _FullMapScreenState extends State<FullMapScreen>
           filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
           child: Container(
             decoration: BoxDecoration(
-              color: (isDark ? const Color(0xFF1E293B) : Colors.white).withOpacity(0.82),
+              color: (isDark ? const Color(0xFF1E293B) : Colors.white).withValues(alpha: 0.82),
               borderRadius: BorderRadius.circular(22),
               border: Border.all(
-                color: colors[1].withOpacity(0.2),
+                color: colors[1].withValues(alpha: 0.2),
                 width: 1.5,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: colors[1].withOpacity(0.15),
+                  color: colors[1].withValues(alpha: 0.15),
                   blurRadius: 30,
                   offset: const Offset(0, 10),
                 ),
@@ -629,7 +629,7 @@ class _FullMapScreenState extends State<FullMapScreen>
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: colors[1].withOpacity(0.3),
+                              color: colors[1].withValues(alpha: 0.3),
                               blurRadius: 8,
                               offset: const Offset(0, 3),
                             ),
@@ -690,7 +690,7 @@ class _FullMapScreenState extends State<FullMapScreen>
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                   decoration: BoxDecoration(
-                                    color: colors[1].withOpacity(isDark ? 0.15 : 0.1),
+                                    color: colors[1].withValues(alpha: isDark ? 0.15 : 0.1),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Text(
@@ -713,7 +713,7 @@ class _FullMapScreenState extends State<FullMapScreen>
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [colors[1].withOpacity(0.15), colors[2].withOpacity(0.08)],
+                            colors: [colors[1].withValues(alpha: 0.15), colors[2].withValues(alpha: 0.08)],
                           ),
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -763,7 +763,7 @@ class _ClusterMarker extends StatelessWidget {
           border: Border.all(color: Colors.white, width: 2.5),
           boxShadow: [
             BoxShadow(
-              color: AppTheme.primary.withOpacity(0.45),
+              color: AppTheme.primary.withValues(alpha: 0.45),
               blurRadius: 14,
               offset: const Offset(0, 4),
             ),
@@ -826,13 +826,13 @@ class _MapPin extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: color.withOpacity(isSelected ? 0.5 : 0.25),
+                    color: color.withValues(alpha: isSelected ? 0.5 : 0.25),
                     blurRadius: isSelected ? 16 : 8,
                     offset: const Offset(0, 4),
                   ),
                   if (isSelected)
                     BoxShadow(
-                      color: color.withOpacity(0.2),
+                      color: color.withValues(alpha: 0.2),
                       blurRadius: 24,
                       spreadRadius: 4,
                     ),
@@ -891,7 +891,7 @@ class _PinTailPainter extends CustomPainter {
     if (isSelected) {
       // Shadow for depth
       final shadowPaint = Paint()
-        ..color = color.withOpacity(0.3)
+        ..color = color.withValues(alpha: 0.3)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);
       canvas.drawPath(path, shadowPaint);
       canvas.drawPath(path, paint);
@@ -924,10 +924,10 @@ class _GlassButton extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: (isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9)).withOpacity(0.7),
+              color: (isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9)).withValues(alpha: 0.7),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
+                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
               ),
             ),
             child: Icon(

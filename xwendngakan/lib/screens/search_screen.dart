@@ -7,6 +7,7 @@ import '../providers/app_provider.dart';
 import '../services/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../widgets/institution_card.dart';
+import '../widgets/premium_search_bar.dart';
 import '../data/constants.dart';
 import 'detail_screen.dart';
 import 'edit_screen.dart';
@@ -32,7 +33,7 @@ class _SearchScreenState extends State<SearchScreen> {
       _searchFocus.requestFocus();
     });
   }
-   
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -45,7 +46,10 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   List<dynamic> _getFilteredResults(AppProvider prov) {
-    if (_localSearch.isEmpty && _selectedType.isEmpty && !_hasActiveFilters(prov)) return [];
+    if (_localSearch.isEmpty &&
+        _selectedType.isEmpty &&
+        !_hasActiveFilters(prov))
+      return [];
 
     final query = _localSearch.toLowerCase();
     var results = prov.allInstitutions.where((inst) {
@@ -53,28 +57,35 @@ class _SearchScreenState extends State<SearchScreen> {
 
       // Search filter
       if (_localSearch.isNotEmpty) {
-        final matchesSearch = inst.nku.toLowerCase().contains(query) ||
-               inst.nen.toLowerCase().contains(query) ||
-               inst.city.toLowerCase().contains(query) ||
-               inst.type.toLowerCase().contains(query);
+        final matchesSearch =
+            inst.nku.toLowerCase().contains(query) ||
+            inst.nen.toLowerCase().contains(query) ||
+            inst.city.toLowerCase().contains(query) ||
+            inst.type.toLowerCase().contains(query);
         if (!matchesSearch) return false;
       }
 
       // Debug print for type filtering
       if (_selectedType.isNotEmpty && inst.type != _selectedType) {
-        print('Filtered out: inst.type = ${inst.type} _selectedType = ${_selectedType}');
+        print(
+          'Filtered out: inst.type = ${inst.type} _selectedType = ${_selectedType}',
+        );
         return false;
       }
 
       // Type filter
       if (prov.filterType.isNotEmpty && inst.type != prov.filterType) {
-        print('Filtered by filterType: inst.type = ${inst.type} filterType = ${prov.filterType}');
+        print(
+          'Filtered by filterType: inst.type = ${inst.type} filterType = ${prov.filterType}',
+        );
         return false;
       }
 
       // City filter
       if (prov.filterCity.isNotEmpty && inst.city != prov.filterCity) {
-        print('Filtered by city: inst.city = ${inst.city} filterCity = ${prov.filterCity}');
+        print(
+          'Filtered by city: inst.city = ${inst.city} filterCity = ${prov.filterCity}',
+        );
         return false;
       }
 
@@ -84,7 +95,11 @@ class _SearchScreenState extends State<SearchScreen> {
     return results;
   }
 
-  void _showFilterBottomSheet(BuildContext context, AppProvider prov, bool isDark) {
+  void _showFilterBottomSheet(
+    BuildContext context,
+    AppProvider prov,
+    bool isDark,
+  ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -108,132 +123,41 @@ class _SearchScreenState extends State<SearchScreen> {
           statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
         ),
         child: Scaffold(
-          backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF3F6FC),
+          backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFF3F6FC),
           body: SafeArea(
             child: Column(
               children: [
                 // Search Header
-                Container(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
-                  child: Row(
-                    children: [
-                      // Back button
-                     
-                      const SizedBox(width: 12),
-                      // Search field
-                      Expanded(
-                        child: Container(
-                          height: 52,
-                          decoration: BoxDecoration(
-                            color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppTheme.primary.withOpacity(0.1),
-                                blurRadius: 15,
-                                offset: const Offset(0, 5),
-                              ),
-                            ],
-                          ),
-                          child: TextField(
-                            controller: _searchController,
-                            focusNode: _searchFocus,
-                            onChanged: (v) => setState(() => _localSearch = v),
-                            textDirection: Directionality.of(context),
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: isDark ? Colors.white : const Color(0xFF1E293B),
-                            ),
-                            decoration: InputDecoration(
-                              hintText: S.of(context, 'searchHint'),
-                              hintStyle: TextStyle(
-                                fontSize: 13,
-                                color: isDark ? Colors.grey[200] : Colors.grey[400],
-                              ),
-                              prefixIcon: Icon(
-                                Iconsax.search_normal_1,
-                                size: 20,
-                                color: AppTheme.primary,
-                              ),
-                              suffixIcon: (_localSearch.isNotEmpty || _selectedType.isNotEmpty)
-                                  ? GestureDetector(
-                                      onTap: () {
-                                        _searchController.clear();
-                                        setState(() {
-                                          _localSearch = '';
-                                          _selectedType = '';
-                                        });
-                                      },
-                                      child: Icon(
-                                        Iconsax.close_circle5,
-                                        size: 20,
-                                        color: Colors.grey[400],
-                                      ),
-                                    )
-                                  : null,
-                              border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 16,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      // Filter button
-                      GestureDetector(
-                        onTap: () => _showFilterBottomSheet(context, prov, isDark),
-                        child: Container(
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                            borderRadius: BorderRadius.circular(14),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.08),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Icon(
-                                Iconsax.setting_4,
-                                size: 20,
-                                color: isDark ? Colors.grey[200] : Colors.grey[600],
-                              ),
-                              if (_hasActiveFilters(prov))
-                                Positioned(
-                                  top: -2,
-                                  right: -2,
-                                  child: Container(
-                                    width: 8,
-                                    height: 8,
-                                    decoration: BoxDecoration(
-                                      color: AppTheme.primary,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 16, 0, 12),
+                  child: PremiumSearchBar(
+                    controller: _searchController,
+                    focusNode: _searchFocus,
+                    hintText: S.of(context, 'searchHint'),
+                    autofocus: true,
+                    showMic: true,
+                    showFilter: true,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    onChanged: (v) => setState(() => _localSearch = v),
+                    onFilterTap: () =>
+                        _showFilterBottomSheet(context, prov, isDark),
+                    onMicTap: () {
+                      HapticFeedback.mediumImpact();
+                      // Voice search
+                    },
                   ),
                 ),
 
                 // Results or suggestions
                 Expanded(
-                  child: (_localSearch.isEmpty && _selectedType.isEmpty && !_hasActiveFilters(prov))
+                  child:
+                      (_localSearch.isEmpty &&
+                          _selectedType.isEmpty &&
+                          !_hasActiveFilters(prov))
                       ? _buildSuggestions(prov, isDark)
                       : results.isEmpty
-                          ? _buildNoResults(isDark)
-                          : _buildResults(results, isDark, screenW),
+                      ? _buildNoResults(isDark)
+                      : _buildResults(results, isDark, screenW),
                 ),
               ],
             ),
@@ -245,60 +169,54 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Widget _buildSuggestions(AppProvider prov, bool isDark) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Recent searches or popular
           Row(
             children: [
-              Icon(
-                Iconsax.trend_up,
-                size: 18,
-                color: AppTheme.primary,
-              ),
-              const SizedBox(width: 8),
+              Icon(Iconsax.trend_up5, size: 20, color: AppTheme.primary),
+              const SizedBox(width: 10),
               Text(
                 S.of(context, 'popularSearches'),
                 style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : const Color(0xFF1E293B),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w900,
+                  color: isDark ? Colors.white : AppTheme.darkSurface,
+                  letterSpacing: -0.5,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: _popularSearches(prov.language).map((s) =>
-              _buildSuggestionChip(s, isDark),
-            ).toList(),
+            spacing: 12,
+            runSpacing: 12,
+            children: _popularSearches(
+              prov.language,
+            ).map((s) => _buildSuggestionChip(s, isDark)).toList(),
           ),
 
-          const SizedBox(height: 32),
+          const SizedBox(height: 40),
 
           // Categories
           Row(
             children: [
-              Icon(
-                Iconsax.category,
-                size: 18,
-                color: AppTheme.accent,
-              ),
-              const SizedBox(width: 8),
+              Icon(Iconsax.category5, size: 20, color: AppTheme.accent),
+              const SizedBox(width: 10),
               Text(
                 S.of(context, 'categories'),
                 style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : const Color(0xFF1E293B),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w900,
+                  color: isDark ? Colors.white : AppTheme.darkSurface,
+                  letterSpacing: -0.5,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           ...prov.institutionTypes.map((t) {
             final key = t['key'] as String;
             final label = prov.localizedField(t, 'name');
@@ -313,11 +231,32 @@ class _SearchScreenState extends State<SearchScreen> {
   List<String> _popularSearches(String lang) {
     switch (lang) {
       case 'en':
-        return ['Salahaddin University', 'University of Sulaimani', 'Institute', 'College', 'Erbil', 'Sulaimani'];
+        return [
+          'Salahaddin University',
+          'University of Sulaimani',
+          'Institute',
+          'College',
+          'Erbil',
+          'Sulaimani',
+        ];
       case 'ar':
-        return ['جامعة صلاح الدين', 'جامعة السليمانية', 'معهد', 'كلية', 'أربيل', 'السليمانية'];
+        return [
+          'جامعة صلاح الدين',
+          'جامعة السليمانية',
+          'معهد',
+          'كلية',
+          'أربيل',
+          'السليمانية',
+        ];
       default:
-        return ['زانکۆی سەلاحەدین', 'زانکۆی سلێمانی', 'پەیمانگا', 'کۆلێژ', 'هەولێر', 'سلێمانی'];
+        return [
+          'زانکۆی سەلاحەدین',
+          'زانکۆی سلێمانی',
+          'پەیمانگا',
+          'کۆلێژ',
+          'هەولێر',
+          'سلێمانی',
+        ];
     }
   }
 
@@ -328,20 +267,29 @@ class _SearchScreenState extends State<SearchScreen> {
         setState(() => _localSearch = text);
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E293B) : Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          color: isDark ? AppTheme.darkCard : Colors.white,
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFFE5E7EB),
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.08)
+                : Colors.black.withValues(alpha: 0.05),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Text(
           text,
           style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: isDark ? Colors.grey[200] : Colors.grey[700],
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            color: isDark ? Colors.grey[300] : Colors.grey[700],
           ),
         ),
       ),
@@ -350,35 +298,39 @@ class _SearchScreenState extends State<SearchScreen> {
 
   static IconData _iconsaxFromName(String name) {
     const map = <String, IconData>{
-      'teacher': Iconsax.teacher,
-      'building_4': Iconsax.building_4,
-      'book_1': Iconsax.book_1,
-      'bookmark_2': Iconsax.bookmark_2,
-      'house': Iconsax.house,
-      'happyemoji': Iconsax.happyemoji,
-      'heart': Iconsax.heart,
-      'translate': Iconsax.translate,
-      'buildings': Iconsax.buildings,
-      'moon': Iconsax.moon,
-      'lamp': Iconsax.lamp,
-      'category': Iconsax.category,
-      'global': Iconsax.global,
-      'medal_star': Iconsax.medal_star,
-      'briefcase': Iconsax.briefcase,
-      'chart': Iconsax.chart,
-      'cup': Iconsax.cup,
-      'music': Iconsax.music,
-      'brush': Iconsax.brush,
-      'computing': Iconsax.computing,
-      'health': Iconsax.health,
-      'microscope': Iconsax.microscope,
+      'teacher': Iconsax.teacher5,
+      'building_4': Iconsax.building_45,
+      'book_1': Iconsax.book_15,
+      'bookmark_2': Iconsax.bookmark_25,
+      'house': Iconsax.house5,
+      'happyemoji': Iconsax.happyemoji5,
+      'heart': Iconsax.heart5,
+      'translate': Iconsax.translate5,
+      'buildings': Iconsax.buildings5,
+      'moon': Iconsax.moon5,
+      'lamp': Iconsax.lamp5,
+      'category': Iconsax.category5,
+      'global': Iconsax.global5,
+      'medal_star': Iconsax.medal_star5,
+      'briefcase': Iconsax.briefcase5,
+      'chart': Iconsax.chart5,
+      'cup': Iconsax.cup5,
+      'music': Iconsax.music5,
+      'brush': Iconsax.brush5,
+      'computing': Iconsax.computing5,
+      'health': Iconsax.health5,
+      'microscope': Iconsax.microscope5,
     };
-    return map[name] ?? Iconsax.category;
+    return map[name] ?? Iconsax.category5;
   }
 
-  Widget _buildCategoryItem(String key, String label, String iconName, bool isDark) {
-    final colors = AppConstants.typeGradients[key] ?? [Colors.grey, Colors.grey];
-    
+  Widget _buildCategoryItem(
+    String key,
+    String label,
+    String iconName,
+    bool isDark,
+  ) {
+    final colors = [AppTheme.primary, AppTheme.primary2];
     final icon = _iconsaxFromName(iconName);
 
     return GestureDetector(
@@ -390,65 +342,46 @@ class _SearchScreenState extends State<SearchScreen> {
         _searchController.clear();
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.all(14),
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E293B) : Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          color: isDark ? AppTheme.darkCard : Colors.white,
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFFE5E7EB),
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.06)
+                : Colors.black.withValues(alpha: 0.04),
           ),
           boxShadow: [
             BoxShadow(
-              color: colors[1].withOpacity(isDark ? 0.08 : 0.06),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 16,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
         child: Row(
           children: [
-            // 3D-style icon container
+            // Premium icon container
             Container(
-              width: 48,
-              height: 48,
+              width: 52,
+              height: 52,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    colors[1].withOpacity(isDark ? 0.25 : 0.15),
-                    colors[1].withOpacity(isDark ? 0.10 : 0.05),
+                    AppTheme.primary.withValues(alpha: 0.15),
+                    AppTheme.primary2.withValues(alpha: 0.05),
                   ],
                 ),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: colors[1].withOpacity(isDark ? 0.2 : 0.12),
-                  width: 1,
-                ),
+                borderRadius: BorderRadius.circular(16),
               ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Shadow layer for depth
-                  Positioned(
-                    bottom: 2,
-                    child: Icon(
-                      icon,
-                      size: 22,
-                      color: colors[0].withOpacity(0.15),
-                    ),
-                  ),
-                  // Main icon
-                  Icon(
-                    icon,
-                    size: 22,
-                    color: colors[1],
-                  ),
-                ],
+              child: Center(
+                child: Icon(icon, size: 26, color: AppTheme.primary),
               ),
             ),
-            const SizedBox(width: 14),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -456,33 +389,36 @@ class _SearchScreenState extends State<SearchScreen> {
                   Text(
                     label,
                     style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white : const Color(0xFF1E293B),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                      color: isDark ? Colors.white : AppTheme.darkSurface,
+                      letterSpacing: -0.5,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 4),
                   Text(
                     '${context.read<AppProvider>().countByType(key)} ${S.of(context, 'institution')}',
                     style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                      color: colors[1].withOpacity(0.8),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.primary.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
               ),
             ),
             Container(
-              padding: const EdgeInsets.all(6),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: colors[1].withOpacity(isDark ? 0.12 : 0.08),
-                borderRadius: BorderRadius.circular(8),
+                color: AppTheme.primary.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
-                Iconsax.arrow_left_2,
-                size: 16,
-                color: colors[1],
+                Directionality.of(context) == TextDirection.rtl
+                    ? Iconsax.arrow_left_2
+                    : Iconsax.arrow_right_3,
+                size: 18,
+                color: AppTheme.primary,
               ),
             ),
           ],
@@ -497,35 +433,44 @@ class _SearchScreenState extends State<SearchScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF3F4F6),
+              color: isDark ? AppTheme.darkCard : const Color(0xFFF3F4F6),
               shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primary.withValues(alpha: 0.1),
+                  blurRadius: 40,
+                  spreadRadius: 10,
+                ),
+              ],
             ),
             child: Icon(
-              Iconsax.search_status,
-              size: 48,
-              color: Colors.grey[400],
+              Iconsax.search_status5,
+              size: 56,
+              color: AppTheme.primary.withValues(alpha: 0.3),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 28),
           Text(
             S.of(context, 'noResults'),
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: isDark ? Colors.grey[200] : Colors.grey[700],
+              fontSize: 20,
+              fontWeight: FontWeight.w900,
+              color: isDark ? Colors.white : AppTheme.darkSurface,
+              letterSpacing: -0.5,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           Text(
             S.of(context, 'searchDifferent'),
             style: TextStyle(
-              fontSize: 13,
+              fontSize: 14,
               color: Colors.grey[500],
+              fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
           GestureDetector(
             onTap: () {
               setState(() {
@@ -535,17 +480,24 @@ class _SearchScreenState extends State<SearchScreen> {
               _searchController.clear();
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               decoration: BoxDecoration(
-                color: AppTheme.primary,
-                borderRadius: BorderRadius.circular(12),
+                gradient: AppTheme.primaryGradient,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primary.withValues(alpha: 0.3),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
               ),
               child: Text(
                 S.of(context, 'back'),
                 style: const TextStyle(
                   color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 15,
                 ),
               ),
             ),
@@ -560,45 +512,66 @@ class _SearchScreenState extends State<SearchScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
-          child: Text(
-            S.of(context, 'resultCount', {'count': results.length.toString()}),
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[500],
-            ),
+          padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
+          child: Row(
+            children: [
+              Container(
+                width: 4,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: AppTheme.primary,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                S.of(context, 'resultCount', {
+                  'count': results.length.toString(),
+                }),
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                  color: isDark ? Colors.white70 : Colors.grey[700],
+                  letterSpacing: -0.2,
+                ),
+              ),
+            ],
           ),
         ),
         Expanded(
           child: AnimationLimiter(
             child: GridView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: screenW > 600 ? 3 : 2,
-                mainAxisSpacing: 14,
-                crossAxisSpacing: 14,
-                childAspectRatio: 0.65,
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                childAspectRatio: 0.62,
               ),
               itemCount: results.length,
               itemBuilder: (context, i) {
                 final inst = results[i];
                 return AnimationConfiguration.staggeredGrid(
                   position: i,
-                  duration: const Duration(milliseconds: 400),
+                  duration: const Duration(milliseconds: 600),
                   columnCount: screenW > 600 ? 3 : 2,
                   child: SlideAnimation(
-                    verticalOffset: 30.0,
+                    verticalOffset: 40.0,
+                    curve: Curves.easeOutQuart,
                     child: FadeInAnimation(
                       child: InstitutionCard(
                         institution: inst,
                         onTap: () => Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => DetailScreen(institution: inst)),
+                          MaterialPageRoute(
+                            builder: (_) => DetailScreen(institution: inst),
+                          ),
                         ),
                         onEdit: () => Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => EditScreen(institution: inst)),
+                          MaterialPageRoute(
+                            builder: (_) => EditScreen(institution: inst),
+                          ),
                         ),
                       ),
                     ),
@@ -620,10 +593,7 @@ class _FilterBottomSheet extends StatelessWidget {
   final AppProvider prov;
   final bool isDark;
 
-  const _FilterBottomSheet({
-    required this.prov,
-    required this.isDark,
-  });
+  const _FilterBottomSheet({required this.prov, required this.isDark});
 
   bool _hasActiveFilters() {
     return prov.filterType.isNotEmpty || prov.filterCity.isNotEmpty;
@@ -633,12 +603,12 @@ class _FilterBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0F172A) : Colors.white,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        color: isDark ? AppTheme.darkBg : Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 30,
+            color: Colors.black.withValues(alpha: 0.3),
+            blurRadius: 40,
             offset: const Offset(0, -10),
           ),
         ],
@@ -648,52 +618,54 @@ class _FilterBottomSheet extends StatelessWidget {
         children: [
           // Handle bar
           Container(
-            margin: const EdgeInsets.only(top: 12),
-            width: 40,
-            height: 4,
+            margin: const EdgeInsets.only(top: 14),
+            width: 48,
+            height: 5,
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF94A3B8) : const Color(0xFFE5E7EB),
-              borderRadius: BorderRadius.circular(2),
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.1)
+                  : const Color(0xFFE5E7EB),
+              borderRadius: BorderRadius.circular(10),
             ),
           ),
-          
+
           // Header
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(24),
             child: Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        AppTheme.primary.withOpacity(0.15),
-                        AppTheme.accent.withOpacity(0.08),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(16),
+                    color: AppTheme.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(18),
                   ),
-                  child: const Icon(Iconsax.setting_4, size: 22, color: AppTheme.primary),
+                  child: const Icon(
+                    Iconsax.setting_45,
+                    size: 24,
+                    color: AppTheme.primary,
+                  ),
                 ),
-                const SizedBox(width: 14),
+                const SizedBox(width: 16),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       S.of(context, 'filter'),
                       style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                        color: isDark ? Colors.white : const Color(0xFF1E293B),
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                        color: isDark ? Colors.white : AppTheme.darkSurface,
+                        letterSpacing: -0.5,
                       ),
                     ),
+                    const SizedBox(height: 2),
                     Text(
                       S.of(context, 'findFavorite'),
                       style: TextStyle(
-                        fontSize: 12,
-                        color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF9CA3AF),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey[500],
                       ),
                     ),
                   ],
@@ -701,22 +673,35 @@ class _FilterBottomSheet extends StatelessWidget {
                 const Spacer(),
                 if (_hasActiveFilters())
                   GestureDetector(
-                    onTap: () => prov.clearFilters(),
+                    onTap: () {
+                      HapticFeedback.mediumImpact();
+                      prov.clearFilters();
+                    },
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
                       decoration: BoxDecoration(
-                        color: AppTheme.danger.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: AppTheme.danger.withOpacity(0.2)),
+                        color: AppTheme.danger.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Iconsax.trash, size: 16, color: AppTheme.danger),
-                          const SizedBox(width: 6),
+                          Icon(
+                            Iconsax.trash5,
+                            size: 16,
+                            color: AppTheme.danger,
+                          ),
+                          const SizedBox(width: 8),
                           Text(
                             S.of(context, 'clear'),
-                             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppTheme.danger),
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w900,
+                              color: AppTheme.danger,
+                            ),
                           ),
                         ],
                       ),
@@ -725,17 +710,10 @@ class _FilterBottomSheet extends StatelessWidget {
               ],
             ),
           ),
-          
-          // Divider
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            height: 1,
-            color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF3F4F6),
-          ),
-          
+
           // Filter options
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -743,18 +721,21 @@ class _FilterBottomSheet extends StatelessWidget {
                 Text(
                   S.of(context, 'institutionType'),
                   style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFF6B7280),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w900,
+                    color: isDark ? Colors.white70 : Colors.grey[700],
+                    letterSpacing: -0.2,
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
                 Container(
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF9FAFB),
-                    borderRadius: BorderRadius.circular(16),
+                    color: isDark ? AppTheme.darkCard : const Color(0xFFF9FAFB),
+                    borderRadius: BorderRadius.circular(18),
                     border: Border.all(
-                      color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE5E7EB),
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.05)
+                          : const Color(0xFFE5E7EB),
                     ),
                   ),
                   child: DropdownButtonHideUnderline(
@@ -762,51 +743,80 @@ class _FilterBottomSheet extends StatelessWidget {
                       value: prov.filterType.isEmpty ? null : prov.filterType,
                       hint: Row(
                         children: [
-                          Icon(Iconsax.category, size: 18, color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFF9CA3AF)),
-                          const SizedBox(width: 10),
+                          Icon(
+                            Iconsax.category5,
+                            size: 20,
+                            color: AppTheme.primary,
+                          ),
+                          const SizedBox(width: 12),
                           Text(
                             S.of(context, 'allTypes'),
                             style: TextStyle(
-                              fontSize: 14,
-                              color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF9CA3AF),
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: isDark ? Colors.white60 : Colors.grey[500],
                             ),
                           ),
                         ],
                       ),
                       isExpanded: true,
-                      icon: Icon(Iconsax.arrow_down_1, size: 18, color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF9CA3AF)),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                      borderRadius: BorderRadius.circular(16),
-                      dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+                      icon: Icon(
+                        Iconsax.arrow_down_1,
+                        size: 20,
+                        color: AppTheme.primary,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 6,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                      dropdownColor: isDark ? AppTheme.darkCard : Colors.white,
                       items: prov.localizedTypeLabels.entries
-                          .map((e) => DropdownMenuItem(
-                                value: e.key,
-                                child: Text(e.value, style: TextStyle(fontSize: 14, color: isDark ? Colors.white : const Color(0xFF1E293B))),
-                              ))
+                          .map(
+                            (e) => DropdownMenuItem(
+                              value: e.key,
+                              child: Text(
+                                e.value,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                  color: isDark
+                                      ? Colors.white
+                                      : AppTheme.darkSurface,
+                                ),
+                              ),
+                            ),
+                          )
                           .toList(),
-                      onChanged: (v) => prov.setFilterType(v ?? ''),
+                      onChanged: (v) {
+                        HapticFeedback.lightImpact();
+                        prov.setFilterType(v ?? '');
+                      },
                     ),
                   ),
                 ),
-                
-                const SizedBox(height: 20),
+
+                const SizedBox(height: 24),
 
                 // City dropdown
                 Text(
                   S.of(context, 'city'),
                   style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFF6B7280),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w900,
+                    color: isDark ? Colors.white70 : Colors.grey[700],
+                    letterSpacing: -0.2,
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
                 Container(
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF9FAFB),
-                    borderRadius: BorderRadius.circular(16),
+                    color: isDark ? AppTheme.darkCard : const Color(0xFFF9FAFB),
+                    borderRadius: BorderRadius.circular(18),
                     border: Border.all(
-                      color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE5E7EB),
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.05)
+                          : const Color(0xFFE5E7EB),
                     ),
                   ),
                   child: DropdownButtonHideUnderline(
@@ -814,70 +824,96 @@ class _FilterBottomSheet extends StatelessWidget {
                       value: prov.filterCity.isEmpty ? null : prov.filterCity,
                       hint: Row(
                         children: [
-                          Icon(Iconsax.location, size: 18, color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFF9CA3AF)),
-                          const SizedBox(width: 10),
+                          Icon(
+                            Iconsax.location5,
+                            size: 20,
+                            color: AppTheme.accent,
+                          ),
+                          const SizedBox(width: 12),
                           Text(
                             S.of(context, 'allCities'),
                             style: TextStyle(
-                              fontSize: 14,
-                              color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF9CA3AF),
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: isDark ? Colors.white60 : Colors.grey[500],
                             ),
                           ),
                         ],
                       ),
                       isExpanded: true,
-                      icon: Icon(Iconsax.arrow_down_1, size: 18, color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF9CA3AF)),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                      borderRadius: BorderRadius.circular(16),
-                      dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+                      icon: Icon(
+                        Iconsax.arrow_down_1,
+                        size: 20,
+                        color: AppTheme.accent,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 6,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                      dropdownColor: isDark ? AppTheme.darkCard : Colors.white,
                       items: (AppConstants.cities['عێراق'] ?? [])
-                          .map((c) => DropdownMenuItem(
-                                value: c,
-                                child: Text(c, style: TextStyle(fontSize: 14, color: isDark ? Colors.white : const Color(0xFF1E293B))),
-                              ))
+                          .map(
+                            (c) => DropdownMenuItem(
+                              value: c,
+                              child: Text(
+                                c,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                  color: isDark
+                                      ? Colors.white
+                                      : AppTheme.darkSurface,
+                                ),
+                              ),
+                            ),
+                          )
                           .toList(),
-                      onChanged: (v) => prov.setFilterCity(v ?? ''),
+                      onChanged: (v) {
+                        HapticFeedback.lightImpact();
+                        prov.setFilterCity(v ?? '');
+                      },
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          
+
           // Apply button
           Padding(
-            padding:  EdgeInsets.fromLTRB(20, 0, 20, 30),
+            padding: EdgeInsets.fromLTRB(24, 40, 24, 40),
             child: GestureDetector(
-              onTap: () => Navigator.pop(context),
+              onTap: () {
+                HapticFeedback.mediumImpact();
+                Navigator.pop(context);
+              },
               child: Container(
                 width: double.infinity,
-                padding:  EdgeInsets.symmetric(vertical: 16),
+                padding: EdgeInsets.symmetric(vertical: 18),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [AppTheme.primary, Color(0xFF6366F1), AppTheme.accent],
-                  ),
-                  borderRadius: BorderRadius.circular(18),
+                  gradient: AppTheme.primaryGradient,
+                  borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.primary.withOpacity(0.4),
+                      color: AppTheme.primary.withValues(alpha: 0.3),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),
                   ],
                 ),
-                child:  Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Iconsax.tick_circle, color: Colors.white, size: 20),
-                    SizedBox(width: 10),
+                    Icon(Iconsax.tick_circle5, color: Colors.white, size: 22),
+                    SizedBox(width: 12),
                     Text(
                       S.of(context, 'apply'),
                       style: TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w900,
                         color: Colors.white,
+                        letterSpacing: 0.5,
                       ),
                     ),
                   ],

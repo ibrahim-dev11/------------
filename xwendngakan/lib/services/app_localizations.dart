@@ -61,6 +61,20 @@ class S {
       'tr': 'Ayarlar',
       'fr': 'Paramètres',
     },
+    'navCvBank': {
+      'ku': 'سیڤی',
+      'ar': 'بنك السير الذاتية',
+      'en': 'CV Bank',
+      'tr': 'CV Bankası',
+      'fr': 'Banque de CV',
+    },
+    'navTeachers': {
+      'ku': 'مامۆستا',
+      'ar': 'المعلمون',
+      'en': 'Teachers',
+      'tr': 'Öğretmenler',
+      'fr': 'Enseignants',
+    },
     'navMap': {
       'ku': 'نەخشە',
       'ar': 'الخريطة',
@@ -354,6 +368,18 @@ class S {
       'tr': 'Hakkında',
       'fr': 'À propos',
     },
+    'support': {
+      'ku': 'پاڵپشتی',
+      'en': 'Support',
+    },
+    'tutorial': {
+      'ku': 'فێرکاری',
+      'en': 'Tutorial',
+    },
+    'tutorialDesc': {
+      'ku': 'چۆنیەتی بەکارهێنانی ئەپلیکەیشنەکە',
+      'en': 'How to use the application',
+    },
     'appDescription': {
       'ku': 'ئەم ئەپلیکەیشنە دلیلێکی گشتگیرە بۆ هەموو دامەزراوە پەروەردەیی و خوێندنییەکانی عێراق و کوردستان. لێرەوە دەتوانیت زانکۆ، پەیمانگە، قوتابخانە، باخچەی منداڵان و زۆر شتی تر ببینیت و بەراوردیان بکەیت.',
       'ar': 'هذا التطبيق دليل شامل لجميع المؤسسات التعليمية في العراق وكوردستان. يمكنك من هنا مشاهدة ومقارنة الجامعات والمعاهد والمدارس ورياض الأطفال وأكثر.',
@@ -484,6 +510,42 @@ class S {
       'fr': 'Chargement...',
     },
 
+    // ─── Banners ───
+    'bannerTopRated': {
+      'ku': 'باشترینەکان',
+      'ar': 'الأعلى تقييماً',
+      'en': 'Top Rated',
+    },
+    'bannerTopRatedDesc': {
+      'ku': 'پێشەنگەکانی خوێندن بدۆزەرەوە',
+      'ar': 'اكتشف قادة التعليم',
+      'en': 'Discover education leaders',
+    },
+    'bannerFeatured': {
+      'ku': 'بەرزکراوەکان',
+      'ar': 'المميزة',
+      'en': 'Featured',
+    },
+    'bannerFeaturedDesc': {
+      'ku': 'بە تایبەت هەڵبژێردراو بۆ تۆ',
+      'ar': 'مختارة خصيصاً لك',
+      'en': 'Hand-picked for you',
+    },
+    'bannerVerified': {
+      'ku': 'پەسەندکراو',
+      'ar': 'موثق',
+      'en': 'Verified',
+    },
+    'bannerVerifiedDesc': {
+      'ku': 'جێگەی متمانە و پارێزراو',
+      'ar': 'آمن وجدير بالثقة',
+      'en': 'Safe and trustworthy',
+    },
+    'explore': {
+      'ku': 'بینین',
+      'ar': 'استكشاف',
+      'en': 'Explore',
+    },
     // ─── Detail ───
     'aboutTab': {
       'ku': 'دەربارە',

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
 import '../providers/app_provider.dart';
 import '../services/app_localizations.dart';
@@ -27,11 +28,11 @@ class FilterBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0F172A) : Colors.white,
+        color: isDark ? AppTheme.darkBg : Colors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 30,
             offset: const Offset(0, -10),
           ),
@@ -46,7 +47,7 @@ class FilterBottomSheet extends StatelessWidget {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF94A3B8) : const Color(0xFFE5E7EB),
+              color: isDark ? AppTheme.textSecondary : const Color(0xFFE5E7EB),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -63,8 +64,8 @@ class FilterBottomSheet extends StatelessWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        AppTheme.primary.withOpacity(0.15),
-                        AppTheme.accent.withOpacity(0.08),
+                        AppTheme.primary.withValues(alpha: 0.15),
+                        AppTheme.accent.withValues(alpha: 0.08),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(16),
@@ -80,14 +81,14 @@ class FilterBottomSheet extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
-                        color: isDark ? Colors.white : const Color(0xFF1E293B),
+                        color: isDark ? Colors.white : AppTheme.darkSurface,
                       ),
                     ),
                     Text(
                       S.of(context, 'findFavorite'),
                       style: TextStyle(
                         fontSize: 12,
-                        color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF9CA3AF),
+                        color: isDark ? AppTheme.lightBg : const Color(0xFF9CA3AF),
                       ),
                     ),
                   ],
@@ -96,15 +97,16 @@ class FilterBottomSheet extends StatelessWidget {
                 if (_hasActiveFilters())
                   GestureDetector(
                     onTap: () {
+                      HapticFeedback.mediumImpact();
                       searchController.clear();
                       prov.clearFilters();
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       decoration: BoxDecoration(
-                        color: AppTheme.danger.withOpacity(0.1),
+                        color: AppTheme.danger.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: AppTheme.danger.withOpacity(0.2)),
+                        border: Border.all(color: AppTheme.danger.withValues(alpha: 0.2)),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -127,7 +129,7 @@ class FilterBottomSheet extends StatelessWidget {
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 20),
             height: 1,
-            color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF3F4F6),
+            color: isDark ? AppTheme.darkSurface : const Color(0xFFF3F4F6),
           ),
 
           // Filter options
@@ -148,10 +150,10 @@ class FilterBottomSheet extends StatelessWidget {
                 const SizedBox(height: 10),
                 Container(
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF9FAFB),
+                    color: isDark ? AppTheme.darkSurface : const Color(0xFFF9FAFB),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE5E7EB),
+                      color: isDark ? AppTheme.darkSurface : const Color(0xFFE5E7EB),
                     ),
                   ),
                   child: DropdownButtonHideUnderline(
@@ -165,23 +167,23 @@ class FilterBottomSheet extends StatelessWidget {
                             S.of(context, 'allTypes'),
                             style: TextStyle(
                               fontSize: 14,
-                              color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF9CA3AF),
+                              color: isDark ? AppTheme.lightBg : const Color(0xFF9CA3AF),
                             ),
                           ),
                         ],
                       ),
                       isExpanded: true,
-                      icon: Icon(Iconsax.arrow_down_1, size: 18, color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF9CA3AF)),
+                      icon: Icon(Iconsax.arrow_down_1, size: 18, color: isDark ? AppTheme.lightBg : const Color(0xFF9CA3AF)),
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                       borderRadius: BorderRadius.circular(16),
-                      dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+                      dropdownColor: isDark ? AppTheme.darkSurface : Colors.white,
                       items: prov.localizedTypeLabels.entries
                           .map((e) => DropdownMenuItem(
                                 value: e.key,
-                                child: Text(e.value, style: TextStyle(fontSize: 14, color: isDark ? Colors.white : const Color(0xFF1E293B))),
+                                child: Text(e.value, style: TextStyle(fontSize: 14, color: isDark ? Colors.white : AppTheme.darkSurface)),
                               ))
                           .toList(),
-                      onChanged: (v) => prov.setFilterType(v ?? ''),
+                      onChanged: (v) { HapticFeedback.selectionClick(); prov.setFilterType(v ?? ''); },
                     ),
                   ),
                 ),
@@ -200,10 +202,10 @@ class FilterBottomSheet extends StatelessWidget {
                 const SizedBox(height: 10),
                 Container(
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF9FAFB),
+                    color: isDark ? AppTheme.darkSurface : const Color(0xFFF9FAFB),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE5E7EB),
+                      color: isDark ? AppTheme.darkSurface : const Color(0xFFE5E7EB),
                     ),
                   ),
                   child: DropdownButtonHideUnderline(
@@ -217,23 +219,23 @@ class FilterBottomSheet extends StatelessWidget {
                             S.of(context, 'allCities'),
                             style: TextStyle(
                               fontSize: 14,
-                              color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF9CA3AF),
+                              color: isDark ? AppTheme.lightBg : const Color(0xFF9CA3AF),
                             ),
                           ),
                         ],
                       ),
                       isExpanded: true,
-                      icon: Icon(Iconsax.arrow_down_1, size: 18, color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF9CA3AF)),
+                      icon: Icon(Iconsax.arrow_down_1, size: 18, color: isDark ? AppTheme.lightBg : const Color(0xFF9CA3AF)),
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                       borderRadius: BorderRadius.circular(16),
-                      dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+                      dropdownColor: isDark ? AppTheme.darkSurface : Colors.white,
                       items: (AppConstants.cities['عێراق'] ?? [])
                           .map((c) => DropdownMenuItem(
                                 value: c,
-                                child: Text(c, style: TextStyle(fontSize: 14, color: isDark ? Colors.white : const Color(0xFF1E293B))),
+                                child: Text(c, style: TextStyle(fontSize: 14, color: isDark ? Colors.white : AppTheme.darkSurface)),
                               ))
                           .toList(),
-                      onChanged: (v) => prov.setFilterCity(v ?? ''),
+                      onChanged: (v) { HapticFeedback.selectionClick(); prov.setFilterCity(v ?? ''); },
                     ),
                   ),
                 ),
@@ -245,7 +247,10 @@ class FilterBottomSheet extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 30),
             child: GestureDetector(
-              onTap: () => Navigator.pop(context),
+              onTap: () {
+                HapticFeedback.lightImpact();
+                Navigator.pop(context);
+              },
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -253,12 +258,12 @@ class FilterBottomSheet extends StatelessWidget {
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [AppTheme.primary, Color(0xFF6366F1), AppTheme.accent],
+                    colors: [Color(0xFF6366F1), Color(0xFF818CF8), Color(0xFF38BDF8)],
                   ),
                   borderRadius: BorderRadius.circular(18),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.primary.withOpacity(0.4),
+                      color: AppTheme.primary.withValues(alpha: 0.4),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),

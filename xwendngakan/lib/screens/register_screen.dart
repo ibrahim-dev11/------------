@@ -210,7 +210,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
           ),
           centerTitle: true,
-          backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
+          backgroundColor: isDark ? AppTheme.darkBg : Colors.white,
         ),
         body: _buildScrollableForm(isDark),
       );
@@ -223,7 +223,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         appBar: AppBar(
           title: Text(S.of(context, 'editInstitution'), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
           centerTitle: true,
-          backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
+          backgroundColor: isDark ? AppTheme.darkBg : Colors.white,
           bottom: TabBar(
             tabs: [
               Tab(text: S.of(context, 'mainInfo')),
@@ -466,7 +466,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 60),
                     child: Column(
                       children: [
-                        Icon(Iconsax.document_text, size: 60, color: Colors.grey.withOpacity(0.3)),
+                        Icon(Iconsax.document_text, size: 60, color: Colors.grey.withValues(alpha: 0.3)),
                         const SizedBox(height: 16),
                         Text(S.of(context, 'noPosts'), style: TextStyle(color: Colors.grey[600], fontSize: 16)),
                       ],
@@ -495,9 +495,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
         margin: const EdgeInsets.only(bottom: 14),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          color: isDark ? AppTheme.darkSurface : Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0)),
+          border: Border.all(color: isDark ? AppTheme.darkCard : const Color(0xFFE2E8F0)),
         ),
         child: Row(
           children: [
@@ -559,7 +559,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget _translateButton(bool isDark) {
     return Container(
       height: 36,
-      decoration: BoxDecoration(color: AppTheme.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+      decoration: BoxDecoration(color: AppTheme.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -587,7 +587,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         label: Text(_hasColleges ? S.of(context, 'addCollege') : S.of(context, 'addDept')),
         style: OutlinedButton.styleFrom(
           foregroundColor: AppTheme.primary,
-          side: BorderSide(color: AppTheme.primary.withOpacity(0.4)),
+          side: BorderSide(color: AppTheme.primary.withValues(alpha: 0.4)),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           padding: const EdgeInsets.symmetric(vertical: 12),
         ),
@@ -603,7 +603,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         decoration: BoxDecoration(
           gradient: const LinearGradient(colors: [AppTheme.success, AppTheme.success2]),
           borderRadius: BorderRadius.circular(14),
-          boxShadow: [BoxShadow(color: AppTheme.success.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 4))],
+          boxShadow: [BoxShadow(color: AppTheme.success.withValues(alpha: 0.3), blurRadius: 12, offset: const Offset(0, 4))],
         ),
         child: ElevatedButton.icon(
           onPressed: _isSubmitting ? null : _submit,
@@ -761,7 +761,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
+        color: isDark ? AppTheme.darkSurface : AppTheme.lightBg,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: isDark ? const Color(0xFF2D3F5E) : const Color(0xFFE2E8F0),
@@ -777,7 +777,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 width: 28,
                 height: 28,
                 decoration: BoxDecoration(
-                  color: AppTheme.primary.withOpacity(0.15),
+                  color: AppTheme.primary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Center(
@@ -802,7 +802,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white : const Color(0xFF1E293B),
+                    color: isDark ? Colors.white : AppTheme.darkSurface,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -830,7 +830,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               prefixIcon: Icon(
                 Iconsax.building_4,
                 size: 18,
-                color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                color: isDark ? AppTheme.textSecondary : AppTheme.lightTextSub,
               ),
             ),
             onChanged: (v) => setState(() {}),
@@ -939,21 +939,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
               color: isSelected
                   ? AppTheme.primary
                   : (isDark
-                        ? const Color(0xFF1E293B)
-                        : const Color(0xFFF8FAFC)),
+                        ? AppTheme.darkSurface
+                        : AppTheme.lightBg),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isSelected
                     ? AppTheme.primary
                     : (isDark
-                          ? const Color(0xFF334155)
+                          ? AppTheme.darkCard
                           : const Color(0xFFE2E8F0)),
                 width: isSelected ? 1.5 : 1,
               ),
               boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: AppTheme.primary.withOpacity(0.2),
+                        color: AppTheme.primary.withValues(alpha: 0.2),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -973,7 +973,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     color: isSelected
                         ? Colors.white
                         : (isDark
-                              ? const Color(0xFFF1F5F9)
+                              ? AppTheme.lightBg
                               : const Color(0xFF475569)),
                   ),
                 ),
@@ -1012,7 +1012,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: Container(
         height: 120,
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
+          color: isDark ? AppTheme.darkSurface : AppTheme.lightBg,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isDark ? const Color(0xFF2D3F5E) : const Color(0xFFE2E8F0),
@@ -1078,7 +1078,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, color: color, size: 18),
@@ -1117,17 +1117,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        color: isDark ? AppTheme.darkSurface : Colors.white,
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.25 : 0.06),
+            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.06),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
         ],
         border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFE8E8E8),
+          color: isDark ? AppTheme.darkCard : const Color(0xFFE8E8E8),
         ),
       ),
       child: Column(
@@ -1151,7 +1151,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : const Color(0xFF1E293B),
+                  color: isDark ? Colors.white : AppTheme.darkSurface,
                 ),
               ),
             ],
@@ -1160,7 +1160,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           Container(
             width: double.infinity,
             height: 1,
-            color: isDark ? const Color(0xFF334155) : const Color(0xFFE8E8E8),
+            color: isDark ? AppTheme.darkCard : const Color(0xFFE8E8E8),
           ),
           const SizedBox(height: 16),
           ...children,
@@ -1180,10 +1180,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
+          color: isDark ? AppTheme.darkSurface : AppTheme.lightBg,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+            color: isDark ? AppTheme.darkCard : const Color(0xFFE2E8F0),
           ),
         ),
         child: Row(
@@ -1200,7 +1200,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: isDark
-                    ? const Color(0xFFF1F5F9)
+                    ? AppTheme.lightBg
                     : const Color(0xFF475569),
               ),
             ),
@@ -1222,7 +1222,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       style: TextStyle(
         fontSize: 12,
         fontWeight: FontWeight.w700,
-        color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF555555),
+        color: isDark ? AppTheme.lightBg : const Color(0xFF555555),
       ),
     );
   }
@@ -1260,7 +1260,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               height: 48,
               width: 48,
               child: Material(
-                color: AppTheme.primary.withOpacity(0.1),
+                color: AppTheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(12),
@@ -1386,7 +1386,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
         ),
         centerTitle: true,
-        backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
+        backgroundColor: isDark ? AppTheme.darkBg : Colors.white,
         surfaceTintColor: Colors.transparent,
       ),
       body: Center(
@@ -1400,8 +1400,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 height: 90,
                 decoration: BoxDecoration(
                   color: isDark
-                      ? AppTheme.primary.withOpacity(0.15)
-                      : AppTheme.primary.withOpacity(0.1),
+                      ? AppTheme.primary.withValues(alpha: 0.15)
+                      : AppTheme.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(Iconsax.lock_1, size: 40, color: AppTheme.primary),
@@ -1412,7 +1412,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : const Color(0xFF1E293B),
+                  color: isDark ? Colors.white : AppTheme.darkSurface,
                 ),
               ),
               const SizedBox(height: 10),
@@ -1422,8 +1422,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 style: TextStyle(
                   fontSize: 14,
                   color: isDark
-                      ? const Color(0xFFF1F5F9)
-                      : const Color(0xFF64748B),
+                      ? AppTheme.lightBg
+                      : AppTheme.lightTextSub,
                 ),
               ),
               const SizedBox(height: 28),
@@ -1467,13 +1467,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       alignment: alignment,
       padding: const EdgeInsets.symmetric(horizontal: 25),
       decoration: BoxDecoration(
-        color: Colors.redAccent.withOpacity(0.15),
+        color: Colors.redAccent.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.redAccent.withOpacity(0.2),
+          color: Colors.redAccent.withValues(alpha: 0.2),
           shape: BoxShape.circle,
         ),
         child: const Icon(Iconsax.trash, color: Colors.redAccent, size: 20),

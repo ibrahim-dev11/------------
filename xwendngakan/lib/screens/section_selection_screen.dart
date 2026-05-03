@@ -14,37 +14,36 @@ class SectionSelectionScreen extends StatefulWidget {
   State<SectionSelectionScreen> createState() => _SectionSelectionScreenState();
 }
 
-class _SectionSelectionScreenState extends State<SectionSelectionScreen>
-    with SingleTickerProviderStateMixin {
+class _SectionSelectionScreenState extends State<SectionSelectionScreen> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  late List<Animation<double>> _slideAnimations;
   late List<Animation<double>> _fadeAnimations;
+  late List<Animation<double>> _slideAnimations;
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1400),
+      duration: const Duration(milliseconds: 800),
     );
 
-    _slideAnimations = [];
-    _fadeAnimations = [];
+    _fadeAnimations = List.generate(3, (index) => 
+      Tween<double>(begin: 0, end: 1).animate(
+        CurvedAnimation(
+          parent: _animationController,
+          curve: Interval(0.2 * index, 0.6 + (0.1 * index), curve: Curves.easeOut),
+        ),
+      ),
+    );
 
-    for (int i = 0; i < 4; i++) {
-      _slideAnimations.add(Tween<double>(begin: 60.0, end: 0.0).animate(
+    _slideAnimations = List.generate(3, (index) => 
+      Tween<double>(begin: 30, end: 0).animate(
         CurvedAnimation(
           parent: _animationController,
-          curve: Interval(0.1 * i, 0.6 + (0.1 * i), curve: Curves.easeOutCubic),
+          curve: Interval(0.2 * index, 0.6 + (0.1 * index), curve: Curves.easeOut),
         ),
-      ));
-      _fadeAnimations.add(Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(
-          parent: _animationController,
-          curve: Interval(0.1 * i, 0.6 + (0.1 * i), curve: Curves.easeOut),
-        ),
-      ));
-    }
+      ),
+    );
 
     _animationController.forward();
   }
@@ -57,221 +56,105 @@ class _SectionSelectionScreenState extends State<SectionSelectionScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFFFFFFF),
-              Color(0xFFF8FAFC),
-              Color(0xFFEFF6FF),
-            ],
-          ),
-        ),
-        child: Stack(
+    final appProvider = Provider.of<AppProvider>(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        body: Stack(
           children: [
-            // Decorative shapes for modern background
-            Positioned(
-              top: -80,
-              right: -80,
-              child: Container(
-                width: 250,
-                height: 250,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppTheme.primary.withOpacity(0.04),
-                ),
+            // Background
+            Positioned.fill(
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 500),
+                color: isDark ? AppTheme.backgroundDark : AppTheme.backgroundLight,
               ),
             ),
-            Positioned(
-              bottom: -60,
-              left: -60,
-              child: Container(
-                width: 260,
-                height: 260,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppTheme.success.withOpacity(0.04),
-                ),
-              ),
-            ),
-            Positioned(
-              top: 300,
-              left: -40,
-              child: Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppTheme.warning.withOpacity(0.04),
-                ),
-              ),
-            ),
-            
-            // Content
+
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+                padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(height: 40),
-                    AnimatedBuilder(
-                      animation: _animationController,
-                      builder: (context, child) {
-                        return Opacity(
-                          opacity: _fadeAnimations[0].value,
-                          child: Transform.translate(
-                            offset: Offset(0, _slideAnimations[0].value),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                // App icon
-                                Container(
-                                  width: 80,
-                                  height: 80,
-                                  decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [AppTheme.primary, Color(0xFF60A5FA)],
-                                    ),
-                                    borderRadius: BorderRadius.circular(26),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: AppTheme.primary.withOpacity(0.3),
-                                        blurRadius: 24,
-                                        offset: const Offset(0, 10),
-                                      ),
-                                    ],
-                                  ),
-                                  child: const Icon(
-                                    Icons.school_rounded,
-                                    color: Colors.white,
-                                    size: 40,
-                                  ),
-                                ),
-                                const SizedBox(height: 24),
-                                const Text(
-                                  '📚 edu book',
-                                  style: TextStyle(
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.w900,
-                                    color: AppTheme.navy,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                const Text(
-                                  'دلیلی دامەزراوە پەروەردەییەکانی عێراق و کوردستان',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    color: Color(0xFF64748B),
-                                    height: 1.5,
-                                  ),
-                                ),
-                              ],
+                    // Logo & Greeting
+                    FadeTransition(
+                      opacity: _fadeAnimations[0],
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primary.withValues(alpha: 0.1),
+                              shape: BoxShape.circle,
                             ),
+                            child: const Icon(Icons.school_rounded, size: 48, color: AppTheme.primary),
                           ),
-                        );
-                      },
+                          const SizedBox(height: 24),
+                          const Text(
+                            'خوێندنگاکانم',
+                            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'بەخێربێیت بۆ گەورەترین پلاتفۆرمی خوێندن',
+                            style: TextStyle(color: isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight),
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 48),
+                    const SizedBox(height: 60),
+                    
+                    // Cards
                     Expanded(
                       child: ListView(
                         physics: const BouncingScrollPhysics(),
                         children: [
-                          _buildAnimatedCard(
-                            index: 1,
-                            title: 'دامەزراوە ئەکادیمییەکان',
-                            subtitle: 'زانکۆ • پەیمانگە • قوتابخانە',
-                            icon: Icons.account_balance_rounded,
-                            color1: AppTheme.primary,
-                            color2: const Color(0xFF60A5FA),
-                            onTap: () async {
-                              final prov = context.read<AppProvider>();
-                              if (prov.isLoggedIn) {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => const MainNavScreen()),
-                                );
-                              } else {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                                );
-                                if (context.mounted && context.read<AppProvider>().isLoggedIn) {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(builder: (_) => const MainNavScreen()),
-                                  );
-                                }
-                              }
-                            },
-                          ),
-                          const SizedBox(height: 24),
-                          _buildAnimatedCard(
-                            index: 2,
-                            title: ' CV',
-                            subtitle: 'سیڤی • هەلی کار',
-                            icon: Icons.badge_rounded,
-                            color1: AppTheme.success,
-                            color2: const Color(0xFF34D399),
-                            onTap: () async {
-                              final prov = context.read<AppProvider>();
-                              if (prov.isLoggedIn) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => const CvBankScreen()),
-                                );
-                              } else {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                                );
-                                if (context.mounted && context.read<AppProvider>().isLoggedIn) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (_) => const CvBankScreen()),
-                                  );
-                                }
-                              }
-                            },
-                          ),
-                          const SizedBox(height: 24),
-                          _buildAnimatedCard(
-                            index: 3,
-                            title: 'ماموستاکانم',
-                            subtitle: 'ماموستای تایبەت • زانکۆ • قوتابخانە',
+                          _buildSectionCard(
+                            index: 0,
+                            title: 'بەشی زانکۆ و قوتابخانەکان',
                             icon: Icons.school_rounded,
-                            color1: AppTheme.warning,
-                            color2: const Color(0xFFFCD34D),
-                            onTap: () async {
-                              final prov = context.read<AppProvider>();
-                              if (prov.isLoggedIn) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => const TeacherRequestScreen()),
-                                );
-                              } else {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                                );
-                                if (context.mounted && context.read<AppProvider>().isLoggedIn) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (_) => const TeacherRequestScreen()),
-                                  );
-                                }
-                              }
-                            },
+                            bgColor: AppTheme.sectionBlue,
+                            iconColor: AppTheme.sectionBlueDark,
+                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MainNavScreen())),
                           ),
-                          const SizedBox(height: 40),
+                          const SizedBox(height: 16),
+                          _buildSectionCard(
+                            index: 1,
+                            title: 'بەشی CV Bank',
+                            icon: Icons.badge_rounded,
+                            bgColor: AppTheme.sectionPink,
+                            iconColor: AppTheme.sectionPinkDark,
+                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CvBankScreen())),
+                          ),
+                          const SizedBox(height: 16),
+                          _buildSectionCard(
+                            index: 2,
+                            title: 'بەشی مامۆستاکانم',
+                            icon: Icons.person_rounded,
+                            bgColor: AppTheme.sectionGreen,
+                            iconColor: AppTheme.sectionGreenDark,
+                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TeacherRequestScreen())),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // User Info / Logout
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 24),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButton.icon(
+                            onPressed: () {
+                              appProvider.logout();
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+                            },
+                            icon: const Icon(Icons.logout_rounded, color: Colors.redAccent),
+                            label: const Text('چوونەدەرەوە', style: TextStyle(color: Colors.redAccent)),
+                          ),
                         ],
                       ),
                     ),
@@ -285,127 +168,57 @@ class _SectionSelectionScreenState extends State<SectionSelectionScreen>
     );
   }
 
-  Widget _buildAnimatedCard({
+  Widget _buildSectionCard({
     required int index,
     required String title,
-    required String subtitle,
     required IconData icon,
-    required Color color1,
-    required Color color2,
+    required Color bgColor,
+    required Color iconColor,
     required VoidCallback onTap,
   }) {
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
         return Opacity(
-          opacity: _fadeAnimations[index].value,
+          opacity: _fadeAnimations[index % 3].value,
           child: Transform.translate(
-            offset: Offset(0, _slideAnimations[index].value),
+            offset: Offset(0, _slideAnimations[index % 3].value),
             child: child,
           ),
         );
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(28),
-          boxShadow: [
-            BoxShadow(
-              color: color1.withOpacity(0.12),
-              blurRadius: 24,
-              offset: const Offset(0, 10),
-            ),
-            BoxShadow(
-              color: Colors.black.withOpacity(0.03),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(28),
-            highlightColor: color1.withOpacity(0.05),
-            splashColor: color1.withOpacity(0.1),
-            child: Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(28),
-                border: Border.all(
-                  color: Colors.white,
-                  width: 1.5,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: AppTheme.softShadow(),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.5),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, size: 32, color: iconColor),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: iconColor.withValues(alpha: 0.8),
+                  ),
                 ),
               ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 68,
-                    height: 68,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [color1, color2],
-                      ),
-                      borderRadius: BorderRadius.circular(22),
-                      boxShadow: [
-                        BoxShadow(
-                          color: color1.withOpacity(0.3),
-                          blurRadius: 16,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
-                    ),
-                    child: Icon(
-                      icon,
-                      color: Colors.white,
-                      size: 32,
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            fontSize: 19,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.navy,
-                            letterSpacing: 0.2,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          subtitle,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: Color(0xFF64748B), // Slate 500
-                            height: 1.4,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: color1.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      color: color1,
-                      size: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+              Icon(Icons.arrow_forward_ios_rounded, size: 16, color: iconColor.withValues(alpha: 0.5)),
+            ],
           ),
         ),
       ),

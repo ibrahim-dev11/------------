@@ -220,7 +220,7 @@ class _CvFormScreenState extends State<CvFormScreen> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primary.withOpacity(0.3),
+            color: AppTheme.primary.withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -232,7 +232,7 @@ class _CvFormScreenState extends State<CvFormScreen> {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(14),
             ),
             child: const Icon(
@@ -258,7 +258,7 @@ class _CvFormScreenState extends State<CvFormScreen> {
                 Text(
                   'زانیاریەکانت پڕبکەوە و ناردن بکە',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.85),
+                    color: Colors.white.withValues(alpha: 0.85),
                     fontSize: 13,
                   ),
                 ),
@@ -287,7 +287,7 @@ class _CvFormScreenState extends State<CvFormScreen> {
         Expanded(
           child: Container(
             height: 1,
-            color: Theme.of(context).dividerColor.withOpacity(0.5),
+            color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
           ),
         ),
       ],
@@ -318,7 +318,7 @@ class _CvFormScreenState extends State<CvFormScreen> {
         hintText: hint,
         prefixIcon: Icon(prefixIcon, color: AppTheme.primary, size: 22),
         filled: true,
-        fillColor: isDark ? Colors.white.withOpacity(0.05) : const Color(0xFFF5F7FA),
+        fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF5F7FA),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -326,7 +326,7 @@ class _CvFormScreenState extends State<CvFormScreen> {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: isDark ? Colors.white.withOpacity(0.1) : const Color(0xFFE8ECF0),
+            color: isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFE8ECF0),
           ),
         ),
         focusedBorder: OutlineInputBorder(
@@ -361,7 +361,7 @@ class _CvFormScreenState extends State<CvFormScreen> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: isDark ? Colors.white.withOpacity(0.05) : const Color(0xFFF5F7FA),
+        fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF5F7FA),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -369,7 +369,7 @@ class _CvFormScreenState extends State<CvFormScreen> {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: isDark ? Colors.white.withOpacity(0.1) : const Color(0xFFE8ECF0),
+            color: isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFE8ECF0),
           ),
         ),
         focusedBorder: OutlineInputBorder(
@@ -388,7 +388,7 @@ class _CvFormScreenState extends State<CvFormScreen> {
       dropdownColor: Theme.of(context).cardColor,
       icon: Icon(
         Icons.keyboard_arrow_down_rounded,
-        color: AppTheme.primary.withOpacity(0.7),
+        color: AppTheme.primary.withValues(alpha: 0.7),
       ),
     );
   }
@@ -406,7 +406,7 @@ class _CvFormScreenState extends State<CvFormScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
-          disabledBackgroundColor: AppTheme.primary.withOpacity(0.6),
+          disabledBackgroundColor: AppTheme.primary.withValues(alpha: 0.6),
         ),
         child: _isLoading
             ? const SizedBox(
@@ -505,7 +505,7 @@ class _CvFormScreenState extends State<CvFormScreen> {
                 width: 70,
                 height: 70,
                 decoration: BoxDecoration(
-                  color: AppTheme.success.withOpacity(0.1),
+                  color: AppTheme.success.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -528,7 +528,7 @@ class _CvFormScreenState extends State<CvFormScreen> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 20),

@@ -1,32 +1,13 @@
-
 import 'dart:ui';
-import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
 import '../services/app_localizations.dart';
 import '../theme/app_theme.dart';
 import 'home_screen.dart';
-import 'cv_bank_screen.dart';
-import 'institution_request_screen.dart';
-import 'teachers_screen.dart';
+import 'search_screen.dart';
 import 'settings_screen.dart';
-
-// Move _NavItemData to the top-level
-class _NavItemData {
-  final IconData icon;
-  final IconData activeIcon;
-  final String label;
-  final bool isCenter;
-
-  const _NavItemData({
-    required this.icon,
-    required this.activeIcon,
-    required this.label,
-    this.isCenter = false,
-  });
-}
-
+import 'profile_screen.dart';
 
 class MainNavScreen extends StatefulWidget {
   const MainNavScreen({super.key});
@@ -35,122 +16,88 @@ class MainNavScreen extends StatefulWidget {
   State<MainNavScreen> createState() => _MainNavScreenState();
 }
 
-
-class _MainNavScreenState extends State<MainNavScreen> with TickerProviderStateMixin {
-  int _currentIndex = 0;
-  late final List<AnimationController> _iconControllers;
-  late final List<Widget> _screens;
-
-  List<_NavItemData> _navItems(BuildContext context) => [
-    _NavItemData(
-      icon: Iconsax.home_2,
-      activeIcon: Iconsax.home_25,
-      label: S.of(context, 'navHome'),
-    ),
-    _NavItemData(
-      icon: Iconsax.document_text,
-      activeIcon: Iconsax.document_text_1,
-      label: 'سیڤی',
-    ),
-    _NavItemData(
-      icon: Iconsax.add_circle,
-      activeIcon: Iconsax.add_circle5,
-      label: S.of(context, 'navRegister'),
-      isCenter: true,
-    ),
-    _NavItemData(
-      icon: Iconsax.teacher,
-      activeIcon: Iconsax.teacher,
-      label: 'مامۆستا',
-    ),
-    _NavItemData(
-      icon: Iconsax.setting_2,
-      activeIcon: Iconsax.setting_25,
-      label: S.of(context, 'navSettings'),
-    ),
+class _MainNavScreenState extends State<MainNavScreen> {
+  int _selectedIndex = 0;
+  
+  final List<Widget> _screens = [
+    const HomeScreen(),
+    const SearchScreen(),
+    const ProfileScreen(),
+    const SettingsScreen(),
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    _screens = [
-      const HomeScreen(),
-      const Scaffold(
-        body: SafeArea(child: CvListView()),
-      ),
-      const InstitutionRequestScreen(),
-      const TeachersScreen(),
-      const SettingsScreen(),
-    ];
-    _iconControllers = List.generate(
-      5,
-      (i) => AnimationController(
-        vsync: this,
-        duration: const Duration(milliseconds: 350),
-      ),
-    );
-    // Set initial active state
-    _iconControllers[0].value = 1.0;
-  }
-
-  @override
-  void dispose() {
-    for (final controller in _iconControllers) {
-      controller.dispose();
-    }
-    super.dispose();
-  }
-
-  void _onTap(int index) {
+  void _onItemTapped(int index) {
     setState(() {
-      _iconControllers[_currentIndex].reverse();
-      _currentIndex = index;
-      _iconControllers[_currentIndex].forward();
+      _selectedIndex = index;
     });
+    HapticFeedback.lightImpact();
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Scaffold(
-      extendBody: true,
-      body: _screens[_currentIndex],
-        bottomNavigationBar: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0), // No vertical padding
+    
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        extendBody: true,
+        body: _screens[_selectedIndex],
+        bottomNavigationBar: Container(
+          margin: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+          decoration: BoxDecoration(
+            color: (isDark ? AppTheme.cardDark : Colors.white).withValues(alpha: 0.9),
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: AppTheme.softShadow(isDark),
+          ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(30),
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Container(
-                  color: isDark
-                    ? Colors.white.withOpacity(0.04)
-                    : Colors.black.withOpacity(0.02),
-                child: GNav(
-                  gap: 2, // Closer icons
-                  selectedIndex: _currentIndex,
-                  onTabChange: (idx) => _onTap(idx),
-                  backgroundColor: Colors.transparent,
-                  tabBackgroundColor: isDark
-                      ? Colors.white.withOpacity(0.08)
-                      : AppTheme.primary.withOpacity(0.10),
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-                  tabBorderRadius: 16,
-                  color: isDark ? Colors.white.withOpacity(0.7) : Colors.grey.shade600,
-                  activeColor: isDark ? Colors.white : AppTheme.primary,
-                  iconSize: 20, // Smaller icons
-                  textSize: 14,
-                  tabs: List.generate(_navItems(context).length, (i) {
-                    final item = _navItems(context)[i];
-                    return GButton(
-                      icon: item.icon,
-                      text: item.label,
-                    );
-                  }),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildNavItem(0, Iconsax.home_2, 'سەرەکی'),
+                    _buildNavItem(1, Iconsax.search_normal, 'گەڕان'),
+                    _buildNavItem(2, Iconsax.user, 'پڕۆفایل'),
+                    _buildNavItem(3, Iconsax.setting_2, 'ڕێکخستن'),
+                  ],
                 ),
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(int index, IconData icon, String label) {
+    final isSelected = _selectedIndex == index;
+    final color = isSelected ? AppTheme.primary : Colors.grey.withValues(alpha: 0.5);
+    
+    return InkWell(
+      onTap: () => _onItemTapped(index),
+      borderRadius: BorderRadius.circular(20),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.primary.withValues(alpha: 0.1) : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: color, size: 24),
+            if (isSelected) ...[
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ],
         ),
       ),
     );

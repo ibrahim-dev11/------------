@@ -51,36 +51,41 @@ class AppProvider extends ChangeNotifier {
   }
 
   Future<void> _init() async {
-    // Load saved language
-    final prefs = await SharedPreferences.getInstance();
-    final savedLang = prefs.getString('app_language');
-    if (savedLang != null) {
-      _language = savedLang;
-      _hasSelectedLanguage = true;
-    }
+    try {
+      // Load saved language
+      final prefs = await SharedPreferences.getInstance();
+      
+      if (prefs.containsKey('app_language')) {
+        _language = prefs.getString('app_language') ?? 'ku';
+        _hasSelectedLanguage = true;
+      }
 
-    // Load onboarding state
-    _hasCompletedOnboarding = prefs.getBool('has_completed_onboarding') ?? false;
+      // Load onboarding state
+      _hasCompletedOnboarding = prefs.getBool('has_completed_onboarding') ?? false;
 
-    // Load saved token
-    await ApiService.loadToken();
+      // Load saved token
+      await ApiService.loadToken();
 
-    _isInitDone = true;
-    notifyListeners();
-
-    // Try to fetch from API, fall back to local data
-    await fetchFromApi();
-
-    // Get user if logged in
-    if (ApiService.isLoggedIn) {
-      _currentUser = await ApiService.getUser();
-      await loadFavorites();
-      await fetchNotifications();
+      _isInitDone = true;
       notifyListeners();
-    } else {
-      // Load local favorites for guests
-      await loadFavorites();
+
+      // Try to fetch from API, fall back to local data
+      await fetchFromApi();
+
+      // Get user if logged in
+      if (ApiService.isLoggedIn) {
+        _currentUser = await ApiService.getUser();
+        await loadFavorites();
+        await fetchNotifications();
+      } else {
+        // Load local favorites for guests
+        await loadFavorites();
+      }
+    } catch (e) {
+      debugPrint('Error during AppProvider init: $e');
+      _isInitDone = true; // Still mark as done to let user into the app
     }
+    notifyListeners();
   }
 
   Future<void> fetchFromApi() async {
@@ -181,6 +186,19 @@ class AppProvider extends ChangeNotifier {
   int get unreadNotificationsCount => _unreadNotificationsCount;
   bool get hasUnreadNotifications => _unreadNotificationsCount > 0;
 
+  String _normalize(String text) {
+    return text
+        .toLowerCase()
+        .replaceAll('ي', 'ی')
+        .replaceAll('ى', 'ی')
+        .replaceAll('ك', 'ک')
+        .replaceAll('ڕ', 'ر') // Optional: some users might search with or without overdots
+        .replaceAll('ڵ', 'ل')
+        .replaceAll('ۆ', 'و')
+        .replaceAll('ێ', 'ی')
+        .trim();
+  }
+
   /// Pick the right localized value from a map based on current language.
   /// Looks for field_en, field_ar, or falls back to field (Kurdish).
   String localizedField(Map<String, dynamic> map, String field) {
@@ -197,23 +215,39 @@ class AppProvider extends ChangeNotifier {
   bool get hasInstitutionTypes => _institutionTypes.isNotEmpty;
 
   /// Build tab list from institution types for home screen.
-  /// First tab is always "all", then one tab per type from API.
+  /// Simplified to 3 main groups as per user request.
   List<Map<String, dynamic>> get tabs {
-    if (_institutionTypes.isNotEmpty) {
-      return [
-        {'id': 'all', 'label': '🌟 هەمووی', 'label_en': '🌟 All', 'label_ar': '🌟 الكل'},
-        ..._institutionTypes.map((t) => {
-              'id': t['key'],
-              'label': '${t['emoji'] ?? ''} ${t['name'] ?? ''}'.trim(),
-              'label_en': t['name_en'] ?? t['name'] ?? '',
-              'label_ar': t['name_ar'] ?? t['name'] ?? '',
-            }),
-      ];
-    }
-    return AppConstants.tabDefs;
+    return [
+      {'id': 'all', 'label': '📋 هەمووی', 'label_en': '📋 All', 'label_ar': '📋 الكل'},
+      {'id': 'edu_min', 'label': '🏫 وەزارەتی پەروەردە', 'label_en': '🏫 Education', 'label_ar': '🏫 وزاره التربیه'},
+      {'id': 'higher_ed', 'label': '🎓 خوێندنی باڵا', 'label_en': '🎓 Higher Ed', 'label_ar': '🎓 التعليم العالي'},
+    ];
   }
 
-  /// Get localized type label for a given type key (e.g. 'gov', 'priv')
+  /// Get sub-tabs (category inside category) based on main tab selection.
+  List<Map<String, dynamic>> get subTabs {
+    if (_currentTab == 'edu_min') {
+      return [
+        {'id': 'all', 'label': '✨ هەمووی', 'label_en': 'All'},
+        {'id': 'school', 'label': '🏫 قوتابخانە', 'label_en': 'Schools'},
+        {'id': 'kg', 'label': '🧒 باخچەی منداڵان', 'label_en': 'KGs'},
+        {'id': 'dc', 'label': '👶 دایەنگە', 'label_en': 'Daycare'},
+        {'id': 'lang', 'label': '📖 سەنتەری زمان', 'label_en': 'Centers'},
+        {'id': 'edu', 'label': '🏢 دامەزراوەی تر', 'label_en': 'Others'},
+      ];
+    } else if (_currentTab == 'higher_ed') {
+      return [
+        {'id': 'all', 'label': '✨ هەمووی', 'label_en': 'All'},
+        {'id': 'gov', 'label': '🎓 زانکۆی حکومی', 'label_en': 'Gov Universities'},
+        {'id': 'priv', 'label': '🏛️ زانکۆی تایبەت', 'label_en': 'Private Universities'},
+        {'id': 'inst5', 'label': '📘 پەیمانگەی ٥ ساڵی', 'label_en': '5-Year Institutes'},
+        {'id': 'inst2', 'label': '📗 پەیمانگەی ٢ ساڵی', 'label_en': '2-Year Institutes'},
+      ];
+    }
+    return [];
+  }
+
+  /// Get localized type label for a given type key
   String typeLabel(String key) {
     if (_institutionTypes.isNotEmpty) {
       final t = _institutionTypes.where((t) => t['key'] == key).firstOrNull;
@@ -222,7 +256,7 @@ class AppProvider extends ChangeNotifier {
     return AppConstants.typeLabels[key] ?? key;
   }
 
-  /// Get localized type labels map (for dropdowns, etc.)
+  /// Get localized type labels map
   Map<String, String> get localizedTypeLabels {
     if (_institutionTypes.isNotEmpty) {
       return {
@@ -236,23 +270,27 @@ class AppProvider extends ChangeNotifier {
   // Filtered list
   List<Institution> get filteredInstitutions {
     var list = _db.where((d) => d.approved).where((d) {
-      // Tab filter
+      // Sub-category filter (Category inside Category)
+      if (_currentSub.isNotEmpty) {
+        if (d.type != _currentSub) return false;
+      }
+      
+      // Main Tab filter (Groups)
       if (_currentTab != 'all') {
-        if (_currentTab == 'gov') {
-          if (_currentSub == 'gov_gov' && d.type != 'gov') return false;
-          if (_currentSub == 'gov_priv' && d.type != 'priv') return false;
-          if (_currentSub.isEmpty || _currentSub == 'gov_all') {
-            if (d.type != 'gov' && d.type != 'priv') return false;
+        if (_currentTab == 'edu_min') {
+          // Ministry of Education types (only if no sub-tab selected)
+          if (_currentSub.isEmpty) {
+            final eduMinTypes = ['school', 'kg', 'dc', 'edu', 'lang'];
+            if (!eduMinTypes.contains(d.type)) return false;
           }
-        } else if (_currentTab == 'school') {
-          if (d.type != 'school') return false;
-          if (_currentSub == 'sch_base' && !d.nku.contains('بنەڕەتی')) {
-            return false;
-          }
-          if (_currentSub == 'sch_prep' && !d.nku.contains('ئامادەیی')) {
-            return false;
+        } else if (_currentTab == 'higher_ed') {
+          // Higher Education types (only if no sub-tab selected)
+          if (_currentSub.isEmpty) {
+            final higherEdTypes = ['gov', 'priv', 'inst5', 'inst2', 'eve_uni', 'eve_inst'];
+            if (!higherEdTypes.contains(d.type)) return false;
           }
         } else {
+          // Direct type match fallback
           if (d.type != _currentTab) return false;
         }
       }
@@ -264,9 +302,9 @@ class AppProvider extends ChangeNotifier {
       if (_filterCity.isNotEmpty && d.city != _filterCity) return false;
       // Search
       if (_searchQuery.isNotEmpty) {
-        final hay =
-            '${d.nku} ${d.nen} ${d.nar} ${d.city}'.toLowerCase();
-        if (!hay.contains(_searchQuery.toLowerCase())) return false;
+        final query = _normalize(_searchQuery);
+        final haystack = _normalize('${d.nku} ${d.nen} ${d.nar} ${d.city} ${d.colleges} ${d.depts}');
+        if (!haystack.contains(query)) return false;
       }
       return true;
     }).toList();
@@ -536,7 +574,7 @@ class AppProvider extends ChangeNotifier {
     return result;
   }
 
-  Future<void> logoutUser() async {
+  Future<void> logout() async {
     await ApiService.logout();
     _currentUser = null;
     _favoriteIds.clear();
@@ -544,6 +582,8 @@ class AppProvider extends ChangeNotifier {
     _unreadNotificationsCount = 0;
     notifyListeners();
   }
+
+  Future<void> logoutUser() => logout();
 
   // ── Notifications ──
 

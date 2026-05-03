@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
@@ -62,9 +63,9 @@ class _LanguageScreenState extends State<LanguageScreen>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF001530),
-              AppTheme.navy,
-              AppTheme.navy2,
+              Color(0xFF0F172A),
+              Color(0xFF1E293B),
+              Color(0xFF334155),
             ],
           ),
         ),
@@ -83,12 +84,16 @@ class _LanguageScreenState extends State<LanguageScreen>
                     gradient: const LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [AppTheme.gold, AppTheme.gold2],
+                      colors: [
+                        Color(0xFF6366F1),
+                        Color(0xFF818CF8),
+                        Color(0xFF38BDF8),
+                      ],
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.gold.withOpacity(0.3),
-                        blurRadius: 24,
+                        color: AppTheme.primary.withValues(alpha: 0.4),
+                        blurRadius: 28,
                         spreadRadius: 2,
                       ),
                     ],
@@ -99,12 +104,12 @@ class _LanguageScreenState extends State<LanguageScreen>
                 ),
                 const SizedBox(height: 28),
                 // Title
-                const Text(
+                Text(
                   'زمان هەڵبژێرە',
-                  style: TextStyle(
+                  style: GoogleFonts.outfit(
                     fontSize: 26,
                     fontWeight: FontWeight.w800,
-                    color: AppTheme.gold,
+                    color: Colors.white,
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -112,7 +117,7 @@ class _LanguageScreenState extends State<LanguageScreen>
                   'تکایە زمانێک هەڵبژێرە بۆ بەردەوامبوون',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.white.withValues(alpha: 0.6),
                   ),
                 ),
                 const SizedBox(height: 40),
@@ -242,12 +247,12 @@ class _LanguageCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             color: isSelected
-                ? AppTheme.gold.withOpacity(0.15)
-                : Colors.white.withOpacity(0.07),
+                ? AppTheme.primary.withValues(alpha: 0.15)
+                : Colors.white.withValues(alpha: 0.07),
             border: Border.all(
               color: isSelected
-                  ? AppTheme.gold.withOpacity(0.5)
-                  : Colors.white.withOpacity(0.1),
+                  ? AppTheme.primary.withValues(alpha: 0.5)
+                  : Colors.white.withValues(alpha: 0.1),
               width: isSelected ? 1.5 : 1,
             ),
           ),
@@ -261,17 +266,17 @@ class _LanguageCard extends StatelessWidget {
                   children: [
                     Text(
                       label,
-                      style: TextStyle(
+                      style: GoogleFonts.outfit(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
-                        color: isSelected ? AppTheme.gold : Colors.white,
+                        color: isSelected ? Colors.white : Colors.white,
                       ),
                     ),
                     Text(
                       subtitle,
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.white.withOpacity(0.4),
+                        color: Colors.white.withValues(alpha: 0.4),
                       ),
                     ),
                   ],
@@ -284,7 +289,7 @@ class _LanguageCard extends StatelessWidget {
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
-                      colors: [AppTheme.gold, AppTheme.gold2],
+                      colors: [Color(0xFF6366F1), Color(0xFF38BDF8)],
                     ),
                   ),
                   child: const Icon(Icons.check, color: Colors.white, size: 18),

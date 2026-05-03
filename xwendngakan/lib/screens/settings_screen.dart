@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../providers/app_provider.dart';
 import '../services/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_snackbar.dart';
 import 'login_screen.dart';
+import 'about_screen.dart';
+import 'tutorial_screen.dart';
 
 
 class SettingsScreen extends StatelessWidget {
@@ -16,63 +19,75 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final prov = context.watch<AppProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? const Color(0xFF0F172A) : const Color(0xFFF3F6FC);
-    final cardBg = isDark ? const Color(0xFF1E293B) : Colors.white;
-    final borderColor = isDark ? const Color(0xFF334155) : const Color(0xFFE8EDF5);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF1E293B);
-    final textSecondary = isDark ? const Color(0xFFF1F5F9) : const Color(0xFF94A3B8);
+    final bg = isDark ? AppTheme.darkBg : AppTheme.lightBg;
+    final cardBg = isDark ? AppTheme.darkSurface : Colors.white;
+    final borderColor = isDark ? AppTheme.darkCard : AppTheme.lightBorder;
+    final textPrimary = isDark ? Colors.white : AppTheme.darkSurface;
+    final textSecondary = isDark ? AppTheme.textPrimary : AppTheme.textSecondary;
 
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          children: [
+        child: AnimationLimiter(
+          child: ListView(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            children: AnimationConfiguration.toStaggeredList(
+              duration: const Duration(milliseconds: 400),
+              childAnimationBuilder: (widget) => SlideAnimation(
+                verticalOffset: 30,
+                child: FadeInAnimation(child: widget),
+              ),
+              children: [
             // ── Header ──
-            const SizedBox(height: 4),
+            const SizedBox(height: 8),
             Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        AppTheme.primary.withOpacity(0.15),
-                        AppTheme.accent.withOpacity(0.1),
-                      ],
-                    ),
+                    color: AppTheme.primary.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Icon(Iconsax.setting_2, color: AppTheme.primary, size: 24),
+                  child: const Icon(Iconsax.setting_25, color: AppTheme.primary, size: 24),
                 ),
-                const SizedBox(width: 14),
+                const SizedBox(width: 16),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       S.of(context, 'settings'),
                       style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w800,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w900,
                         color: textPrimary,
+                        letterSpacing: -0.5,
                       ),
                     ),
-                    
+                    const SizedBox(height: 2),
+                    Text(
+                      S.of(context, 'customizeExperience'),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: textSecondary.withValues(alpha: 0.7),
+                      ),
+                    ),
                   ],
                 ),
               ],
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 28),
 
             // ── Account Card ──
             _buildAccountCard(context, prov, isDark, cardBg, borderColor, textPrimary, textSecondary),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
 
             // ── Preferences Group ──
             _sectionLabel(S.of(context, 'appearance'), textSecondary),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             _buildGroupCard(
               isDark: isDark,
               cardBg: cardBg,
@@ -80,21 +95,26 @@ class SettingsScreen extends StatelessWidget {
               children: [
                 _groupTile(
                   icon: isDark ? Iconsax.moon5 : Iconsax.sun_15,
-                  iconBg: isDark ? const Color(0xFFFDE68A) : const Color(0xFFF59E0B),
+                  iconBg: isDark ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
                   title: isDark ? S.of(context, 'darkMode') : S.of(context, 'lightMode'),
                   subtitle: S.of(context, 'changeAppTheme'),
                   isDark: isDark,
                   textPrimary: textPrimary,
                   textSecondary: textSecondary,
+                  context: context,
                   trailing: Transform.scale(
-                    scale: 0.85,
-                    child: Switch.adaptive(
+                    scale: 0.8,
+                    child: Switch(
                       value: isDark,
-                      onChanged: (_) => prov.toggleTheme(),
-                      activeThumbColor: Colors.white,
+                      onChanged: (_) {
+                        HapticFeedback.mediumImpact();
+                        prov.toggleTheme();
+                      },
+                      activeColor: Colors.white,
                       activeTrackColor: AppTheme.primary,
-                      inactiveThumbColor: Colors.white,
-                      inactiveTrackColor: isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
+                      inactiveThumbColor: Colors.white70,
+                      inactiveTrackColor: isDark ? Colors.white10 : Colors.black12,
+                      trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
                     ),
                   ),
                 ),
@@ -102,131 +122,98 @@ class SettingsScreen extends StatelessWidget {
                 _languageTile(context, prov, isDark, textPrimary, textSecondary),
               ],
             ),
-            const SizedBox(height: 16),
-            // ── About Group ──
-            _sectionLabel(S.of(context, 'about'), textSecondary),
-            const SizedBox(height: 8),
+            const SizedBox(height: 24),
+            // ── Support Group ──
+            _sectionLabel(S.of(context, 'support'), textSecondary),
+            const SizedBox(height: 12),
             _buildGroupCard(
               isDark: isDark,
               cardBg: cardBg,
               borderColor: borderColor,
               children: [
-                // App info tile
-                Padding(
-                  padding: const EdgeInsets.all(14),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 46,
-                        height: 46,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [AppTheme.primary, AppTheme.accent],
-                          ),
-                          borderRadius: BorderRadius.circular(14),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppTheme.primary.withOpacity(0.3),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: const Center(
-                          child: Text('📚', style: TextStyle(fontSize: 26)),
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              S.of(context, 'appName'),
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w800,
-                                color: textPrimary,
-                              ),
-                            ),
-                            const SizedBox(height: 3),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: AppTheme.success.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                'v1.0.0',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppTheme.success,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF5F7FB),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      S.of(context, 'appDescription'),
-                      style: TextStyle(
-                        fontSize: 12,
-                        height: 1.8,
-                        color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFF64748B),
-                      ),
-                    ),
-                  ),
+                _groupTile(
+                  icon: Iconsax.teacher5,
+                  iconBg: const Color(0xFFF43F5E),
+                  title: S.of(context, 'tutorial'),
+                  subtitle: S.of(context, 'tutorialDesc'),
+                  isDark: isDark,
+                  textPrimary: textPrimary,
+                  textSecondary: textSecondary,
+                  context: context,
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const TutorialScreen()),
+                    );
+                  },
                 ),
                 _divider(isDark),
-                InkWell(
-                  onTap: () => launchUrl(
-                    Uri.parse('https://www.facebook.com/profile.php?id=61559861546507'),
-                    mode: LaunchMode.externalApplication,
-                  ),
-                  child: _groupTile(
-                    icon: Iconsax.code_1,
-                    iconBg: AppTheme.accent,
-                    title: S.of(context, 'developer'),
-                    subtitle: 'ibrahim dev',
-                    isDark: isDark,
-                    textPrimary: textPrimary,
-                    textSecondary: textSecondary,
-                  ),
+                _groupTile(
+                  icon: Iconsax.info_circle5,
+                  iconBg: AppTheme.primary,
+                  title: S.of(context, 'about'),
+                  subtitle: S.of(context, 'appDescription').substring(0, 30) + '...',
+                  isDark: isDark,
+                  textPrimary: textPrimary,
+                  textSecondary: textSecondary,
+                  context: context,
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => const AboutScreen(),
+                        transitionsBuilder: (_, anim, __, child) {
+                          return FadeTransition(
+                            opacity: CurvedAnimation(parent: anim, curve: Curves.easeOut),
+                            child: SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(0.05, 0),
+                                end: Offset.zero,
+                              ).animate(CurvedAnimation(parent: anim, curve: Curves.easeOutQuart)),
+                              child: child,
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-          ],
+            const SizedBox(height: 32),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
   Widget _sectionLabel(String title, Color color) {
     return Padding(
-      padding: const EdgeInsets.only(right: 4),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
-          color: color,
-          letterSpacing: 0.3,
-        ),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Row(
+        children: [
+          Container(
+            width: 3,
+            height: 12,
+            decoration: BoxDecoration(
+              color: AppTheme.primary,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+              color: color,
+              letterSpacing: 0.2,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -239,16 +226,12 @@ class SettingsScreen extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: cardBg,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: borderColor),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.01),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(
+          color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.05),
+          width: 1,
+        ),
       ),
       child: Column(children: children),
     );
@@ -263,43 +246,64 @@ class SettingsScreen extends StatelessWidget {
     required Color textPrimary,
     required Color textSecondary,
     Widget? trailing,
+    VoidCallback? onTap,
+    required BuildContext context,
   }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      child: Row(
-        children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: iconBg.withOpacity(isDark ? 0.15 : 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: iconBg, size: 20),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: textPrimary,
-                  ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Row(
+            children: [
+              Container(
+                width: 46,
+                height: 46,
+                decoration: BoxDecoration(
+                  color: iconBg.withValues(alpha: isDark ? 0.12 : 0.08),
+                  borderRadius: BorderRadius.circular(14),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: TextStyle(fontSize: 11, color: textSecondary),
+                child: Icon(icon, color: iconBg, size: 22),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        color: textPrimary,
+                        letterSpacing: -0.2,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: textSecondary.withValues(alpha: 0.7),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              if (trailing != null) trailing,
+              if (trailing == null && onTap != null)
+                Icon(
+                  Directionality.of(context) == TextDirection.rtl 
+                      ? Iconsax.arrow_left_2 : Iconsax.arrow_right_3,
+                  size: 16,
+                  color: textSecondary.withValues(alpha: 0.5),
+                ),
+            ],
           ),
-          if (trailing != null) trailing,
-        ],
+        ),
       ),
     );
   }
@@ -308,9 +312,9 @@ class SettingsScreen extends StatelessWidget {
     return Divider(
       height: 1,
       thickness: 1,
-      indent: 16,
-      endIndent: 16,
-      color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+      indent: 20,
+      endIndent: 20,
+      color: isDark ? Colors.white.withValues(alpha: 0.03) : AppTheme.lightBorder.withValues(alpha: 0.5),
     );
   }
 
@@ -335,67 +339,70 @@ class SettingsScreen extends StatelessWidget {
 
     return InkWell(
       onTap: () {
+        HapticFeedback.mediumImpact();
         showModalBottomSheet(
           context: context,
           backgroundColor: Colors.transparent,
           builder: (ctx) {
             return Container(
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                color: isDark ? AppTheme.darkBg : Colors.white,
                 borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  topRight: Radius.circular(24),
+                  topLeft: Radius.circular(32),
+                  topRight: Radius.circular(32),
                 ),
               ),
               child: Directionality(
-                textDirection: Directionality.of(context),
+                textDirection: prov.isRtl ? TextDirection.rtl : TextDirection.ltr,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 14),
                     Container(
-                      width: 40,
-                      height: 4,
+                      width: 48,
+                      height: 5,
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF94A3B8) : const Color(0xFFE2E8F0),
-                        borderRadius: BorderRadius.circular(2),
+                        color: isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFE5E7EB),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
                     Text(
                       S.of(context, 'chooseLanguage'),
                       style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w800,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
                         color: textPrimary,
+                        letterSpacing: -0.5,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
                     ...languages.map((lang) {
                       final isSelected = lang['code'] == prov.language;
                       return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
                         child: Material(
                           color: Colors.transparent,
                           child: InkWell(
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(16),
                             onTap: () {
+                              HapticFeedback.selectionClick();
                               prov.setLanguageAndSave(lang['code']!);
                               Navigator.pop(ctx);
                             },
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                              padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                 color: isSelected
-                                    ? AppTheme.primary.withOpacity(isDark ? 0.15 : 0.08)
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(14),
+                                    ? AppTheme.primary.withValues(alpha: 0.08)
+                                    : isDark ? AppTheme.darkCard : const Color(0xFFF9FAFB),
+                                borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
                                   color: isSelected
-                                      ? AppTheme.primary.withOpacity(0.4)
+                                      ? AppTheme.primary.withValues(alpha: 0.3)
                                       : isDark
-                                          ? const Color(0xFF1E293B)
-                                          : const Color(0xFFF1F5F9),
+                                          ? Colors.white.withValues(alpha: 0.05)
+                                          : const Color(0xFFE5E7EB),
                                 ),
                               ),
                               child: Row(
@@ -404,19 +411,19 @@ class SettingsScreen extends StatelessWidget {
                                     _kurdistanFlag(24)
                                   else
                                     Text(lang['flag']!, style: const TextStyle(fontSize: 24)),
-                                  const SizedBox(width: 14),
+                                  const SizedBox(width: 16),
                                   Expanded(
                                     child: Text(
                                       lang['name']!,
                                       style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                        fontSize: 16,
+                                        fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                                         color: isSelected ? AppTheme.primary : textPrimary,
                                       ),
                                     ),
                                   ),
                                   if (isSelected)
-                                    Icon(Iconsax.tick_circle5, color: AppTheme.primary, size: 22),
+                                    Icon(Iconsax.tick_circle5, color: AppTheme.primary, size: 24),
                                 ],
                               ),
                             ),
@@ -424,7 +431,7 @@ class SettingsScreen extends StatelessWidget {
                         ),
                       );
                     }),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 32),
                   ],
                 ),
               ),
@@ -433,19 +440,19 @@ class SettingsScreen extends StatelessWidget {
         );
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Row(
           children: [
             Container(
-              width: 42,
-              height: 42,
+              width: 46,
+              height: 46,
               decoration: BoxDecoration(
-                color: const Color(0xFF0EA5E9).withOpacity(isDark ? 0.15 : 0.1),
-                borderRadius: BorderRadius.circular(12),
+                color: AppTheme.accent.withValues(alpha: isDark ? 0.12 : 0.08),
+                borderRadius: BorderRadius.circular(14),
               ),
-              child: const Icon(Iconsax.global, color: Color(0xFF0EA5E9), size: 20),
+              child: const Icon(Iconsax.global5, color: AppTheme.accent, size: 22),
             ),
-            const SizedBox(width: 14),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -453,24 +460,32 @@ class SettingsScreen extends StatelessWidget {
                   Text(
                     S.of(context, 'language'),
                     style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w800,
                       color: textPrimary,
+                      letterSpacing: -0.2,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     current['name']!,
-                    style: TextStyle(fontSize: 11, color: textSecondary),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: textSecondary.withValues(alpha: 0.7),
+                    ),
                   ),
                 ],
               ),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(8),
+                color: isDark ? AppTheme.darkBg : AppTheme.lightBg,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFE5E7EB),
+                ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -479,11 +494,11 @@ class SettingsScreen extends StatelessWidget {
                     _kurdistanFlag(16)
                   else
                     Text(current['flag']!, style: const TextStyle(fontSize: 16)),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 8),
                   Icon(
                     Iconsax.arrow_down_1,
-                    size: 14,
-                    color: textSecondary,
+                    size: 16,
+                    color: AppTheme.primary,
                   ),
                 ],
               ),
@@ -543,68 +558,40 @@ class SettingsScreen extends StatelessWidget {
       final email = user['email'] as String? ?? '';
       return Container(
         decoration: BoxDecoration(
-          color: cardBg,
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: borderColor),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.01),
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(
+            color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.05),
+            width: 1,
+          ),
         ),
         child: Column(
           children: [
-            // Profile header with gradient
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: isDark
-                      ? [const Color(0xFF1E293B), const Color(0xFF1A2332)]
-                      : [const Color(0xFFF0F4FF), const Color(0xFFF8F9FE)],
-                ),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(22),
-                  topRight: Radius.circular(22),
-                ),
-              ),
+            // Profile header
+            Padding(
+              padding: const EdgeInsets.all(24),
               child: Row(
                 children: [
                   Container(
-                    width: 54,
-                    height: 54,
+                    width: 64,
+                    height: 64,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [AppTheme.primary, AppTheme.accent],
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppTheme.primary.withOpacity(0.3),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
+                      gradient: AppTheme.emeraldGlowGradient,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: AppTheme.premiumShadow(AppTheme.primary),
                     ),
                     child: Center(
                       child: Text(
                         name.isNotEmpty ? name[0].toUpperCase() : '?',
                         style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w800,
+                          fontSize: 26,
+                          fontWeight: FontWeight.w900,
                           color: Colors.white,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 14),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -612,42 +599,47 @@ class SettingsScreen extends StatelessWidget {
                         Text(
                           name,
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w800,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w900,
                             color: textPrimary,
+                            letterSpacing: -0.5,
                           ),
                         ),
-                        const SizedBox(height: 3),
+                        const SizedBox(height: 4),
                         Text(
                           email,
-                          style: TextStyle(fontSize: 12, color: textSecondary),
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: textSecondary.withValues(alpha: 0.7),
+                          ),
                         ),
                       ],
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: AppTheme.success.withOpacity(0.12),
+                      color: AppTheme.success.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          width: 7,
-                          height: 7,
+                          width: 8,
+                          height: 8,
                           decoration: const BoxDecoration(
                             color: AppTheme.success,
                             shape: BoxShape.circle,
                           ),
                         ),
-                        const SizedBox(width: 5),
+                        const SizedBox(width: 6),
                         Text(
                           S.of(context, 'active'),
                           style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
                             color: AppTheme.success,
                           ),
                         ),
@@ -659,7 +651,7 @@ class SettingsScreen extends StatelessWidget {
             ),
             // Logout button
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+              padding: const EdgeInsets.all(16),
               child: _LogoutButton(prov: prov),
             ),
           ],
@@ -671,13 +663,13 @@ class SettingsScreen extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: borderColor),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : borderColor),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -685,65 +677,79 @@ class SettingsScreen extends StatelessWidget {
         children: [
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(20, 28, 20, 20),
+            padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: isDark
-                    ? [const Color(0xFF1E293B), const Color(0xFF1A2332)]
-                    : [const Color(0xFFF0F4FF), const Color(0xFFF8F9FE)],
-              ),
+              color: isDark
+                  ? AppTheme.darkCard.withValues(alpha: 0.5)
+                  : AppTheme.lightBg.withValues(alpha: 0.5),
               borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(22),
-                topRight: Radius.circular(22),
+                topLeft: Radius.circular(24),
+                topRight: Radius.circular(24),
               ),
             ),
             child: Column(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: AppTheme.primary.withOpacity(isDark ? 0.15 : 0.1),
+                    color: AppTheme.primary.withValues(alpha: isDark ? 0.15 : 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Iconsax.user, size: 30, color: AppTheme.primary),
+                  child: Icon(Iconsax.user5, size: 36, color: AppTheme.primary),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 18),
                 Text(
                   S.of(context, 'notLoggedIn'),
                   style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w900,
                     color: textPrimary,
+                    letterSpacing: -0.5,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Text(
                   S.of(context, 'loginForFeatures'),
-                  style: TextStyle(fontSize: 12, color: textSecondary),
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: textSecondary.withValues(alpha: 0.7),
+                  ),
                 ),
               ],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+            padding: const EdgeInsets.all(20),
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () {
+                  HapticFeedback.mediumImpact();
                   Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    PageRouteBuilder(
+                      pageBuilder: (_, __, ___) => const LoginScreen(),
+                      transitionDuration: const Duration(milliseconds: 500),
+                      transitionsBuilder: (_, anim, __, child) {
+                        return FadeTransition(
+                          opacity: CurvedAnimation(parent: anim, curve: Curves.easeOut),
+                          child: child,
+                        );
+                      },
+                    ),
                     (route) => false,
                   );
                 },
-                icon: const Icon(Iconsax.login, size: 18),
-                label: Text(S.of(context, 'login')),
+                icon: const Icon(Iconsax.login5, size: 20),
+                label: Text(
+                  S.of(context, 'login'),
+                  style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.primary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                   elevation: 0,
                 ),
               ),
@@ -774,12 +780,12 @@ class _LogoutButtonState extends State<_LogoutButton> {
         return Directionality(
           textDirection: Directionality.of(ctx),
           child: AlertDialog(
-            backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+            backgroundColor: isDark ? AppTheme.darkSurface : Colors.white,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             icon: Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: AppTheme.danger.withOpacity(0.1),
+                color: AppTheme.danger.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(Iconsax.logout, color: AppTheme.danger, size: 30),
@@ -788,7 +794,7 @@ class _LogoutButtonState extends State<_LogoutButton> {
               S.of(context, 'logout'),
               style: TextStyle(
                 fontWeight: FontWeight.w800,
-                color: isDark ? Colors.white : const Color(0xFF1E293B),
+                color: isDark ? Colors.white : AppTheme.darkSurface,
               ),
             ),
             content: Text(
@@ -796,7 +802,7 @@ class _LogoutButtonState extends State<_LogoutButton> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13,
-                color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF64748B),
+                color: isDark ? AppTheme.textPrimary : AppTheme.lightTextSub,
               ),
             ),
             actionsAlignment: MainAxisAlignment.center,
@@ -808,7 +814,7 @@ class _LogoutButtonState extends State<_LogoutButton> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                     side: BorderSide(
-                      color: isDark ? const Color(0xFF94A3B8) : const Color(0xFFE2E8F0),
+                      color: isDark ? AppTheme.textSecondary : AppTheme.textPrimary,
                     ),
                   ),
                 ),
@@ -816,7 +822,7 @@ class _LogoutButtonState extends State<_LogoutButton> {
                   S.of(context, 'no'),
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
-                    color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF64748B),
+                    color: isDark ? AppTheme.textPrimary : AppTheme.lightTextSub,
                   ),
                 ),
               ),
@@ -850,7 +856,16 @@ class _LogoutButtonState extends State<_LogoutButton> {
     AppSnackbar.success(context, S.of(context, 'loggedOutSuccess'));
 
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => const LoginScreen(),
+        transitionDuration: const Duration(milliseconds: 400),
+        transitionsBuilder: (_, anim, __, child) {
+          return FadeTransition(
+            opacity: CurvedAnimation(parent: anim, curve: Curves.easeOut),
+            child: child,
+          );
+        },
+      ),
       (route) => false,
     );
   }
@@ -864,10 +879,10 @@ class _LogoutButtonState extends State<_LogoutButton> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          color: AppTheme.danger.withOpacity(isDark ? 0.08 : 0.05),
+          color: AppTheme.danger.withValues(alpha: isDark ? 0.08 : 0.05),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppTheme.danger.withOpacity(isDark ? 0.2 : 0.15),
+            color: AppTheme.danger.withValues(alpha: isDark ? 0.2 : 0.15),
           ),
         ),
         child: Row(
