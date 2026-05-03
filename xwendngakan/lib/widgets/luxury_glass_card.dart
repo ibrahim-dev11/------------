@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 class GlassmorphicCard extends StatelessWidget {
   final Widget child;
@@ -20,7 +21,7 @@ class GlassmorphicCard extends StatelessWidget {
     this.width,
     this.height,
     this.borderRadius = 24.0,
-    this.blur = 10.0,
+    this.blur = 12.0,
     this.opacity = 0.7,
     this.padding,
     this.hasGlow = false,
@@ -31,6 +32,14 @@ class GlassmorphicCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final baseColor = color ?? (isDark ? Colors.white : Colors.white);
+    final effectiveOpacity = isDark ? (opacity > 0.3 ? 0.06 : opacity * 0.1) : opacity;
+    final borderColor = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.white.withValues(alpha: 0.6);
+    final shadowCol = glowColor ?? (isDark ? AppTheme.primary : AppTheme.primary);
+
     return Container(
       width: width,
       height: height,
@@ -39,14 +48,14 @@ class GlassmorphicCard extends StatelessWidget {
         boxShadow: [
           if (showShadow)
             BoxShadow(
-              color: (glowColor ?? Colors.blue.withOpacity(0.1)),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-              spreadRadius: -5,
+              color: shadowCol.withValues(alpha: isDark ? 0.15 : 0.08),
+              blurRadius: 24,
+              offset: const Offset(0, 8),
+              spreadRadius: -4,
             ),
           if (hasGlow)
             BoxShadow(
-              color: (glowColor ?? Colors.blue).withOpacity(0.3),
+              color: (glowColor ?? AppTheme.primary).withValues(alpha: 0.3),
               blurRadius: 30,
               spreadRadius: 2,
             ),
@@ -59,10 +68,10 @@ class GlassmorphicCard extends StatelessWidget {
           child: Container(
             padding: padding ?? const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
-              color: (color ?? Colors.white).withOpacity(opacity),
+              color: baseColor.withValues(alpha: effectiveOpacity),
               borderRadius: BorderRadius.circular(borderRadius),
               border: Border.all(
-                color: Colors.white.withOpacity(0.8),
+                color: borderColor,
                 width: 1.5,
               ),
             ),

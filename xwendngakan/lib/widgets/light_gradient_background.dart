@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
+/// Adaptive gradient background — uses aurora mesh for dark, soft gradient for light
 class LightGradientBackground extends StatelessWidget {
   final Widget child;
 
@@ -7,53 +9,31 @@ class LightGradientBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFD9E7FF), // Soft Blue
-            Color(0xFFF0F5FF), // Lighter Blue
-            Colors.white,
-          ],
-          stops: [0.0, 0.5, 1.0],
-        ),
-      ),
-      child: Stack(
-        children: [
-          // Decorative blurry shapes
-          Positioned(
-            top: -100,
-            right: -50,
-            child: _buildBlurCircle(300, const Color(0xFFA5C5FF).withOpacity(0.3)),
-          ),
-          Positioned(
-            bottom: 100,
-            left: -100,
-            child: _buildBlurCircle(400, const Color(0xFFBDD7FF).withOpacity(0.2)),
-          ),
-          Positioned(
-            top: 200,
-            left: 50,
-            child: _buildBlurCircle(200, Colors.white.withOpacity(0.4)),
-          ),
-          child,
-        ],
-      ),
-    );
-  }
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-  Widget _buildBlurCircle(double size, Color color) {
     return Container(
-      width: size,
-      height: size,
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: color,
+        gradient: isDark
+            ? const LinearGradient(
+                colors: [
+                  AppTheme.deepNavy,
+                  AppTheme.backgroundDark,
+                  Color(0xFF0E1230),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              )
+            : const LinearGradient(
+                colors: [
+                  AppTheme.backgroundLight,
+                  Color(0xFFE8EBFF),
+                  Color(0xFFF5F3FF),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
       ),
+      child: child,
     );
   }
 }

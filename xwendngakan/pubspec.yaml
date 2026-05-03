@@ -89,6 +89,8 @@ flutter:
   assets:
     - assets/
     - assets/fonts/
+    - assets/images/
+    - assets/images/3d/
 
   fonts:
     - family: AppFont
