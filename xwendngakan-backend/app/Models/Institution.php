@@ -15,13 +15,17 @@ class Institution extends Model
         'fee', 'meal', 'uniform', 'books', 'level',
         'kg_fee', 'kg_meal', 'kg_uniform', 'kg_age', 'kg_hours',
         'fb', 'ig', 'tg', 'wa', 'tk', 'yt',
-        'logo', 'img', 'approved',
+        'logo', 'img', 'video',
+        'founded_year', 'students_count',
+        'approved',
     ];
 
     protected $casts = [
         'approved' => 'boolean',
         'lat' => 'double',
         'lng' => 'double',
+        'founded_year' => 'integer',
+        'students_count' => 'integer',
     ];
 
     // Map snake_case DB columns to camelCase for Flutter JSON
@@ -30,11 +34,9 @@ class Institution extends Model
         $array = parent::toArray();
         $array['kgAge'] = $array['kg_age'] ?? '';
         $array['kgHours'] = $array['kg_hours'] ?? '';
-        unset($array['kg_fee'], $array['kg_meal'], $array['kg_uniform'], $array['kg_age'], $array['kg_hours']);
-        unset($array['fee'], $array['meal'], $array['uniform'], $array['books'], $array['level'], $array['kg_fee'], $array['kg_meal'], $array['kg_uniform']);
 
-        // Ensure image paths start with /storage/ for API consumers
-        foreach (['logo', 'img'] as $key) {
+        // Ensure file paths start with /storage/ for API consumers
+        foreach (['logo', 'img', 'video'] as $key) {
             if (!empty($array[$key]) && !str_starts_with($array[$key], 'http') && !str_starts_with($array[$key], '/storage/')) {
                 $array[$key] = '/storage/' . ltrim($array[$key], '/');
             }
@@ -42,6 +44,7 @@ class Institution extends Model
 
         return $array;
     }
+
 
     /**
      * Get posts for this institution.

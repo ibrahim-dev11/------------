@@ -20,6 +20,29 @@ class PostController extends Controller
         $this->firebaseService = $firebaseService;
     }
     /**
+     * Get all approved posts globally (public feed).
+     */
+    public function allPosts(Request $request)
+    {
+        $perPage = (int) $request->query('per_page', 20);
+
+        $posts = Post::where('approved', true)
+            ->with(['user', 'institution'])
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
+
+        return response()->json([
+            'success' => true,
+            'data'    => $posts->items(),
+            'meta'    => [
+                'current_page' => $posts->currentPage(),
+                'last_page'    => $posts->lastPage(),
+                'total'        => $posts->total(),
+            ],
+        ]);
+    }
+
+    /**
      * Get posts for a specific institution (only approved ones for public).
      */
     public function index(Request $request, int $institutionId)

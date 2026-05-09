@@ -289,8 +289,12 @@ class InstitutionController extends Controller
                 'kg'       => (clone $approved)->where('type', 'kg')->count(),
                 'dc'       => (clone $approved)->where('type', 'dc')->count(),
                 'cities'   => (clone $approved)->distinct('city')->count('city'),
+                'news'     => \App\Models\News::count(),
+                'events'   => \App\Models\Event::count(),
+                'teachers' => \App\Models\Teacher::where('is_approved', true)->count(),
                 'pending'  => Institution::where('approved', false)->count(),
             ],
         ]);
     }
+
 }

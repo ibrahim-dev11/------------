@@ -61,6 +61,7 @@ class TeacherController extends Controller
             'experience_years' => 'nullable|integer|min:0|max:60',
             'hourly_rate' => 'nullable|integer|min:0',
             'about' => 'nullable|string|max:2000',
+            'video_url' => 'nullable|url|max:500',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'subject_photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);

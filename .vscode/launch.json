@@ -4,23 +4,22 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
         {
-            "name": "xwendngakan",
-            "cwd": "xwendngakan",
+            "name": "xwendngakan_app",
+            "cwd": "xwendngakan_app",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "xwendngakan (profile mode)",
-            "cwd": "xwendngakan",
+            "name": "xwendngakan_app (profile mode)",
+            "cwd": "xwendngakan_app",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "xwendngakan (release mode)",
-            "cwd": "xwendngakan",
+            "name": "xwendngakan_app (release mode)",
+            "cwd": "xwendngakan_app",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"

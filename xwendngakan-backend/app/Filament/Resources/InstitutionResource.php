@@ -97,6 +97,26 @@ class InstitutionResource extends Resource
                             ->placeholder('44.009400'),
                     ])->columns(2),
 
+                // ─── دامەزران و ئامار ───
+                Forms\Components\Section::make('ئامارەکان')
+                    ->description('ساڵی دامەزران و ژمارەی قوتابییان')
+                    ->icon('heroicon-o-chart-bar')
+                    ->schema([
+                        Forms\Components\TextInput::make('founded_year')
+                            ->label('ساڵی دامەزران')
+                            ->numeric()
+                            ->minValue(1800)
+                            ->maxValue(date('Y'))
+                            ->placeholder('1990')
+                            ->prefixIcon('heroicon-o-calendar'),
+                        Forms\Components\TextInput::make('students_count')
+                            ->label('ژمارەی قوتابی')
+                            ->numeric()
+                            ->minValue(0)
+                            ->placeholder('500')
+                            ->prefixIcon('heroicon-o-user-group'),
+                    ])->columns(2)->collapsible(),
+
                 // ─── ١. دەربارە ───
                 Forms\Components\Section::make('دەربارە')
                     ->description('زانیاری دەربارەی دامەزراوەکە')
@@ -222,6 +242,20 @@ class InstitutionResource extends Resource
                             ->maxLength(255)
                             ->prefixIcon('heroicon-o-link'),
                     ])->columns(2)->collapsible(),
+
+                // ─── ٧. ڤیدیۆ ───
+                Forms\Components\Section::make('ڤیدیۆ')
+                    ->description('لینکی ڤیدیۆ لە یوتیوب یان هەر سەکۆیەک')
+                    ->icon('heroicon-o-play-circle')
+                    ->schema([
+                        Forms\Components\TextInput::make('video')
+                            ->label('لینکی ڤیدیۆ')
+                            ->url()
+                            ->maxLength(500)
+                            ->prefixIcon('heroicon-o-play-circle')
+                            ->placeholder('https://youtube.com/watch?v=...')
+                            ->columnSpanFull(),
+                    ])->collapsible(),
             ]);
     }
 

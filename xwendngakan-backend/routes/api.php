@@ -9,6 +9,10 @@ use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\CvController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\NewsController;
+use App\Http\Controllers\Api\EventController;
+use App\Http\Controllers\Api\AppDataController;
+use App\Http\Controllers\Api\UserRequestController;
 use App\Models\InstitutionType;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +32,14 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 // App version check (public)
 Route::post('/check-update', [AppVersionController::class, 'check']);
 
+// Public News
+Route::get('/news', [NewsController::class, 'index']);
+Route::get('/news/{id}', [NewsController::class, 'show']);
+
+// Public Events
+Route::get('/events', [EventController::class, 'index']);
+Route::get('/events/{id}', [EventController::class, 'show']);
+
 // Public institution browsing
 Route::get('/institutions', [InstitutionController::class, 'index']);
 Route::get('/institutions/{id}', [InstitutionController::class, 'show']);
@@ -41,6 +53,10 @@ Route::post('/institutions/{id}/report', [ReportController::class, 'store']);
 
 // Public posts for an institution
 Route::get('/institutions/{institutionId}/posts', [PostController::class, 'index']);
+
+// Global public posts feed
+Route::get('/posts', [PostController::class, 'allPosts']);
+
 
 // CV Routes (public)
 Route::get('/cvs', [CvController::class, 'index']);
@@ -57,25 +73,10 @@ Route::get('/teacher-stats', [TeacherController::class, 'stats']);
 
 
 // Institution types
-Route::get('/institution-types', function () {
-    $types = InstitutionType::active()->ordered()->get(['key', 'name', 'name_en', 'name_ar', 'emoji', 'icon']);
-    return response()->json([
-        'success' => true,
-        'data' => $types,
-    ]);
-});
+Route::get('/institution-types', [AppDataController::class, 'institutionTypes']);
 
 // Unified app data — single endpoint for types + categories
-Route::get('/app-data', function () {
-    $types = InstitutionType::active()->ordered()->get(['key', 'name', 'name_en', 'name_ar', 'emoji', 'icon']);
-
-    return response()->json([
-        'success' => true,
-        'data' => [
-            'types' => $types,
-        ], 
-    ]);
-});
+Route::get('/app-data', [AppDataController::class, 'appData']);
 
 /*
 |--------------------------------------------------------------------------
@@ -90,88 +91,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/toggle-notifications', [AuthController::class, 'toggleNotifications']);
 
     // Teacher Requests
-    Route::get('/my-teacher-request', function () {
-        $request = \App\Models\TeacherRequest::where('user_id', auth()->id())->latest()->first();
-        return response()->json([
-            'success' => true,
-            'data' => $request
-        ]);
-    });
-
-    Route::post('/teacher-requests', function (\Illuminate\Http\Request $request) {
-        $request->validate([
-            'name' => 'required|string',
-            'phone' => 'required|string',
-            'message' => 'nullable|string',
-        ]);
-        
-        // Update existing or create new
-        $teacherRequest = \App\Models\TeacherRequest::updateOrCreate(
-            ['user_id' => auth()->id()],
-            [
-                'name' => $request->name,
-                'phone' => $request->phone,
-                'message' => $request->message,
-                'status' => 'pending'
-            ]
-        );
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'داواکاریەکەت بە سەرکەوتوویی نێردرا، بە زوترین کات پەیوەندیت پێوە دەکرێت',
-            'data' => $teacherRequest
-        ]);
-    });
-
-    Route::delete('/teacher-requests/clear', function () {
-        \App\Models\TeacherRequest::where('user_id', auth()->id())->delete();
-        return response()->json(['success' => true]);
-    });
+    Route::get('/my-teacher-request', [UserRequestController::class, 'myTeacherRequest']);
+    Route::post('/teacher-requests', [UserRequestController::class, 'storeTeacherRequest']);
+    Route::delete('/teacher-requests/clear', [UserRequestController::class, 'clearTeacherRequests']);
 
     // Institution Requests
-    Route::get('/my-institution-request', function () {
-        $request = \App\Models\InstitutionRequest::where('user_id', auth()->id())->latest()->first();
-        return response()->json([
-            'success' => true,
-            'data' => $request
-        ]);
-    });
-
-    Route::get('/my-institution', function () {
-        $inst = \App\Models\Institution::where('user_id', auth()->id())->first();
-        return response()->json([
-            'success' => true,
-            'data' => $inst
-        ]);
-    });
-
-    Route::post('/institution-requests', function (Illuminate\Http\Request $request) {
-        $request->validate([
-            'name' => 'required',
-            'phone' => 'required',
-        ]);
-
-        $instReq = \App\Models\InstitutionRequest::updateOrCreate(
-            ['user_id' => auth()->id()],
-            [
-                'name' => $request->name,
-                'phone' => $request->phone,
-                'message' => $request->message,
-                'status' => 'pending'
-            ]
-        );
-
-        return response()->json([
-            'success' => true,
-            'message' => 'داواکاریەکەت بە سەرکەوتوویی نێردرا، بە زوترین کات پەیوەندیت پێوە دەکرێت',
-            'data' => $instReq
-        ]);
-    });
-
-    Route::delete('/institution-requests/clear', function () {
-        \App\Models\InstitutionRequest::where('user_id', auth()->id())->delete();
-        return response()->json(['success' => true]);
-    });
+    Route::get('/my-institution-request', [UserRequestController::class, 'myInstitutionRequest']);
+    Route::get('/my-institution', [UserRequestController::class, 'myInstitution']);
+    Route::post('/institution-requests', [UserRequestController::class, 'storeInstitutionRequest']);
+    Route::delete('/institution-requests/clear', [UserRequestController::class, 'clearInstitutionRequests']);
 
     // Institution CRUD
     Route::post('/institutions', [InstitutionController::class, 'store']);

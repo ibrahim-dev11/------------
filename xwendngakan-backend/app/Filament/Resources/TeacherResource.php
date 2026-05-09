@@ -73,6 +73,9 @@ class TeacherResource extends Resource
                             ->tel()
                             ->required()
                             ->maxLength(20),
+                        Forms\Components\TextInput::make('subject')
+                            ->label('بابەت / پسپۆڕی')
+                            ->maxLength(255),
                         Forms\Components\Select::make('type')
                             ->label('جۆری ماموستا')
                             ->options([
@@ -96,14 +99,20 @@ class TeacherResource extends Resource
                             ->minValue(0),
                     ])->columns(2),
 
-                Forms\Components\Section::make('دەربارە')
+                Forms\Components\Section::make('دەربارە و ڤیدیۆ')
                     ->icon('heroicon-o-document-text')
                     ->schema([
                         Forms\Components\Textarea::make('about')
                             ->label('دەربارەی ماموستا')
                             ->rows(4)
                             ->maxLength(2000),
+                        Forms\Components\TextInput::make('video_url')
+                            ->label('لینکی ڤیدیۆ (YouTube)')
+                            ->url()
+                            ->placeholder('https://www.youtube.com/watch?v=...')
+                            ->maxLength(255),
                     ]),
+
 
                 Forms\Components\Section::make('دۆخ')
                     ->schema([
@@ -123,10 +132,12 @@ class TeacherResource extends Resource
                     ->circular()
                     ->defaultImageUrl(fn ($record) => 'https://ui-avatars.com/api/?name=' . urlencode($record->name) . '&background=3b82f6&color=fff'),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('ناو')
+                    ->label('ناوی مامۆستا')
                     ->searchable()
-                    ->sortable()
                     ->weight('bold'),
+                Tables\Columns\TextColumn::make('subject')
+                    ->label('پسپۆڕی')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('phone')
                     ->label('تەلەفۆن')
                     ->searchable()
@@ -158,7 +169,12 @@ class TeacherResource extends Resource
                     ->label('نرخ/کاتژمێر')
                     ->suffix(' دینار')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('video_url')
+                    ->label('ڤیدیۆ')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->copyable(),
                 Tables\Columns\IconColumn::make('is_approved')
+
                     ->label('پەسەندکراو')
                     ->boolean()
                     ->trueIcon('heroicon-o-check-circle')
