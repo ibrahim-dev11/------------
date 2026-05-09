@@ -55,8 +55,8 @@ class AppLocalizations {
   // =====================
   String get onboardingTitle1 => _t({'ku': 'edu book بدۆزەرەوە', 'ar': 'اكتشف edu book', 'en': 'Discover edu book', 'tr': 'edu book\'u Keşfet'});
   String get onboardingDesc1 => _t({'ku': 'زانکۆ، قوتابخانە، و سەنتەرە پەروەردەییەکان بە ئاسانی بدۆزەرەوە', 'ar': 'اكتشف الجامعات والمدارس والمراكز التعليمية بسهولة', 'en': 'Discover universities, schools & educational centers easily', 'tr': 'Üniversiteleri, okulları ve eğitim merkezlerini kolayca keşfet'});
-  String get onboardingTitle2 => _t({'ku': 'ماموستا بدۆزەرەوە', 'ar': 'ابحث عن معلم', 'en': 'Find Your Teacher', 'tr': 'Öğretmenini Bul'});
-  String get onboardingDesc2 => _t({'ku': 'ماموستای تایبەتی و زانکۆیی بدۆزەرەوە بۆ وردکاری و پێشڕەوی خوێندنەکەت', 'ar': 'ابحث عن معلمين خاصين وجامعيين لتطوير مهاراتك', 'en': 'Find private & university teachers for your educational advancement', 'tr': 'Öğrenimi için özel ve üniversite öğretmenleri bul'});
+  String get onboardingTitle2 => _t({'ku': 'مامۆستا بدۆزەرەوە', 'ar': 'ابحث عن معلم', 'en': 'Find Your Teacher', 'tr': 'Öğretmenini Bul'});
+  String get onboardingDesc2 => _t({'ku': 'مامۆستای تایبەتی و زانکۆیی بدۆزەرەوە بۆ وردکاری و پێشڕەوی خوێندنەکەت', 'ar': 'ابحث عن معلمين خاصين وجامعيين لتطوير مهاراتك', 'en': 'Find private & university teachers for your educational advancement', 'tr': 'Öğrenimi için özel ve üniversite öğretmenleri bul'});
   String get onboardingTitle3 => _t({'ku': 'CV بنێرە', 'ar': 'أرسل سيرتك الذاتية', 'en': 'Share Your CV', 'tr': 'CV\'ni Paylaş'});
   String get onboardingDesc3 => _t({'ku': 'CV خۆت دابنێ و دۆخی کارکردن بدۆزەرەوە', 'ar': 'أضف سيرتك الذاتية وابحث عن فرص العمل', 'en': 'Upload your CV and discover job opportunities', 'tr': 'CV\'ni yükle ve iş fırsatlarını keşfet'});
   String get onboardingTitle4 => _t({'ku': 'زمان هەڵبژێرە', 'ar': 'اختر اللغة', 'en': 'Choose Language', 'tr': 'Dil Seç'});
@@ -138,11 +138,11 @@ class AppLocalizations {
   // =====================
   // TEACHERS
   // =====================
-  String get teachers => _t({'ku': 'ماموستاکان', 'ar': 'المعلمون', 'en': 'Teachers', 'tr': 'Öğretmenler'});
-  String get myTeachers => _t({'ku': 'ماموستاکانم', 'ar': 'معلموني', 'en': 'My Teachers', 'tr': 'Öğretmenlerim'});
-  String get privateTeacher => _t({'ku': 'ماموستای تایبەت', 'ar': 'معلم خاص', 'en': 'Private Teacher', 'tr': 'Özel Öğretmen'});
-  String get universityTeacher => _t({'ku': 'ماموستای زانکۆ', 'ar': 'معلم جامعي', 'en': 'University Teacher', 'tr': 'Üniversite Öğretmeni'});
-  String get schoolTeacher => _t({'ku': 'ماموستای قوتابخانە', 'ar': 'معلم مدرسة', 'en': 'School Teacher', 'tr': 'Okul Öğretmeni'});
+  String get teachers => _t({'ku': 'مامۆستایان', 'ar': 'المعلمون', 'en': 'Teachers', 'tr': 'Öğretmenler'});
+  String get myTeachers => _t({'ku': 'مامۆستاکانم', 'ar': 'معلموني', 'en': 'My Teachers', 'tr': 'Öğretmenlerim'});
+  String get privateTeacher => _t({'ku': 'مامۆستای تایبەت', 'ar': 'معلم خاص', 'en': 'Private Teacher', 'tr': 'Özel Öğretmen'});
+  String get universityTeacher => _t({'ku': 'مامۆستای زانکۆ', 'ar': 'معلم جامعي', 'en': 'University Teacher', 'tr': 'Üniversite Öğretmeni'});
+  String get schoolTeacher => _t({'ku': 'مامۆستای قوتابخانە', 'ar': 'معلم مدرسة', 'en': 'School Teacher', 'tr': 'Okul Öğretmeni'});
   String get experience => _t({'ku': 'ئەزموون', 'ar': 'الخبرة', 'en': 'Experience', 'tr': 'Deneyim'});
   String get experienceYears => _t({'ku': 'ساڵی ئەزموون', 'ar': 'سنوات الخبرة', 'en': 'Years of Experience', 'tr': 'Deneyim Yılı'});
   String get hourlyRate => _t({'ku': 'کرێی هەر کاتژمێر', 'ar': 'الأجر في الساعة', 'en': 'Hourly Rate', 'tr': 'Saatlik Ücret'});
@@ -150,9 +150,9 @@ class AppLocalizations {
   String get subject => _t({'ku': 'بابەت', 'ar': 'المادة', 'en': 'Subject', 'tr': 'Ders'});
   String get rating => _t({'ku': 'هەڵسەنگاندن', 'ar': 'التقييم', 'en': 'Rating', 'tr': 'Değerlendirme'});
   String get reviews => _t({'ku': 'ڕێکردنەوەکان', 'ar': 'التقييمات', 'en': 'Reviews', 'tr': 'İncelemeler'});
-  String get bookTeacher => _t({'ku': 'ماموستا بووکبکە', 'ar': 'احجز معلم', 'en': 'Book Teacher', 'tr': 'Öğretmen Rezerve Et'});
+  String get bookTeacher => _t({'ku': 'مامۆستا بووکبکە', 'ar': 'احجز معلم', 'en': 'Book Teacher', 'tr': 'Öğretmen Rezerve Et'});
   String get contactTeacher => _t({'ku': 'پەیوەندی بکە', 'ar': 'تواصل معه', 'en': 'Contact', 'tr': 'İletişim Kur'});
-  String get registerAsTeacher => _t({'ku': 'وەک ماموستا تۆمار بکە', 'ar': 'سجل كمعلم', 'en': 'Register as Teacher', 'tr': 'Öğretmen Olarak Kayıt'});
+  String get registerAsTeacher => _t({'ku': 'وەک مامۆستا تۆمار بکە', 'ar': 'سجل كمعلم', 'en': 'Register as Teacher', 'tr': 'Öğretmen Olarak Kayıt'});
   String get biography => _t({'ku': 'بیۆگرافی', 'ar': 'السيرة الذاتية المختصرة', 'en': 'Biography', 'tr': 'Biyografi'});
   String get subjects => _t({'ku': 'بابەتەکان', 'ar': 'المواد', 'en': 'Subjects', 'tr': 'Dersler'});
 
@@ -222,7 +222,7 @@ class AppLocalizations {
   String get personalInfo => _t({'ku': 'زانیاری کەسی', 'ar': 'المعلومات الشخصية', 'en': 'Personal Info', 'tr': 'Kişisel Bilgiler'});
   String get fieldOfStudy => _t({'ku': 'بواری خوێندن', 'ar': 'مجال الدراسة', 'en': 'Field of Study', 'tr': 'Çalışma Alanı'});
   String get subjectPhoto => _t({'ku': 'وێنەی بابەت', 'ar': 'صورة المادة', 'en': 'Subject Photo', 'tr': 'Ders Fotoğrafı'});
-  String get teacherType => _t({'ku': 'جۆری ماموستا', 'ar': 'نوع المعلم', 'en': 'Teacher Type', 'tr': 'Öğretmen Türü'});
+  String get teacherType => _t({'ku': 'جۆری مامۆستا', 'ar': 'نوع المعلم', 'en': 'Teacher Type', 'tr': 'Öğretmen Türü'});
   String get privacyPolicy => _t({'ku': 'سیاسەتی نهێنی', 'ar': 'سياسة الخصوصية', 'en': 'Privacy Policy', 'tr': 'Gizlilik Politikası'});
   String get helpCenter => _t({'ku': 'ناوەندی یارمەتی', 'ar': 'مركز المساعدة', 'en': 'Help Center', 'tr': 'Yardım Merkezi'});
   String get contactInfo => _t({'ku': 'زانیاری پەیوەندی', 'ar': 'معلومات الاتصال', 'en': 'Contact Info', 'tr': 'İletişim Bilgileri'});
@@ -232,7 +232,7 @@ class AppLocalizations {
   String get stats => _t({'ku': 'ئامارەکان', 'ar': 'الإحصائيات', 'en': 'Statistics', 'tr': 'İstatistikler'});
 
   String get totalInstitutions => _t({'ku': 'کۆی خوێندنگاکان', 'ar': 'إجمالي المؤسسات', 'en': 'Total Institutions', 'tr': 'Toplam Kurum'});
-  String get totalTeachers => _t({'ku': 'کۆی ماموستاکان', 'ar': 'إجمالي المعلمين', 'en': 'Total Teachers', 'tr': 'Toplam Öğretmen'});
+  String get totalTeachers => _t({'ku': 'کۆی مامۆستایان', 'ar': 'إجمالي المعلمين', 'en': 'Total Teachers', 'tr': 'Toplam Öğretmen'});
   String get totalCvs => _t({'ku': 'کۆی CVکان', 'ar': 'إجمالي السير الذاتية', 'en': 'Total CVs', 'tr': 'Toplam CV'});
   String get cities => _t({'ku': 'شارەکان', 'ar': 'المدن', 'en': 'Cities', 'tr': 'Şehirler'});
 }

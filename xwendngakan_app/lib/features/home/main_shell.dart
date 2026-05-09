@@ -55,7 +55,7 @@ class MainShell extends StatelessWidget {
       const _NavItem(
           icon: Icons.article_outlined,
           activeIcon: Icons.article_rounded,
-          label: 'هەواڵ'),
+          label: 'هەواڵەکان'),
       _NavItem(
           icon: Icons.school_outlined,
           activeIcon: Icons.school_rounded,

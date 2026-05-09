@@ -63,188 +63,185 @@ class _TeachersScreenState extends State<TeachersScreen> {
             controller: _scrollCtrl,
             physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
             slivers: [
-              // Premium Header
-              SliverToBoxAdapter(
-                child: Container(
+              // Premium Pinned App Bar
+              SliverAppBar(
+                pinned: true,
+                floating: true,
+                snap: true,
+                elevation: 0,
+                backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                surfaceTintColor: Colors.transparent,
+                automaticallyImplyLeading: false,
+                titleSpacing: 0,
+                title: Container(
                   decoration: BoxDecoration(
-                    color: isDark ? AppColors.darkCard : Colors.white,
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(32),
-                      bottomRight: Radius.circular(32),
+                    border: Border(
+                      bottom: BorderSide(
+                        color: isDark ? const Color(0xFF2C2C2C) : const Color(0xFFEFEFEF),
+                        width: 1,
+                      ),
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: isDark ? Colors.black.withOpacity(0.3) : Colors.black.withOpacity(0.04),
-                        blurRadius: 24,
-                        offset: const Offset(0, 8),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.school_rounded,
+                          size: 18,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        l.teachers,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
+                          fontFamily: 'NotoSansArabic',
+                          color: isDark ? Colors.white : AppColors.textDark,
+                          letterSpacing: -0.3,
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          '${prov.teachers.length} مامۆستا',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.primary,
+                            fontFamily: 'NotoSansArabic',
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                  child: SafeArea(
-                    bottom: false,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 28),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                ),
+              ),
+
+              // Search Bar & Filter Section
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Modern Search Bar
+                      Container(
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.02),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                          border: Border.all(
+                            color: isDark ? const Color(0xFF2C2C2C) : const Color(0xFFE2E8F0),
+                          ),
+                        ),
+                        child: AppSearchBar(
+                          controller: _searchCtrl,
+                          hint: l.searchHint,
+                          onChanged: (v) => prov.setSearch(v),
+                          onFilterTap: () => _showCityFilter(context, l),
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      
+                      // Horizontal Filter Chips
+                      SizedBox(
+                        height: 44,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          clipBehavior: Clip.none,
+                          physics: const BouncingScrollPhysics(),
+                          children: [
+                            _buildPremiumChip('هەموو', _selectedType == null, () {
+                              setState(() => _selectedType = null);
+                              prov.setFilter(type: '');
+                            }, isDark, Icons.grid_view_rounded),
+                            _buildPremiumChip('زانکۆ', _selectedType == 'university', () {
+                              setState(() => _selectedType = 'university');
+                              prov.setFilter(type: 'university');
+                            }, isDark, Icons.account_balance_rounded),
+                            _buildPremiumChip('قوتابخانە', _selectedType == 'school', () {
+                              setState(() => _selectedType = 'school');
+                              prov.setFilter(type: 'school');
+                            }, isDark, Icons.menu_book_rounded),
+                          ],
+                        ),
+                      ),
+                      
+                      // Selected City Filter Badge
+                      if (_selectedCity != null) ...[
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.primary.withValues(alpha: 0.04),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
+                                  const Icon(Icons.location_on_rounded, size: 16, color: AppColors.primary),
+                                  const SizedBox(width: 8),
                                   Text(
-                                    l.teachers,
-                                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 32,
-                                      letterSpacing: -0.5,
-                                      color: isDark ? Colors.white : const Color(0xFF111827),
+                                    _selectedCity!,
+                                    style: TextStyle(
+                                      color: isDark ? Colors.white : const Color(0xFF1F2937),
+                                      fontSize: 13,
+                                      fontFamily: 'NotoSansArabic',
+                                      fontWeight: FontWeight.w700,
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primary.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Text(
-                                      '${prov.teachers.length} مامۆستای پسپۆڕ',
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: AppColors.primary,
-                                        fontFamily: 'NotoSansArabic',
-                                        fontWeight: FontWeight.w700,
+                                  const SizedBox(width: 12),
+                                  GestureDetector(
+                                    onTap: () {
+                                      HapticFeedback.lightImpact();
+                                      setState(() => _selectedCity = null);
+                                      prov.setFilter(city: '');
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(3),
+                                      decoration: BoxDecoration(
+                                        color: isDark ? const Color(0xFF2C2C2C) : const Color(0xFFF1F5F9),
+                                        shape: BoxShape.circle,
                                       ),
+                                      child: const Icon(Icons.close_rounded, size: 12, color: AppColors.textGrey),
                                     ),
                                   ),
                                 ],
                               ),
-                              Container(
-                                width: 56,
-                                height: 56,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [AppColors.primary, AppColors.primary.withOpacity(0.7)],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: AppColors.primary.withOpacity(0.3),
-                                      blurRadius: 16,
-                                      offset: const Offset(0, 8),
-                                    ),
-                                  ],
-                                ),
-                                child: const Icon(Icons.school_rounded, color: Colors.white, size: 28),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 32),
-                          
-                          // Modern Search Bar
-                          Container(
-                            decoration: BoxDecoration(
-                              color: isDark ? const Color(0xFF1F2937) : const Color(0xFFF3F4F6),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
-                              ),
-                            ),
-                            child: AppSearchBar(
-                              controller: _searchCtrl,
-                              hint: l.searchHint,
-                              onChanged: (v) => prov.setSearch(v),
-                              onFilterTap: () => _showCityFilter(context, l),
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          
-                          // Horizontal Filter Chips
-                          SizedBox(
-                            height: 48,
-                            child: ListView(
-                              scrollDirection: Axis.horizontal,
-                              clipBehavior: Clip.none,
-                              physics: const BouncingScrollPhysics(),
-                              children: [
-                                _buildPremiumChip('هەموو', _selectedType == null, () {
-                                  setState(() => _selectedType = null);
-                                  prov.setFilter(type: '');
-                                }, isDark, Icons.grid_view_rounded),
-                                _buildPremiumChip('زانکۆ', _selectedType == 'university', () {
-                                  setState(() => _selectedType = 'university');
-                                  prov.setFilter(type: 'university');
-                                }, isDark, Icons.account_balance_rounded),
-                                _buildPremiumChip('قوتابخانە', _selectedType == 'school', () {
-                                  setState(() => _selectedType = 'school');
-                                  prov.setFilter(type: 'school');
-                                }, isDark, Icons.menu_book_rounded),
-                              ],
-                            ),
-                          ),
-                          
-                          // Selected City Filter Badge
-                          if (_selectedCity != null) ...[
-                            const SizedBox(height: 20),
-                            Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                  decoration: BoxDecoration(
-                                    color: isDark ? const Color(0xFF374151) : Colors.white,
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(color: AppColors.primary.withOpacity(0.3)),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: AppColors.primary.withOpacity(0.08),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 4),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(Icons.location_on_rounded, size: 18, color: AppColors.primary),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        _selectedCity!,
-                                        style: TextStyle(
-                                          color: isDark ? Colors.white : const Color(0xFF1F2937),
-                                          fontSize: 14,
-                                          fontFamily: 'NotoSansArabic',
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 14),
-                                      GestureDetector(
-                                        onTap: () {
-                                          HapticFeedback.lightImpact();
-                                          setState(() => _selectedCity = null);
-                                          prov.setFilter(city: '');
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.all(4),
-                                          decoration: BoxDecoration(
-                                            color: isDark ? const Color(0xFF4B5563) : const Color(0xFFF3F4F6),
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: const Icon(Icons.close_rounded, size: 14, color: AppColors.textGrey),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
                             ),
                           ],
-                        ],
-                      ),
-                    ),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
               ),
