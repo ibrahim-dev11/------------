@@ -242,11 +242,11 @@ class _CvHeader extends StatelessWidget {
                           color: AppColors.success,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: const Row(
+                        child: Row(
                           children: [
-                            Icon(Icons.verified_rounded, color: Colors.white, size: 14),
-                            SizedBox(width: 4),
-                            Text('پشکنراوە', style: TextStyle(
+                            const Icon(Icons.verified_rounded, color: Colors.white, size: 14),
+                            const SizedBox(width: 4),
+                            Text(AppLocalizations.of(context).cvVerified, style: const TextStyle(
                               color: Colors.white, fontSize: 11,
                               fontWeight: FontWeight.w600, fontFamily: 'NotoSansArabic',
                             )),

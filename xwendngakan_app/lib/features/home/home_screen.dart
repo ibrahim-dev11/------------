@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../core/constants/app_colors.dart';
@@ -12,6 +13,7 @@ import '../../providers/institutions_provider.dart';
 import '../../providers/locale_provider.dart';
 import '../../providers/notifications_provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../data/models/institution_type_model.dart';
 import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/common_widgets.dart';
 import 'widgets/home_drawer.dart';
@@ -23,9 +25,28 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+class _SubFilterItem {
+  final String id;
+  final String name;
+  final String? type;
+  final String? sector;
+  final IconData? icon;
+  final String? emoji;
+
+  _SubFilterItem({
+    required this.id,
+    required this.name,
+    this.type,
+    this.sector,
+    this.icon,
+    this.emoji,
+  });
+}
+
 class _HomeScreenState extends State<HomeScreen> {
   final _searchCtrl = TextEditingController();
-  String _selectedFilter = 'all';
+  String _selectedParentFilter = 'all'; // 'all', 'moe', 'mhe', 'others'
+  String _selectedChildFilterId = 'all'; // unique id for sub-filter
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   // Dynamic filters will be populated from provider
@@ -35,7 +56,8 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final auth = Provider.of<AuthProvider>(context, listen: false);
-      Provider.of<NotificationsProvider>(context, listen: false).loadUnread(auth);
+      Provider.of<NotificationsProvider>(context, listen: false)
+          .loadUnread(auth);
     });
   }
 
@@ -82,8 +104,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
           const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
-
-
           // Categories / Filters Header
           SliverToBoxAdapter(
             child: Padding(
@@ -91,9 +111,9 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'جۆرەکانی خوێندن',
-                    style: TextStyle(
+                  Text(
+                    l.educationTypes,
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                       fontFamily: 'NotoSansArabic',
@@ -101,9 +121,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   GestureDetector(
                     onTap: () => context.go('/institutions'),
-                    child: const Text(
-                      'هەمووی',
-                      style: TextStyle(
+                    child: Text(
+                      l.seeAllShort,
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: AppColors.primary,
@@ -118,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
           const SliverToBoxAdapter(child: SizedBox(height: 16)),
 
-          // Premium Categories Row
+          // Ministries Row (Top Row)
           SliverToBoxAdapter(
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -126,34 +146,64 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: [
-                  // Always show "All" first
-                  _buildFilterItem(
+                  _buildParentFilterItem(
                     key: 'all',
-                    name: 'هەموو',
+                    name: l.allFilter,
                     icon: Icons.grid_view_rounded,
-                    color: AppColors.primary,
                     isDark: isDark,
                   ),
-                  ...prov.institutionTypes.map((type) => _buildFilterItem(
-                        key: type.key,
-                        name: type.name,
-                        emoji: type.emoji,
-                        isDark: isDark,
-                      )),
+                  _buildParentFilterItem(
+                    key: 'mhe',
+                    name: l.higherEducation,
+                    icon: Icons.account_balance_rounded,
+                    isDark: isDark,
+                  ),
+                  _buildParentFilterItem(
+                    key: 'moe',
+                    name: l.ministryOfEducation,
+                    icon: Icons.school_rounded,
+                    isDark: isDark,
+                  ),
+                  _buildParentFilterItem(
+                    key: 'others',
+                    name: l.otherInstitutions,
+                    icon: Icons.domain_rounded,
+                    isDark: isDark,
+                  ),
                 ],
               ),
             ),
           ),
 
+          const SliverToBoxAdapter(child: SizedBox(height: 16)),
+
+          // Sub Categories Row (Bottom Row)
+          if (_selectedParentFilter != 'all')
+            SliverToBoxAdapter(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: _getSubFilters(prov.institutionTypes).map((item) {
+                    return _buildSubFilterItem(
+                      item: item,
+                      isDark: isDark,
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+
           const SliverToBoxAdapter(child: SizedBox(height: 32)),
 
           // Institutions Section Header
-          const SliverToBoxAdapter(
+          SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
-                'باشترین دامەزراوەکان',
-                style: TextStyle(
+                l.bestInstitutions,
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                   fontFamily: 'NotoSansArabic',
@@ -191,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.all(40),
                 child: Center(
                   child: Text(
-                    'هیچ دامەزراوەیەک نەدۆزرایەوە',
+                    l.noInstitutionsFound,
                     style: TextStyle(
                       color: isDark ? AppColors.textGrey : AppColors.textMuted,
                       fontFamily: 'NotoSansArabic',
@@ -280,141 +330,128 @@ class _HomeScreenState extends State<HomeScreen> {
           SafeArea(
             bottom: false,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+              padding: const EdgeInsets.fromLTRB(0, 20, 0, 32),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Top Row: User info & Actions
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // User Avatar (Opens Drawer)
-                      GestureDetector(
-                        onTap: () => _scaffoldKey.currentState?.openDrawer(),
-                        child: Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                            border: Border.all(
-                                color: Colors.white.withOpacity(0.5), width: 2),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              )
-                            ],
-                          ),
-                          child: Center(
-                            child: Text(
-                              auth.user?.name.substring(0, 1).toUpperCase() ??
-                                  'X',
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primary,
+                  Padding(
+                    padding: EdgeInsets.zero,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // User Avatar (Opens Drawer)
+                        GestureDetector(
+                          onTap: () => _scaffoldKey.currentState?.openDrawer(),
+                          child: Transform.translate(
+                            offset: const Offset(10, 0),
+                            child: Container(
+                              width: 100,
+                              height: 100,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.transparent,
+                              ),
+                              child: Image.asset(
+                                'assets/images/app_logo.png',
+                                fit: BoxFit.contain,
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 16),
-                      // Greeting text
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        // Brand & User info Group
+                        Expanded(
+                          child: Transform.translate(
+                            offset: const Offset(30, -2),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  "Edu Book",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.white,
+                                    fontFamily: GoogleFonts.outfit().fontFamily,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                               
+                              ],
+                            ),
+                          ),
+                        ),
+                        // Action buttons
+                        Row(
                           children: [
+                            _buildNotificationButton(context),
+                            const SizedBox(width: 12),
+                            _buildGlassButton(
+                              icon: isDark
+                                  ? Icons.light_mode_rounded
+                                  : Icons.dark_mode_rounded,
+                              onTap: () => theme.toggle(),
+                            ),
+                            const SizedBox(width: 16),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  // Search Bar
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: GestureDetector(
+                      onTap: () => context.go('/institutions'),
+                      child: Container(
+                        height: 56,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 15,
+                              offset: const Offset(0, 5),
+                            )
+                          ],
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.search_rounded,
+                                color: AppColors.primaryLight, size: 24),
+                            const SizedBox(width: 12),
                             Text(
-                              _greeting(l),
+                              l.searchHint,
                               style: const TextStyle(
-                                fontSize: 13,
-                                color: Colors.white70,
+                                color: AppColors.textMuted,
+                                fontSize: 15,
                                 fontFamily: 'NotoSansArabic',
-                                letterSpacing: 0.5,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              auth.user?.name ?? l.appName,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
-                                fontFamily: 'NotoSansArabic',
+                            const Spacer(),
+                            GestureDetector(
+                              onTap: () =>
+                                  _showFilterBottomSheet(context, isDark),
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Icon(Icons.tune_rounded,
+                                    color: AppColors.primary, size: 20),
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
                       ),
-                      // Action buttons
-                      Row(
-                        children: [
-                          _buildNotificationButton(context),
-                          const SizedBox(width: 12),
-                          _buildGlassButton(
-                            icon: isDark
-                                ? Icons.light_mode_rounded
-                                : Icons.dark_mode_rounded,
-                            onTap: () => theme.toggle(),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 32),
-                  // Search Bar
-                  GestureDetector(
-                    onTap: () => context.go('/institutions'),
-                    child: Container(
-                      height: 56,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 15,
-                            offset: const Offset(0, 5),
-                          )
-                        ],
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.search_rounded,
-                              color: AppColors.primaryLight, size: 24),
-                          const SizedBox(width: 12),
-                          Text(
-                            l.searchHint,
-                            style: const TextStyle(
-                              color: AppColors.textMuted,
-                              fontSize: 15,
-                              fontFamily: 'NotoSansArabic',
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const Spacer(),
-                          GestureDetector(
-                            onTap: () => _showFilterBottomSheet(context, isDark),
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: AppColors.primary.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Icon(Icons.tune_rounded,
-                                  color: AppColors.primary, size: 20),
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                   ),
-                  
                 ],
               ),
             ),
@@ -425,6 +462,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showFilterBottomSheet(BuildContext context, bool isDark) {
+    final l = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -463,7 +501,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'فلتەری پێشکەوتوو',
+                    l.advancedFilter,
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
@@ -473,14 +511,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   IconButton(
                     onPressed: () => Navigator.pop(ctx),
-                    icon: Icon(Icons.close_rounded, color: isDark ? Colors.white70 : Colors.black54),
+                    icon: Icon(Icons.close_rounded,
+                        color: isDark ? Colors.white70 : Colors.black54),
                   ),
                 ],
               ),
               const SizedBox(height: 24),
-              
+
               Text(
-                'شارەکان',
+                l.cities,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
@@ -492,13 +531,19 @@ class _HomeScreenState extends State<HomeScreen> {
               Wrap(
                 spacing: 12,
                 runSpacing: 12,
-                children: ['هەولێر', 'سلێمانی', 'دهۆک', 'هەڵەبجە', 'کەرکوک'].map((city) {
+                children: l.filterCities.map((city) {
                   return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
                     decoration: BoxDecoration(
-                      color: isDark ? AppColors.darkBg : Colors.grey.withOpacity(0.1),
+                      color: isDark
+                          ? AppColors.darkBg
+                          : Colors.grey.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: isDark ? AppColors.darkBorder : Colors.transparent),
+                      border: Border.all(
+                          color: isDark
+                              ? AppColors.darkBorder
+                              : Colors.transparent),
                     ),
                     child: Text(
                       city,
@@ -511,10 +556,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 }).toList(),
               ),
-              
+
               const SizedBox(height: 32),
               Text(
-                'ئاستی هەڵسەنگاندن',
+                l.ratingLevel,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
@@ -527,9 +572,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: List.generate(5, (index) {
                   return Container(
                     margin: const EdgeInsets.only(left: 8),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
                     decoration: BoxDecoration(
-                      color: index == 0 ? AppColors.primary : (isDark ? AppColors.darkBg : Colors.grey.withOpacity(0.1)),
+                      color: index == 0
+                          ? AppColors.primary
+                          : (isDark
+                              ? AppColors.darkBg
+                              : Colors.grey.withOpacity(0.1)),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Row(
@@ -538,17 +588,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           '${5 - index}',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: index == 0 ? Colors.white : (isDark ? Colors.white70 : AppColors.textDark),
+                            color: index == 0
+                                ? Colors.white
+                                : (isDark
+                                    ? Colors.white70
+                                    : AppColors.textDark),
                           ),
                         ),
                         const SizedBox(width: 4),
-                        Icon(Icons.star_rounded, size: 16, color: index == 0 ? Colors.white : Colors.amber),
+                        Icon(Icons.star_rounded,
+                            size: 16,
+                            color: index == 0 ? Colors.white : Colors.amber),
                       ],
                     ),
                   );
                 }),
               ),
-              
+
               const Spacer(),
               SizedBox(
                 width: double.infinity,
@@ -565,9 +621,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     elevation: 0,
                   ),
-                  child: const Text(
-                    'جێبەجێکردنی فلتەر',
-                    style: TextStyle(
+                  child: Text(
+                    l.applyFilter,
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                       color: Colors.white,
@@ -599,9 +655,11 @@ class _HomeScreenState extends State<HomeScreen> {
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.15),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
+              border:
+                  Border.all(color: Colors.white.withOpacity(0.2), width: 1),
             ),
-            child: const Icon(Icons.notifications_none_rounded, color: Colors.white, size: 22),
+            child: const Icon(Icons.notifications_none_rounded,
+                color: Colors.white, size: 22),
           ),
           if (notifProv.hasUnread)
             Positioned(
@@ -616,7 +674,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 child: Center(
                   child: Text(
-                    notifProv.unreadCount > 9 ? '9+' : '${notifProv.unreadCount}',
+                    notifProv.unreadCount > 9
+                        ? '9+'
+                        : '${notifProv.unreadCount}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 9,
@@ -648,81 +708,177 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildFilterItem({
+  List<_SubFilterItem> _getSubFilters(List<InstitutionTypeModel> allTypes) {
+    final l = AppLocalizations.of(context);
+    List<_SubFilterItem> items = [];
+    items.add(
+        _SubFilterItem(id: 'all', name: l.allFilter, icon: Icons.apps_rounded));
+
+    if (_selectedParentFilter == 'mhe') {
+      final mheKeys = ['gov', 'priv', 'inst2', 'eve_uni', 'eve_inst'];
+      final mheTypes = allTypes.where((t) => mheKeys.contains(t.key));
+      for (var t in mheTypes) {
+        items.add(_SubFilterItem(
+            id: t.key, name: t.name, type: t.key, emoji: t.emoji));
+      }
+    } else if (_selectedParentFilter == 'moe') {
+      final moeKeys = ['school', 'kg', 'inst5'];
+      final moeTypes = allTypes.where((t) => moeKeys.contains(t.key));
+      for (var t in moeTypes) {
+        items.add(_SubFilterItem(
+            id: t.key, name: t.name, type: t.key, emoji: t.emoji));
+      }
+    } else if (_selectedParentFilter == 'others') {
+      final knownKeys = [
+        'gov',
+        'priv',
+        'inst5',
+        'inst2',
+        'eve_uni',
+        'eve_inst',
+        'school',
+        'kg'
+      ];
+      final otherTypes = allTypes.where((t) => !knownKeys.contains(t.key));
+      for (var t in otherTypes) {
+        items.add(_SubFilterItem(
+            id: t.key, name: t.name, type: t.key, emoji: t.emoji));
+      }
+    }
+
+    return items;
+  }
+
+  Widget _buildParentFilterItem({
     required String key,
     required String name,
-    IconData? icon,
-    String? emoji,
-    Color? color,
+    required IconData icon,
     required bool isDark,
   }) {
-    final isActive = _selectedFilter == key;
-    final iconColor = color ?? AppColors.primary;
-
+    final isActive = _selectedParentFilter == key;
     return GestureDetector(
       onTap: () {
-        setState(() => _selectedFilter = key);
+        setState(() {
+          _selectedParentFilter = key;
+          _selectedChildFilterId = 'all';
+        });
+
         final p = Provider.of<InstitutionsProvider>(context, listen: false);
-        p.setFilter(type: key == 'all' ? null : key);
+        final subCats = _getSubFilters(p.institutionTypes);
+
+        if (key == 'all') {
+          p.setFilter(type: null, sector: null);
+        } else {
+          // Find first available sub-category other than 'all' if present, to show some data,
+          // OR just default to 'all' so it shows everything in that parent?
+          // Since the API doesn't support multiple types (e.g. university AND institute),
+          // we have to pick one. Let's select the first concrete child.
+          final firstReal = subCats.where((s) => s.id != 'all').firstOrNull;
+          if (firstReal != null) {
+            setState(() {
+              _selectedChildFilterId = firstReal.id;
+            });
+            p.setFilter(type: firstReal.type, sector: firstReal.sector);
+          } else {
+            p.setFilter(type: null, sector: null);
+          }
+        }
       },
       child: AnimatedContainer(
-        duration: AppConstants.fast,
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        duration: AppConstants.medium,
+        curve: Curves.fastOutSlowIn,
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: isActive
               ? AppColors.primary
               : (isDark ? AppColors.darkCard : Colors.white),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isActive
-                ? AppColors.primary
-                : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
-            width: 1.5,
-          ),
+          borderRadius: BorderRadius.circular(12),
+          border: isActive
+              ? null
+              : Border.all(
+                  color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                  width: 1,
+                ),
           boxShadow: isActive
               ? [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.3),
-                    blurRadius: 12,
-                    offset: const Offset(0, 6),
+                    color: AppColors.primary.withValues(alpha: 0.25),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
                   )
                 ]
               : [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.02),
-                    blurRadius: 5,
-                    offset: const Offset(0, 2),
+                    color: Colors.black.withValues(alpha: 0.02),
+                    blurRadius: 3,
+                    offset: const Offset(0, 1),
                   )
                 ],
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon != null)
-              Icon(
-                icon,
-                size: 20,
-                color: isActive ? Colors.white : iconColor,
-              )
-            else if (emoji != null)
-              Text(
-                emoji,
-                style: const TextStyle(fontSize: 18),
-              ),
-            const SizedBox(width: 8),
-            Text(
-              name,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
-                color: isActive
-                    ? Colors.white
-                    : (isDark ? Colors.white : AppColors.textDark),
-                fontFamily: 'NotoSansArabic',
-              ),
+        child: Center(
+          child: Text(
+            name,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
+              color: isActive
+                  ? Colors.white
+                  : (isDark ? Colors.white70 : AppColors.textDark),
+              fontFamily: 'NotoSansArabic',
             ),
-          ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubFilterItem({
+    required _SubFilterItem item,
+    required bool isDark,
+  }) {
+    final isActive = _selectedChildFilterId == item.id;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedChildFilterId = item.id;
+        });
+        final p = Provider.of<InstitutionsProvider>(context, listen: false);
+        p.setFilter(type: item.type ?? 'all', sector: item.sector ?? 'all');
+      },
+      child: AnimatedContainer(
+        duration: AppConstants.medium,
+        curve: Curves.fastOutSlowIn,
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: isActive
+              ? (isDark
+                  ? AppColors.primary.withValues(alpha: 0.4)
+                  : AppColors.primary.withValues(alpha: 0.25))
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isActive
+                ? (isDark
+                    ? AppColors.primary.withValues(alpha: 0.8)
+                    : AppColors.primary.withValues(alpha: 0.6))
+                : (isDark ? AppColors.darkBorder : Colors.grey.shade300),
+            width: 1,
+          ),
+        ),
+        child: Center(
+          child: Text(
+            item.name,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+              color: isActive
+                  ? AppColors.primary
+                  : (isDark ? Colors.white70 : AppColors.textGrey),
+              fontFamily: 'NotoSansArabic',
+            ),
+          ),
         ),
       ),
     );
@@ -743,29 +899,29 @@ class _AdsCarouselState extends State<AdsCarousel> {
   int _currentPage = 0;
   Timer? _timer;
 
-  final List<Map<String, dynamic>> _ads = [
-    {
-      'title': 'سەنتەری دیپلۆمان',
-      'subtitle': 'بەهێزترین کۆرسی زمانی ئینگلیزی',
-      'tag': '🔥 تایبەت بەم هەفتەیە',
-      'colors': [const Color(0xFFD4A017), const Color(0xFFE8B84B)],
-      'icon': Icons.school_rounded,
-    },
-    {
-      'title': 'پەیمانگای کۆمپیوتەر',
-      'subtitle': 'خولی فێربوونی پڕۆگرامسازی بۆ ئاستی سەرەتایی',
-      'tag': '💻 خولی نوێ',
-      'colors': [AppColors.primary, AppColors.primaryLight],
-      'icon': Icons.computer_rounded,
-    },
-    {
-      'title': 'زانکۆی ئەمریکی',
-      'subtitle': 'دەرگای پێشکەشکردن کرایەوە بۆ ساڵی نوێ',
-      'tag': '🎓 زانکۆ',
-      'colors': [const Color(0xFF1D9E75), const Color(0xFF28B485)],
-      'icon': Icons.account_balance_rounded,
-    },
-  ];
+  List<Map<String, dynamic>> _buildAds(AppLocalizations l) => [
+        {
+          'title': l.adDiplomaTitle,
+          'subtitle': l.adDiplomaSubtitle,
+          'tag': l.adDiplomaTag,
+          'colors': [const Color(0xFFD4A017), const Color(0xFFE8B84B)],
+          'icon': Icons.school_rounded,
+        },
+        {
+          'title': l.adComputerTitle,
+          'subtitle': l.adComputerSubtitle,
+          'tag': l.adComputerTag,
+          'colors': [AppColors.primary, AppColors.primaryLight],
+          'icon': Icons.computer_rounded,
+        },
+        {
+          'title': l.adAmericanTitle,
+          'subtitle': l.adAmericanSubtitle,
+          'tag': l.adAmericanTag,
+          'colors': [const Color(0xFF1D9E75), const Color(0xFF28B485)],
+          'icon': Icons.account_balance_rounded,
+        },
+      ];
 
   @override
   void initState() {
@@ -777,7 +933,7 @@ class _AdsCarouselState extends State<AdsCarousel> {
     _timer = Timer.periodic(const Duration(seconds: 4), (timer) {
       if (_pageController.hasClients) {
         int nextPage = _currentPage + 1;
-        if (nextPage >= _ads.length) {
+        if (nextPage >= 3) {
           nextPage = 0;
           _pageController.animateToPage(
             nextPage,
@@ -803,6 +959,8 @@ class _AdsCarouselState extends State<AdsCarousel> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final ads = _buildAds(l);
     return Column(
       children: [
         SizedBox(
@@ -812,15 +970,15 @@ class _AdsCarouselState extends State<AdsCarousel> {
             onPageChanged: (idx) {
               setState(() => _currentPage = idx);
             },
-            itemCount: _ads.length,
+            itemCount: ads.length,
             itemBuilder: (context, index) {
-              final ad = _ads[index];
+              final ad = ads[index];
               return Container(
                 margin: const EdgeInsets.symmetric(horizontal: 6),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(24),
                   gradient: LinearGradient(
-                    colors: ad['colors'],
+                    colors: (ad['colors'] as List).cast<Color>(),
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -942,7 +1100,7 @@ class _AdsCarouselState extends State<AdsCarousel> {
         const SizedBox(height: 16),
         SmoothPageIndicator(
           controller: _pageController,
-          count: _ads.length,
+          count: _buildAds(AppLocalizations.of(context)).length,
           effect: ExpandingDotsEffect(
             dotHeight: 6,
             dotWidth: 6,

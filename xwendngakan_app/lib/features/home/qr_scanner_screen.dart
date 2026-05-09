@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/localization/app_localizations.dart';
 
 class QrScannerScreen extends StatefulWidget {
   const QrScannerScreen({super.key});
@@ -22,11 +23,12 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('سکانی کۆدی QR',
-            style: TextStyle(
+        title: Text(l10n.scanQr,
+            style: const TextStyle(
                 fontFamily: 'NotoSansArabic',
                 fontWeight: FontWeight.bold,
                 color: Colors.white)),
@@ -92,10 +94,10 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
             right: 0,
             child: Column(
               children: [
-                const Text(
-                  'کۆدی QR ی دامەزراوەکە بخەرە بەر کامێرا',
+                Text(
+                  l10n.scanQrInstructions,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontFamily: 'NotoSansArabic',
                     fontSize: 16,
@@ -109,9 +111,9 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
                     color: Colors.white.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: const Text(
-                    'بۆ بینینی زانیاری خوێندنگا',
-                    style: TextStyle(
+                  child: Text(
+                    l10n.viewInstitutionInfo,
+                    style: const TextStyle(
                       color: Colors.white70,
                       fontFamily: 'NotoSansArabic',
                       fontSize: 13,

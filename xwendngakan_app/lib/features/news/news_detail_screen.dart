@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/localization/app_localizations.dart';
 import '../../data/models/news_model.dart';
 import '../../data/models/post_model.dart';
 
@@ -10,15 +11,15 @@ class NewsDetailScreen extends StatelessWidget {
 
   const NewsDetailScreen({super.key, this.news, this.post});
 
-  String _timeAgo(String? raw) {
+  String _timeAgo(String? raw, AppLocalizations l) {
     if (raw == null) return '';
     try {
       final dt = DateTime.parse(raw).toLocal();
       final diff = DateTime.now().difference(dt);
-      if (diff.inMinutes < 1) return 'ئێستا';
-      if (diff.inMinutes < 60) return '${diff.inMinutes} خولەک لەمەوبەر';
-      if (diff.inHours < 24) return '${diff.inHours} کاتژمێر لەمەوبەر';
-      if (diff.inDays < 7) return '${diff.inDays} ڕۆژ لەمەوبەر';
+      if (diff.inMinutes < 1) return l.timeNow;
+      if (diff.inMinutes < 60) return l.timeMinutesAgoBefore(diff.inMinutes);
+      if (diff.inHours < 24) return l.timeHoursAgoBefore(diff.inHours);
+      if (diff.inDays < 7) return l.timeDaysAgoBefore(diff.inDays);
       final d = dt;
       return '${d.year}/${d.month.toString().padLeft(2, '0')}/${d.day.toString().padLeft(2, '0')}';
     } catch (_) {
@@ -26,18 +27,18 @@ class NewsDetailScreen extends StatelessWidget {
     }
   }
 
-  String _getTypeLabel(String? type) {
+  String _getTypeLabel(String? type, AppLocalizations l) {
     switch (type) {
       case 'university':
-        return 'زانکۆ';
+        return l.typeUniversity;
       case 'school':
-        return 'قوتابخانە';
+        return l.typeSchool;
       case 'language_center':
-        return 'سەنتەری زمان';
+        return l.typeLanguageCenter;
       case 'kindergarten':
-        return 'باخچەی ساوایان';
+        return l.typeKindergarten;
       default:
-        return 'هەواڵ';
+        return l.newsTag;
     }
   }
 
@@ -59,6 +60,7 @@ class NewsDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l = AppLocalizations.of(context);
 
     // Extract common fields for unified rendering
     final title = post?.title ?? news?.title ?? '';
@@ -66,7 +68,7 @@ class NewsDetailScreen extends StatelessWidget {
     final imageUrl = post?.imageUrl ?? news?.displayImageUrl ?? '';
     final hasImage = imageUrl.isNotEmpty;
     final createdAt = post?.createdAt ?? news?.createdAt;
-    final displayName = post?.displayName ?? 'هەواڵی فەرمی';
+    final displayName = post?.displayName ?? l.officialNews;
     final logoUrl = post?.logoUrl ?? '';
     final type = post?.institutionType;
     final typeColor = _getTypeColor(type);
@@ -223,7 +225,7 @@ class NewsDetailScreen extends StatelessWidget {
                                           color: isDark ? Colors.white38 : Colors.black38),
                                       const SizedBox(width: 4),
                                       Text(
-                                        _timeAgo(createdAt),
+                                        _timeAgo(createdAt, l),
                                         style: TextStyle(
                                           fontSize: 11,
                                           fontFamily: 'NotoSansArabic',
@@ -238,7 +240,7 @@ class NewsDetailScreen extends StatelessWidget {
                                           borderRadius: BorderRadius.circular(20),
                                         ),
                                         child: Text(
-                                          _getTypeLabel(type),
+                                          _getTypeLabel(type, l),
                                           style: TextStyle(
                                             fontSize: 10,
                                             fontWeight: FontWeight.w800,

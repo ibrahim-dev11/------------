@@ -457,9 +457,11 @@ class TeacherCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isUniversity = teacher.type == 'university';
-    final typeColor = isUniversity ? AppColors.primary : AppColors.success;
-    final typeIcon = isUniversity ? Icons.account_balance_rounded : Icons.menu_book_rounded;
-    
+    final typeColor =
+        isUniversity ? AppColors.primary : const Color(0xFF10B981);
+    final typeIcon =
+        isUniversity ? Icons.school_rounded : Icons.menu_book_rounded;
+
     final String typeLabel;
     if (teacher.subject != null && teacher.subject!.trim().isNotEmpty) {
       typeLabel = 'مامۆستای ${teacher.subject!.trim()}';
@@ -472,256 +474,272 @@ class TeacherCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
+        margin: const EdgeInsets.only(bottom: 14),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1F2937) : Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
-            width: 1,
-          ),
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: isDark ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.04),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
+              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
           ],
+          border: Border.all(
+            color: isDark ? const Color(0xFF2C2C2C) : const Color(0xFFEDF2F7),
+            width: 1,
+          ),
         ),
-        child: Stack(
-          children: [
-            // Background Pattern / Gradient Accent
-            Positioned(
-              right: 0,
-              top: 0,
-              bottom: 0,
-              width: 80,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.horizontal(right: Radius.circular(24)),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Stack(
+            children: [
+              // Subtle modern gradient background flare
+              Positioned(
+                right: -30,
+                top: -30,
                 child: Container(
+                  width: 120,
+                  height: 120,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.centerRight,
-                      end: Alignment.centerLeft,
-                      colors: [
-                        typeColor.withOpacity(0.05),
-                        Colors.transparent,
-                      ],
-                    ),
+                    shape: BoxShape.circle,
+                    color: typeColor.withValues(alpha: 0.04),
                   ),
                 ),
               ),
-            ),
-            
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Premium Avatar Container
-                  Container(
-                    width: 85,
-                    height: 85,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(22),
-                      boxShadow: [
-                        BoxShadow(
-                          color: typeColor.withOpacity(0.2),
-                          blurRadius: 15,
-                          offset: const Offset(0, 5),
+              Padding(
+                padding: const EdgeInsets.all(14),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Brand New Premium Circular Avatar Frame
+                    Container(
+                      width: 76,
+                      height: 76,
+                      padding: const EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(
+                          colors: [
+                            typeColor,
+                            typeColor.withValues(alpha: 0.3),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
-                      ],
-                    ),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(22),
-                          child: teacher.photoUrl.isNotEmpty
-                              ? CachedNetworkImage(
-                                  imageUrl: teacher.photoUrl,
-                                  fit: BoxFit.cover,
-                                  errorWidget: (_, __, ___) => _avatarFallback(teacher.name, typeColor),
-                                )
-                              : _avatarFallback(teacher.name, typeColor),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color:
+                              isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                          shape: BoxShape.circle,
                         ),
-                        // Small verified badge or status dot
-                        Positioned(
-                          bottom: -2,
-                          right: -2,
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: isDark ? const Color(0xFF1F2937) : Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Container(
-                              width: 14,
-                              height: 14,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFF10B981),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(Icons.check, size: 10, color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  
-                  // Content
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Header Row (Name + Favorite)
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Stack(
+                          fit: StackFit.expand,
                           children: [
-                            Expanded(
-                              child: Text(
-                                teacher.name,
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w800,
-                                  color: isDark ? Colors.white : const Color(0xFF111827),
-                                  fontFamily: 'NotoSansArabic',
-                                  height: 1.3,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,                       // Header Row (Name + Favorite)
-                        
-                              ),
+                            ClipOval(
+                              child: teacher.photoUrl.isNotEmpty
+                                  ? CachedNetworkImage(
+                                      imageUrl: teacher.photoUrl,
+                                      fit: BoxFit.cover,
+                                      errorWidget: (_, __, ___) =>
+                                          _avatarFallback(
+                                              teacher.name, typeColor),
+                                    )
+                                  : _avatarFallback(teacher.name, typeColor),
                             ),
-                            const SizedBox(width: 8),
-                            GestureDetector(
-                              onTap: onFavorite,
+                            // Verified Small Badge
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
                               child: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: isFavorite 
-                                      ? const Color(0xFFFF4757).withOpacity(0.1) 
-                                      : (isDark ? Colors.white.withOpacity(0.05) : const Color(0xFFF3F4F6)),
+                                padding: const EdgeInsets.all(2),
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
                                   shape: BoxShape.circle,
                                 ),
-                                child: Icon(
-                                  isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                                  size: 18,
-                                  color: isFavorite ? const Color(0xFFFF4757) : const Color(0xFF9CA3AF),
+                                child: const Icon(
+                                  Icons.verified_rounded,
+                                  size: 14,
+                                  color: Color(0xFF10B981),
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
-                        
-                        // Type & City Tags
-                        Wrap(
-                          spacing: 6,
-                          runSpacing: 6,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: typeColor.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(typeIcon, size: 12, color: typeColor),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    typeLabel,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w700,
-                                      color: typeColor,
-                                      fontFamily: 'NotoSansArabic',
-                                    ),
-                                  ),
-                                ],
-                              ),
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+
+                    // Main info
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            teacher.name,
+                            style: TextStyle(
+                              fontSize: 15.5,
+                              fontWeight: FontWeight.w900,
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color(0xFF1A202C),
+                              fontFamily: 'NotoSansArabic',
+                              height: 1.25,
                             ),
-                            if (teacher.city != null && teacher.city!.isNotEmpty)
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 6),
+
+                          // Modern Type Chip
+                          Row(
+                            children: [
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: isDark ? Colors.white.withOpacity(0.05) : const Color(0xFFF3F4F6),
+                                  color: typeColor.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.location_on_rounded, size: 12, color: isDark ? Colors.white70 : const Color(0xFF6B7280)),
+                                    Icon(typeIcon, size: 11, color: typeColor),
                                     const SizedBox(width: 4),
                                     Text(
-                                      teacher.city!,
+                                      typeLabel,
                                       style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w600,
-                                        color: isDark ? Colors.white70 : const Color(0xFF6B7280),
+                                        fontSize: 10.5,
+                                        fontWeight: FontWeight.w800,
+                                        color: typeColor,
                                         fontFamily: 'NotoSansArabic',
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                          ],
-                        ),
-                        
-                        const SizedBox(height: 12),
-                        
-                        // Stats Row (Rating & Experience)
-                        Row(
-                          children: [
-                            if (teacher.experienceYears != null) ...[
-                              _buildStatItem(
-                                icon: Icons.work_history_rounded,
-                                iconColor: const Color(0xFF3B82F6),
-                                text: '${teacher.experienceYears} ساڵ',
-                                isDark: isDark,
-                              ),
-                              const SizedBox(width: 12),
+                              if (teacher.city != null &&
+                                  teacher.city!.isNotEmpty) ...[
+                                const SizedBox(width: 6),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: isDark
+                                        ? const Color(0xFF2C2C2C)
+                                        : const Color(0xFFF1F5F9),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.location_on_rounded,
+                                          size: 11,
+                                          color: isDark
+                                              ? Colors.white70
+                                              : const Color(0xFF64748B)),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        teacher.city!,
+                                        style: TextStyle(
+                                          fontSize: 10.5,
+                                          fontWeight: FontWeight.w700,
+                                          color: isDark
+                                              ? Colors.white70
+                                              : const Color(0xFF64748B),
+                                          fontFamily: 'NotoSansArabic',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ],
-                            _buildStatItem(
-                              icon: Icons.star_rounded,
-                              iconColor: const Color(0xFFF59E0B),
-                              text: '٤.٩ (١٢٠+)',
-                              isDark: isDark,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+                          ),
+                          const SizedBox(height: 8),
 
-  Widget _buildStatItem({required IconData icon, required Color iconColor, required String text, required bool isDark}) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 14, color: iconColor),
-        const SizedBox(width: 4),
-        Text(
-          text,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: isDark ? Colors.white70 : const Color(0xFF4B5563),
-            fontFamily: 'NotoSansArabic',
+                          // Rating & Stats Row
+                          Row(
+                            children: [
+                              if (teacher.experienceYears != null) ...[
+                                Row(
+                                  children: [
+                                    const Icon(Icons.work_history_rounded,
+                                        size: 12, color: Color(0xFF3B82F6)),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '${teacher.experienceYears} ساڵ ئەزموون',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w700,
+                                        color: isDark
+                                            ? Colors.white60
+                                            : const Color(0xFF4A5568),
+                                        fontFamily: 'NotoSansArabic',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(width: 12),
+                              ],
+                              Row(
+                                children: [
+                                  const Icon(Icons.star_rounded,
+                                      size: 13, color: Color(0xFFF59E0B)),
+                                  const SizedBox(width: 3),
+                                  Text(
+                                    '٤.٩',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w800,
+                                      color: isDark
+                                          ? Colors.white60
+                                          : const Color(0xFF4A5568),
+                                      fontFamily: 'NotoSansArabic',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+
+                    // Favorite button
+                    GestureDetector(
+                      onTap: onFavorite,
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: isFavorite
+                              ? const Color(0xFFFF4757).withValues(alpha: 0.1)
+                              : (isDark
+                                  ? const Color(0xFF2C2C2C)
+                                  : const Color(0xFFF8FAFC)),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          isFavorite
+                              ? Icons.favorite_rounded
+                              : Icons.favorite_border_rounded,
+                          size: 16,
+                          color: isFavorite
+                              ? const Color(0xFFFF4757)
+                              : const Color(0xFF94A3B8),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 
@@ -731,15 +749,15 @@ class TeacherCard extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [color, color.withOpacity(0.7)],
+          colors: [color, color.withValues(alpha: 0.7)],
         ),
       ),
       child: Center(
         child: Text(
           _getInitials(name),
           style: const TextStyle(
-            fontSize: 26,
-            fontWeight: FontWeight.w800,
+            fontSize: 22,
+            fontWeight: FontWeight.w900,
             color: Colors.white,
             fontFamily: 'NotoSansArabic',
           ),
@@ -749,11 +767,13 @@ class TeacherCard extends StatelessWidget {
   }
 
   String _getInitials(String name) {
-    final parts = name.split(RegExp(r'\s+')).where((e) => e.isNotEmpty).toList();
+    final parts =
+        name.split(RegExp(r'\s+')).where((e) => e.isNotEmpty).toList();
     if (parts.length >= 2) {
       final p1 = parts[0].replaceAll('.', '');
       final p2 = parts[1].replaceAll('.', '');
-      return '${p1.isNotEmpty ? p1[0] : ''} ${p2.isNotEmpty ? p2[0] : ''}'.trim();
+      return '${p1.isNotEmpty ? p1[0] : ''}${p2.isNotEmpty ? p2[0] : ''}'
+          .trim();
     }
     final p = name.replaceAll('.', '').trim();
     return p.isNotEmpty ? p[0] : '?';

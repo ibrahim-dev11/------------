@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/localization/app_localizations.dart';
 import '../../providers/institutions_provider.dart';
 import '../../shared/widgets/common_widgets.dart';
 
@@ -22,23 +23,24 @@ class _PathFinderScreenState extends State<PathFinderScreen> {
   String? _selectedCity;
   String? _selectedType;
 
-  final List<Map<String, dynamic>> _interests = [
-    {'id': 'medical', 'name': 'پزیشکی', 'icon': Icons.medical_services_rounded},
-    {'id': 'engineering', 'name': 'ئەندازیاری', 'icon': Icons.engineering_rounded},
-    {'id': 'it', 'name': 'تەکنەلۆژیا', 'icon': Icons.computer_rounded},
-    {'id': 'law', 'name': 'یاسا', 'icon': Icons.gavel_rounded},
-    {'id': 'business', 'name': 'کارگێڕی', 'icon': Icons.business_center_rounded},
-    {'id': 'arts', 'name': 'هونەر', 'icon': Icons.palette_rounded},
+  List<Map<String, dynamic>> _getInterests(AppLocalizations l) => [
+    {'id': 'medical', 'name': l.medical, 'icon': Icons.medical_services_rounded},
+    {'id': 'engineering', 'name': l.engineering, 'icon': Icons.engineering_rounded},
+    {'id': 'it', 'name': l.it, 'icon': Icons.computer_rounded},
+    {'id': 'law', 'name': l.law, 'icon': Icons.gavel_rounded},
+    {'id': 'business', 'name': l.business, 'icon': Icons.business_center_rounded},
+    {'id': 'arts', 'name': l.arts, 'icon': Icons.palette_rounded},
   ];
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l = AppLocalizations.of(context);
     
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkBg : const Color(0xFFF8F9FD),
       appBar: AppBar(
-        title: const Text('ڕێبەرە زیرەکەکەت', style: TextStyle(fontFamily: 'NotoSansArabic', fontWeight: FontWeight.bold)),
+        title: Text(l.pathFinder, style: const TextStyle(fontFamily: 'NotoSansArabic', fontWeight: FontWeight.bold)),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -69,7 +71,7 @@ class _PathFinderScreenState extends State<PathFinderScreen> {
           Expanded(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 400),
-              child: _buildCurrentStep(isDark),
+              child: _buildCurrentStep(isDark, l),
             ),
           ),
           
@@ -86,13 +88,13 @@ class _PathFinderScreenState extends State<PathFinderScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       ),
-                      child: const Text('پێشتر', style: TextStyle(fontFamily: 'NotoSansArabic')),
+                      child: Text(l.previous, style: const TextStyle(fontFamily: 'NotoSansArabic')),
                     ),
                   ),
                 if (_currentStep > 0) const SizedBox(width: 16),
                 Expanded(
                   child: GradientButton(
-                    text: _currentStep == 3 ? 'دۆزینەوەی ئەنجام' : 'دواتر',
+                    text: _currentStep == 3 ? l.findResults : l.next,
                     onPressed: () {
                       if (_currentStep < 3) {
                         setState(() => _currentStep++);
@@ -110,26 +112,26 @@ class _PathFinderScreenState extends State<PathFinderScreen> {
     );
   }
 
-  Widget _buildCurrentStep(bool isDark) {
+  Widget _buildCurrentStep(bool isDark, AppLocalizations l) {
     switch (_currentStep) {
-      case 0: return _stepAverage(isDark);
-      case 1: return _stepInterests(isDark);
-      case 2: return _stepCity(isDark);
-      case 3: return _stepType(isDark);
+      case 0: return _stepAverage(isDark, l);
+      case 1: return _stepInterests(isDark, l);
+      case 2: return _stepCity(isDark, l);
+      case 3: return _stepType(isDark, l);
       default: return const SizedBox();
     }
   }
 
-  Widget _stepAverage(bool isDark) {
+  Widget _stepAverage(bool isDark, AppLocalizations l) {
     return Column(
       key: const ValueKey(0),
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Icon(Icons.school_rounded, size: 80, color: AppColors.primary),
         const SizedBox(height: 24),
-        const Text(
-          'نمرەی پۆلی ١٢ت چەندە؟',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, fontFamily: 'NotoSansArabic'),
+        Text(
+          l.whatIsYourGrade,
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, fontFamily: 'NotoSansArabic'),
         ),
         const SizedBox(height: 40),
         Text(
@@ -147,15 +149,16 @@ class _PathFinderScreenState extends State<PathFinderScreen> {
     );
   }
 
-  Widget _stepInterests(bool isDark) {
+  Widget _stepInterests(bool isDark, AppLocalizations l) {
+    final interests = _getInterests(l);
     return SingleChildScrollView(
       key: const ValueKey(1),
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          const Text(
-            'حەزت لە کام بووارەیە؟',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, fontFamily: 'NotoSansArabic'),
+          Text(
+            l.whichFieldDoYouLike,
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, fontFamily: 'NotoSansArabic'),
           ),
           const SizedBox(height: 24),
           GridView.builder(
@@ -167,9 +170,9 @@ class _PathFinderScreenState extends State<PathFinderScreen> {
               mainAxisSpacing: 16,
               childAspectRatio: 1.2,
             ),
-            itemCount: _interests.length,
+            itemCount: interests.length,
             itemBuilder: (context, index) {
-              final item = _interests[index];
+              final item = interests[index];
               final isSelected = _selectedInterest == item['id'];
               return GestureDetector(
                 onTap: () => setState(() => _selectedInterest = item['id']),
@@ -185,10 +188,10 @@ class _PathFinderScreenState extends State<PathFinderScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(item['icon'], color: isSelected ? Colors.white : AppColors.primary, size: 32),
+                      Icon(item['icon'] as IconData, color: isSelected ? Colors.white : AppColors.primary, size: 32),
                       const SizedBox(height: 12),
                       Text(
-                        item['name'],
+                        item['name'] as String,
                         style: TextStyle(
                           color: isSelected ? Colors.white : (isDark ? Colors.white : AppColors.textDark),
                           fontFamily: 'NotoSansArabic',
@@ -206,16 +209,16 @@ class _PathFinderScreenState extends State<PathFinderScreen> {
     );
   }
 
-  Widget _stepCity(bool isDark) {
-    final cities = ['هەموو شارەکان', 'هەولێر', 'سلێمانی', 'دهۆک', 'هەڵەبجە', 'کەرکوک'];
+  Widget _stepCity(bool isDark, AppLocalizations l) {
+    final cities = [l.all, 'هەولێر', 'سلێمانی', 'دهۆک', 'هەڵەبجە', 'کەرکوک'];
     return Padding(
       key: const ValueKey(2),
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          const Text(
-            'لە کام شار بێت؟',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, fontFamily: 'NotoSansArabic'),
+          Text(
+            l.whichCity,
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, fontFamily: 'NotoSansArabic'),
           ),
           const SizedBox(height: 24),
           Expanded(
@@ -223,9 +226,9 @@ class _PathFinderScreenState extends State<PathFinderScreen> {
               itemCount: cities.length,
               itemBuilder: (context, index) {
                 final city = cities[index];
-                final isSelected = _selectedCity == city || (city == 'هەموو شارەکان' && _selectedCity == null);
+                final isSelected = _selectedCity == city || (city == l.all && _selectedCity == null);
                 return GestureDetector(
-                  onTap: () => setState(() => _selectedCity = city == 'هەموو شارەکان' ? null : city),
+                  onTap: () => setState(() => _selectedCity = city == l.all ? null : city),
                   child: Container(
                     margin: const EdgeInsets.only(bottom: 12),
                     padding: const EdgeInsets.all(20),
@@ -261,20 +264,20 @@ class _PathFinderScreenState extends State<PathFinderScreen> {
     );
   }
 
-  Widget _stepType(bool isDark) {
+  Widget _stepType(bool isDark, AppLocalizations l) {
     final types = [
-      {'id': null, 'name': 'هەردووکی', 'icon': Icons.all_inclusive_rounded},
-      {'id': 'public', 'name': 'حکومی', 'icon': Icons.account_balance_rounded},
-      {'id': 'private', 'name': 'ئەهلی', 'icon': Icons.business_rounded},
+      {'id': null, 'name': l.both, 'icon': Icons.all_inclusive_rounded},
+      {'id': 'public', 'name': l.public, 'icon': Icons.account_balance_rounded},
+      {'id': 'private', 'name': l.private, 'icon': Icons.business_rounded},
     ];
     return Padding(
       key: const ValueKey(3),
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          const Text(
-            'جۆری دامەزراوەکە؟',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, fontFamily: 'NotoSansArabic'),
+          Text(
+            l.institutionTypeQuestion,
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, fontFamily: 'NotoSansArabic'),
           ),
           const SizedBox(height: 24),
           ...types.map((type) {

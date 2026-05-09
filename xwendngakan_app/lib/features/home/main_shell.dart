@@ -52,10 +52,10 @@ class MainShell extends StatelessWidget {
           icon: Icons.home_outlined,
           activeIcon: Icons.home_rounded,
           label: l.home),
-      const _NavItem(
+      _NavItem(
           icon: Icons.article_outlined,
           activeIcon: Icons.article_rounded,
-          label: 'هەواڵەکان'),
+          label: l.news),
       _NavItem(
           icon: Icons.school_outlined,
           activeIcon: Icons.school_rounded,

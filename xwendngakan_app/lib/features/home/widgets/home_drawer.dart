@@ -13,6 +13,7 @@ class HomeDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l = AppLocalizations.of(context);
     final auth = Provider.of<AuthProvider>(context);
     final theme = Provider.of<ThemeProvider>(context);
     final locale = Provider.of<LocaleProvider>(context);
@@ -50,7 +51,7 @@ class HomeDrawer extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        auth.user?.name ?? 'خوێندکار',
+                        auth.user?.name ?? l.drawerStudent,
                         style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'NotoSansArabic'),
                       ),
                       const SizedBox(height: 4),
@@ -69,12 +70,12 @@ class HomeDrawer extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 16),
               children: [
-                _buildSectionTitle('ئامرازەکان', isDark),
+                _buildSectionTitle(l.drawerSectionTools, isDark),
                 _buildDrawerItem(
                   context,
                   icon: Icons.psychology_rounded,
-                  title: 'ڕێبەرە زیرەکەکەت',
-                  subtitle: 'یارمەتیت دەدات بۆ هەڵبژاردنی بەش',
+                  title: l.drawerPathFinder,
+                  subtitle: l.drawerPathFinderSub,
                   color: const Color(0xFF6366F1),
                   onTap: () {
                     context.pop();
@@ -85,8 +86,8 @@ class HomeDrawer extends StatelessWidget {
                 _buildDrawerItem(
                   context,
                   icon: Icons.key_rounded,
-                  title: 'ونبوو و دۆزراوە',
-                  subtitle: 'شتێکت لێ ون بووە؟ لێرە بڵاوی بکەرەوە',
+                  title: l.drawerLostFound,
+                  subtitle: l.drawerLostFoundSub,
                   color: const Color(0xFFFF4757),
                   onTap: () {
                     context.pop();
@@ -97,8 +98,8 @@ class HomeDrawer extends StatelessWidget {
                 _buildDrawerItem(
                   context,
                   icon: Icons.description_rounded,
-                  title: 'کۆچنووس (CV)',
-                  subtitle: 'دروستکردنی سیڤی تایبەت بە خۆت',
+                  title: l.drawerCv,
+                  subtitle: l.drawerCvSub,
                   color: const Color(0xFF2ED573),
                   onTap: () {
                     context.pop();
@@ -109,11 +110,11 @@ class HomeDrawer extends StatelessWidget {
 
                 const Padding(padding: EdgeInsets.symmetric(horizontal: 24), child: Divider(height: 32)),
 
-                _buildSectionTitle('ڕێکخستنەکان', isDark),
+                _buildSectionTitle(l.drawerSectionSettings, isDark),
                 _buildDrawerItem(
                   context,
                   icon: isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-                  title: 'دۆخی تاریک و ڕووناک',
+                  title: l.drawerTheme,
                   color: isDark ? Colors.amber : const Color(0xFF3742FA),
                   onTap: () => theme.toggle(),
                   isDark: isDark,
@@ -121,7 +122,7 @@ class HomeDrawer extends StatelessWidget {
                 _buildDrawerItem(
                   context,
                   icon: Icons.translate_rounded,
-                  title: 'گۆڕینی زمان',
+                  title: l.drawerChangeLanguage,
                   color: const Color(0xFFFFA502),
                   onTap: () {
                     final newLang = locale.locale.languageCode == 'ku' ? 'ar' : 'ku';
@@ -136,11 +137,11 @@ class HomeDrawer extends StatelessWidget {
 
                 const Padding(padding: EdgeInsets.symmetric(horizontal: 24), child: Divider(height: 32)),
 
-                _buildSectionTitle('زانیاری', isDark),
+                _buildSectionTitle(l.drawerSectionInfo, isDark),
                 _buildDrawerItem(
                   context,
                   icon: Icons.shield_rounded,
-                  title: 'سیاسەتی تایبەتمەندی',
+                  title: l.drawerPrivacyPolicy,
                   color: Colors.grey,
                   onTap: () {},
                   isDark: isDark,
@@ -148,7 +149,7 @@ class HomeDrawer extends StatelessWidget {
                 _buildDrawerItem(
                   context,
                   icon: Icons.info_outline_rounded,
-                  title: 'دەربارەی ئەپەکە',
+                  title: l.drawerAboutApp,
                   color: Colors.grey,
                   onTap: () {},
                   isDark: isDark,
@@ -158,7 +159,7 @@ class HomeDrawer extends StatelessWidget {
                 _buildDrawerItem(
                   context,
                   icon: Icons.logout_rounded,
-                  title: 'چوونە دەرەوە',
+                  title: l.drawerLogout,
                   color: Colors.red,
                   onTap: () {
                     context.pop();

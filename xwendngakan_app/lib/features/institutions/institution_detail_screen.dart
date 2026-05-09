@@ -70,9 +70,7 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
     final lang = locale.locale.languageCode;
 
     if (_loading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator(color: AppColors.primary)),
-      );
+      return _buildShimmerLoading(context, isDark);
     }
 
     if (_error != null || _institution == null) {
@@ -100,9 +98,29 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
                   height: 240,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: typeColor,
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        typeColor,
+                        typeColor.withOpacity(0.8),
+                      ],
+                    ),
                     borderRadius: const BorderRadius.vertical(
                       bottom: Radius.circular(40),
+                    ),
+                  ),
+                ),
+                // Decorative Patterns
+                Positioned(
+                  top: -20,
+                  right: -20,
+                  child: Container(
+                    width: 150,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.1),
                     ),
                   ),
                 ),
@@ -110,21 +128,40 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
                 Positioned(
                   top: MediaQuery.of(context).padding.top + 10,
                   left: 20,
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
-                    onPressed: () => context.pop(),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Container(
+                        color: Colors.white.withOpacity(0.2),
+                        child: IconButton(
+                          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white, size: 20),
+                          onPressed: () => context.pop(),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 // Favorite Button
                 Positioned(
                   top: MediaQuery.of(context).padding.top + 10,
                   right: 20,
-                  child: IconButton(
-                    icon: Icon(
-                      isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                      color: isFav ? Colors.redAccent : Colors.white,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Container(
+                        color: Colors.white.withOpacity(0.2),
+                        child: IconButton(
+                          icon: Icon(
+                            isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                            color: isFav ? Colors.redAccent : Colors.white,
+                            size: 24,
+                          ),
+                          onPressed: () => prov.toggleFavorite(inst.id),
+                        ),
+                      ),
                     ),
-                    onPressed: () => prov.toggleFavorite(inst.id),
                   ),
                 ),
                 // Center Icon Circle
@@ -134,11 +171,12 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
                     width: 100,
                     height: 100,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: isDark ? AppColors.darkCard : Colors.white,
                       shape: BoxShape.circle,
+                      border: Border.all(color: typeColor.withOpacity(0.3), width: 3),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: typeColor.withOpacity(0.2),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
                         ),
@@ -197,31 +235,31 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
               children: [
                 _buildActionCircle(
                   icon: Icons.phone_in_talk_rounded,
-                  label: 'پەیوەندی',
+                  label: l.contact,
                   color: const Color(0xFF1D9E75),
                   onTap: inst.phone != null ? () => _launch('tel:${inst.phone}') : () {},
                 ),
                 _buildActionCircle(
                   icon: Icons.notifications_active_rounded,
-                  label: 'ئاگادارکردنەوە',
+                  label: l.notifications,
                   color: const Color(0xFF3A7DD4),
                   onTap: () {},
                 ),
                 _buildActionCircle(
                   icon: Icons.map_rounded,
-                  label: 'نەخشە',
+                  label: l.map,
                   color: const Color(0xFFE05C8A),
                   onTap: () => context.push('/map'),
                 ),
                 _buildActionCircle(
                   icon: Icons.qr_code_2_rounded,
-                  label: 'کۆدی QR',
+                  label: l.scanQr,
                   color: const Color(0xFF7F77DD),
                   onTap: () => _showQrCode(inst, lang),
                 ),
                 _buildActionCircle(
                   icon: Icons.share_rounded,
-                  label: 'ناردن',
+                  label: l.share,
                   color: const Color(0xFFFF6B35),
                   onTap: () => _shareInstitution(inst, lang),
                 ),
@@ -246,9 +284,9 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
               ),
               child: Row(
                 children: [
-                  _buildTabItem(0, 'دەربارە', isDark),
-                  _buildTabItem(1, 'بەشەکان', isDark),
-                  _buildTabItem(2, 'پۆستەکان', isDark),
+                  _buildTabItem(0, l.about, isDark),
+                  _buildTabItem(1, l.departments, isDark),
+                  _buildTabItem(2, l.recentUpdates, isDark),
                 ],
               ),
             ),
@@ -257,7 +295,23 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
             // ── Tab Content ──
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: _buildTabContent(inst, isDark, lang, l),
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                transitionBuilder: (child, animation) => FadeTransition(
+                  opacity: animation,
+                  child: SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(0, 0.05),
+                      end: Offset.zero,
+                    ).animate(animation),
+                    child: child,
+                  ),
+                ),
+                child: KeyedSubtree(
+                  key: ValueKey(_activeTab),
+                  child: _buildTabContent(inst, isDark, lang, l),
+                ),
+              ),
             ),
             const SizedBox(height: 40),
           ],
@@ -335,9 +389,9 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (inst.desc != null && inst.desc!.isNotEmpty) ...[
-              const Text(
-                'دەربارە',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, fontFamily: 'NotoSansArabic'),
+              Text(
+                l.about,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, fontFamily: 'NotoSansArabic'),
               ),
               const SizedBox(height: 12),
               Text(
@@ -345,8 +399,9 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
                 style: TextStyle(
                   fontSize: 14,
                   height: 1.8,
-                  color: isDark ? Colors.white70 : AppColors.textDark.withOpacity(0.7),
+                  color: isDark ? Colors.white70 : AppColors.textDark.withOpacity(0.85),
                   fontFamily: 'NotoSansArabic',
+                  letterSpacing: 0.2,
                 ),
               ),
               const SizedBox(height: 24),
@@ -354,12 +409,17 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
             _StatsRow(isDark: isDark, inst: inst),
             const SizedBox(height: 24),
             if (inst.video != null && inst.video!.isNotEmpty) ...[
-              _VideoCard(videoUrl: inst.video!, isDark: isDark, onTap: () => _launch(inst.video!)),
+              _VideoCard(
+                videoUrl: inst.video!,
+                isDark: isDark,
+                typeColor: AppColors.typeColor(inst.type),
+                onTap: () => _launch(inst.video!),
+              ),
               const SizedBox(height: 24),
             ],
-            const Text(
-              'پەیوەندی',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, fontFamily: 'NotoSansArabic'),
+            Text(
+              l.contact,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, fontFamily: 'NotoSansArabic'),
             ),
             const SizedBox(height: 12),
             _ContactCard(inst: inst, isDark: isDark, onLaunch: _launch),
@@ -368,20 +428,22 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
       case 1: // Colleges
         final list = _parseColleges(inst.colleges);
         if (list.isEmpty && (inst.colleges == null || inst.colleges!.isEmpty)) {
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.all(32),
-              child: Text('هیچ زانیارییەک نییە', style: TextStyle(fontFamily: 'NotoSansArabic')),
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 40),
+            child: EmptyState(
+              icon: Icons.account_balance_outlined,
+              message: l.noInformation,
             ),
           );
         }
         return _CollegesCard(colleges: list, isDark: isDark, l: l);
       case 2: // Posts
         if (inst.posts.isEmpty) {
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.all(32),
-              child: Text('هیچ پۆستێک نییە', style: TextStyle(fontFamily: 'NotoSansArabic')),
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 40),
+            child: EmptyState(
+              icon: Icons.feed_outlined,
+              message: l.noPosts,
             ),
           );
         }
@@ -392,6 +454,7 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
   }
 
   void _showQrCode(InstitutionModel inst, String lang) {
+    final l = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -399,9 +462,9 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'کۆدی QR ی دامەزراوە',
-              style: TextStyle(
+            Text(
+              l.scanQr,
+              style: const TextStyle(
                 fontFamily: 'NotoSansArabic',
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -447,9 +510,9 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text(
-                'داخستن',
-                style: TextStyle(color: Colors.white, fontFamily: 'NotoSansArabic'),
+              child: Text(
+                l.close,
+                style: const TextStyle(color: Colors.white, fontFamily: 'NotoSansArabic'),
               ),
             ),
           ],
@@ -490,6 +553,50 @@ $shareUrl
         .where((s) => s.trim().isNotEmpty)
         .map((s) => {'name': s.trim(), 'departments': []})
         .toList();
+  }
+
+  Widget _buildShimmerLoading(BuildContext context, bool isDark) {
+    return Scaffold(
+      backgroundColor: isDark ? AppColors.darkBg : const Color(0xFFF8F9FD),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            ShimmerBox(width: double.infinity, height: 240, borderRadius: 0),
+            const SizedBox(height: 60),
+            const ShimmerBox(width: 200, height: 24, borderRadius: 12),
+            const SizedBox(height: 12),
+            const ShimmerBox(width: 120, height: 16, borderRadius: 8),
+            const SizedBox(height: 40),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: List.generate(5, (index) => const ShimmerBox(width: 60, height: 60, borderRadius: 30)),
+              ),
+            ),
+            const SizedBox(height: 40),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: ShimmerBox(width: double.infinity, height: 60, borderRadius: 20),
+            ),
+            const SizedBox(height: 32),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const ShimmerBox(width: 100, height: 20, borderRadius: 8),
+                  const SizedBox(height: 16),
+                  const ShimmerBox(width: double.infinity, height: 100, borderRadius: 20),
+                  const SizedBox(height: 24),
+                  const ShimmerBox(width: double.infinity, height: 80, borderRadius: 20),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -565,6 +672,7 @@ class _StatsRow extends StatelessWidget {
             : '${inst.studentsCount}+'
         : '—';
 
+    final l = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkCard : Colors.white,
@@ -583,19 +691,19 @@ class _StatsRow extends StatelessWidget {
         children: [
           _StatItem(
               value: inst.foundedYear?.toString() ?? '—',
-              label: 'ساڵی دامەزران',
+              label: l.foundedYearLabel,
               icon: Icons.calendar_today_rounded,
               color: const Color(0xFFD4A017)),
           _VDivider(),
           _StatItem(
               value: yearsExp,
-              label: 'ساڵ تەجربە',
+              label: l.experienceYears,
               icon: Icons.history_edu_rounded,
               color: AppColors.primary),
           _VDivider(),
           _StatItem(
               value: studentsStr,
-              label: 'قوتابی',
+              label: l.studentsLabel,
               icon: Icons.groups_rounded,
               color: AppColors.success),
         ],
@@ -703,12 +811,14 @@ class _SectionCard extends StatelessWidget {
 class _VideoCard extends StatelessWidget {
   final String videoUrl;
   final bool isDark;
+  final Color typeColor;
   final VoidCallback onTap;
   const _VideoCard(
-      {required this.videoUrl, required this.isDark, required this.onTap});
+      {required this.videoUrl, required this.isDark, required this.typeColor, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -716,14 +826,14 @@ class _VideoCard extends StatelessWidget {
         height: 130,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFFF0000), Color(0xFFCC0000)],
+            colors: [typeColor, typeColor.withOpacity(0.8)],
           ),
           boxShadow: [
             BoxShadow(
-                color: const Color(0xFFFF0000).withOpacity(0.35),
+                color: typeColor.withOpacity(0.35),
                 blurRadius: 16,
                 offset: const Offset(0, 6))
           ],
@@ -766,8 +876,8 @@ class _VideoCard extends StatelessWidget {
                           color: Colors.white, size: 32),
                     ),
                     const SizedBox(height: 10),
-                    const Text('ڤیدیۆی دامەزراوەکە ببینە',
-                        style: TextStyle(
+                    Text(l.viewVideo,
+                        style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
                             fontSize: 14,

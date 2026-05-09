@@ -6,7 +6,7 @@ class LocaleProvider extends ChangeNotifier {
   Locale _locale = const Locale('ku');
 
   Locale get locale => _locale;
-  bool get isRTL => _locale.languageCode == 'ku' || _locale.languageCode == 'ar';
+  bool get isRTL => _locale.languageCode == 'ku' || _locale.languageCode == 'kbd' || _locale.languageCode == 'ar';
 
   LocaleProvider() {
     _load();

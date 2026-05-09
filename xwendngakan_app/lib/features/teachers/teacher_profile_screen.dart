@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -64,7 +63,7 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen>
 
   String? _extractYtId(String url) {
     final regExp = RegExp(
-      r'^.*((youtu.be\/)|(v\/)|(\u002Fu\/\w\/)|(embed\/)|(watch\?))\\??v?=?([^#&?]*).*',
+      r'^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\\??v?=?([^#&?]*).*',
       caseSensitive: false,
     );
     final match = regExp.firstMatch(url);
@@ -92,14 +91,14 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen>
 
     if (_loading) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF3F4F6),
-        body: const Center(child: CircularProgressIndicator()),
+        backgroundColor: isDark ? const Color(0xFF111827) : const Color(0xFFF8FAFC),
+        body: const Center(child: CircularProgressIndicator(color: AppColors.primary)),
       );
     }
 
     if (_error != null || _teacher == null) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF3F4F6),
+        backgroundColor: isDark ? const Color(0xFF111827) : const Color(0xFFF8FAFC),
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new_rounded),
@@ -116,14 +115,14 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen>
     }
 
     final t = _teacher!;
-    final String displaySubject = t.subject != null && t.subject!.trim().isNotEmpty 
-        ? 'مامۆستای ${t.subject!.trim()}' 
-        : (t.typeLabel ?? '');
+    final String displaySubject = t.subject != null && t.subject!.trim().isNotEmpty
+        ? l.teacherOf(t.subject!.trim())
+        : (t.typeLabel ?? l.educationSpecialization);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.light, // Top is always dark gradient
+      value: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.light,
       child: Scaffold(
-        backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF3F4F6),
+        backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
         bottomNavigationBar: _buildStickyContact(t, l, isDark),
         body: FadeTransition(
           opacity: _fadeAnim,
@@ -132,200 +131,86 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen>
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: [
+                // ── CURVED HERO HEADER ──
                 SliverToBoxAdapter(
                   child: Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      // ── TOP BACKGROUND ──
-                      Container(
-                        height: 280,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              AppColors.primary,
-                              AppColors.primary.withValues(alpha: 0.8),
-                              const Color(0xFF4F46E5),
-                            ],
-                          ),
-                        ),
-                        child: Stack(
-                          children: [
-                            // Subtle pattern / glow
-                            Positioned(
-                              top: -50, right: -50,
-                              child: Container(
-                                width: 200, height: 200,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.white.withValues(alpha: 0.1),
+                      ClipRRect(
+                        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(36)),
+                        child: t.videoUrl != null && t.videoUrl!.isNotEmpty
+                            ? Container(
+                                padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                                color: Colors.black,
+                                child: AspectRatio(
+                                  aspectRatio: 16 / 9,
+                                  child: _buildVideoPlayer(t),
+                                ),
+                              )
+                            : Container(
+                                height: 200,
+                                width: double.infinity,
+                                decoration: const BoxDecoration(
+                                  gradient: AppColors.primaryGradient,
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Positioned(
+                                      top: -30, right: -30,
+                                      child: Container(
+                                        width: 140, height: 140,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.white.withValues(alpha: 0.08),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-                            Positioned(
-                              bottom: -20, left: -30,
-                              child: Container(
-                                width: 140, height: 140,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.white.withValues(alpha: 0.05),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
-                      
-                      // ── BACK BUTTON ──
+
+                      // Floating Back Button
                       SafeArea(
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                           child: GestureDetector(
                             onTap: _goBack,
                             child: Container(
-                              width: 44, height: 44,
+                              width: 40, height: 40,
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(14),
-                                border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
+                                color: Colors.black.withValues(alpha: 0.25),
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
                               ),
-                              child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+                              child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 16),
                             ),
                           ),
                         ),
                       ),
 
-                      // ── MAIN INFO CARD ──
-                      Padding(
-                        padding: const EdgeInsets.only(top: 200, left: 20, right: 20, bottom: 20),
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.only(top: 65, left: 20, right: 20, bottom: 24),
-                          decoration: BoxDecoration(
-                            color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                            borderRadius: BorderRadius.circular(32),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.08),
-                                blurRadius: 30,
-                                offset: const Offset(0, 15),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              // Name
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      t.name,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 26,
-                                        fontWeight: FontWeight.w900,
-                                        color: isDark ? Colors.white : const Color(0xFF111827),
-                                        fontFamily: 'NotoSansArabic',
-                                      ),
-                                    ),
-                                  ),
-                                  if (t.isApproved) ...[
-                                    const SizedBox(width: 6),
-                                    const Icon(Icons.verified_rounded, color: AppColors.success, size: 24),
-                                  ],
-                                ],
-                              ),
-                              
-                              if (displaySubject.isNotEmpty) ...[
-                                const SizedBox(height: 10),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primary.withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Text(
-                                    displaySubject,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.primary,
-                                      fontFamily: 'NotoSansArabic',
-                                    ),
-                                  ),
-                                ),
-                              ],
-
-                              const SizedBox(height: 28),
-
-                              // Stats Grid
-                              Row(
-                                children: [
-                                  Expanded(child: _buildStatItem(
-                                    icon: Icons.history_edu_rounded,
-                                    value: t.experienceYears != null ? '${t.experienceYears}' : '—',
-                                    unit: l.years,
-                                    label: l.experience,
-                                    color: const Color(0xFFF59E0B),
-                                    isDark: isDark,
-                                  )),
-                                  _buildDivider(isDark),
-                                  Expanded(child: _buildStatItem(
-                                    icon: Icons.payments_rounded,
-                                    value: t.hourlyRate != null ? '\$${t.hourlyRate}' : '—',
-                                    unit: '',
-                                    label: l.hourlyRate,
-                                    color: AppColors.success,
-                                    isDark: isDark,
-                                  )),
-                                  _buildDivider(isDark),
-                                  Expanded(child: _buildStatItem(
-                                    icon: Icons.location_on_rounded,
-                                    value: t.city ?? '—',
-                                    unit: '',
-                                    label: l.city,
-                                    color: const Color(0xFF3B82F6),
-                                    isDark: isDark,
-                                  )),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      // ── AVATAR ──
+                      // Avatar
                       Positioned(
-                        top: 130, // Overlaps top bg and card
+                        bottom: -48,
                         left: 0, right: 0,
                         child: Center(
                           child: Container(
-                            width: 130,
-                            height: 130,
+                            width: 96, height: 96,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                              border: Border.all(
-                                color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                                width: 6,
-                              ),
+                              color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+                              border: Border.all(color: const Color(0xFFF59E0B), width: 3.5),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.15),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 10),
+                                  color: AppColors.primary.withValues(alpha: 0.2),
+                                  blurRadius: 16,
+                                  offset: const Offset(0, 8),
                                 ),
                               ],
                             ),
                             child: ClipOval(
                               child: t.photoUrl.isNotEmpty
-                                  ? CachedNetworkImage(
-                                      imageUrl: t.photoUrl,
-                                      fit: BoxFit.cover,
-                                    )
+                                  ? CachedNetworkImage(imageUrl: t.photoUrl, fit: BoxFit.cover)
                                   : _avatarFallback(t.name, AppColors.primary),
                             ),
                           ),
@@ -335,57 +220,146 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen>
                   ),
                 ),
 
-                // ── OTHER SECTIONS ──
+                const SliverToBoxAdapter(child: SizedBox(height: 60)),
+
+                // ── PROFILE CONTENT ──
                 SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
-                      
-                      // About
+                      // Name + subject badge
+                      Center(
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    t.name,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w900,
+                                      color: isDark ? Colors.white : const Color(0xFF0F172A),
+                                      fontFamily: 'NotoSansArabic',
+                                    ),
+                                  ),
+                                ),
+                                if (t.isApproved) ...[
+                                  const SizedBox(width: 6),
+                                  const Icon(Icons.verified_rounded, color: Color(0xFF10B981), size: 22),
+                                ],
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            if (displaySubject.isNotEmpty)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withValues(alpha: 0.08),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  displaySubject,
+                                  style: const TextStyle(
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.primary,
+                                    fontFamily: 'NotoSansArabic',
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 28),
+
+                      // ── THREE TILE CARDS ──
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildTileCard(
+                              icon: Icons.history_edu_rounded,
+                              title: l.tileExperience,
+                              value: t.experienceYears != null ? '${t.experienceYears} ${l.yearsUnit}' : '—',
+                              color: const Color(0xFFF59E0B),
+                              isDark: isDark,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: _buildTileCard(
+                              icon: Icons.location_on_rounded,
+                              title: l.tileProvince,
+                              value: t.city ?? '—',
+                              color: const Color(0xFF3B82F6),
+                              isDark: isDark,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: _buildTileCard(
+                              icon: Icons.menu_book_rounded,
+                              title: l.tileCurriculum,
+                              value: t.subject ?? l.specializationFallback,
+                              color: const Color(0xFF8B5CF6),
+                              isDark: isDark,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Biography
                       if (t.about != null && t.about!.isNotEmpty)
                         _buildCreativeSection(
                           isDark: isDark,
                           title: l.about,
-                          icon: Icons.format_quote_rounded,
+                          icon: Icons.info_outline_rounded,
                           child: Text(
                             t.about!,
                             style: TextStyle(
-                              fontSize: 15,
-                              height: 1.9,
+                              fontSize: 14,
+                              height: 1.8,
                               color: isDark ? Colors.white70 : const Color(0xFF4B5563),
                               fontFamily: 'NotoSansArabic',
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
 
-                      // Subject Photo
+                      // Subject Photo / Curriculum
                       if (t.subjectPhotoUrl.isNotEmpty)
                         _buildCreativeSection(
                           isDark: isDark,
-                          title: l.subjectPhoto,
-                          icon: Icons.image_rounded,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: CachedNetworkImage(
-                              imageUrl: t.subjectPhotoUrl,
-                              width: double.infinity,
-                              height: 220,
-                              fit: BoxFit.cover,
-                            ),
+                          title: l.curriculumSection,
+                          icon: Icons.auto_stories_rounded,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: CachedNetworkImage(
+                                  imageUrl: t.subjectPhotoUrl,
+                                  width: double.infinity,
+                                  height: 200,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                l.curriculumCaption,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontFamily: 'NotoSansArabic',
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textGrey,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-
-                      // Video
-                      if (t.videoUrl != null && t.videoUrl!.isNotEmpty)
-                        _buildCreativeSection(
-                          isDark: isDark,
-                          title: 'ڤیدیۆی مامۆستا',
-                          icon: Icons.play_circle_fill_rounded,
-                          iconColor: const Color(0xFFEF4444),
-                          child: _buildVideoPlayer(t),
-                        ),
-
-                      const SizedBox(height: 40),
                     ]),
                   ),
                 ),
@@ -401,9 +375,9 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen>
     if (t.phone == null || t.phone!.isEmpty) return const SizedBox.shrink();
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 32), // bottom safe area padding
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
         boxShadow: [
           BoxShadow(
@@ -418,7 +392,7 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen>
           Expanded(
             child: _StickyBtn(
               icon: Icons.call_rounded,
-              label: l.contactTeacher,
+              label: l.contactPhone,
               color: const Color(0xFF3B82F6),
               onTap: () => _launch('tel:${t.phone}'),
             ),
@@ -426,8 +400,8 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen>
           const SizedBox(width: 12),
           Expanded(
             child: _StickyBtn(
-              icon: Icons.wechat_rounded, // Best builtin alternative to whatsapp icon
-              label: 'WhatsApp',
+              icon: Icons.wechat_rounded,
+              label: l.contactWhatsapp,
               color: const Color(0xFF10B981),
               onTap: () => _launch('https://wa.me/${t.phone?.replaceAll(RegExp(r'[^0-9]'), '')}'),
             ),
@@ -477,69 +451,6 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen>
     );
   }
 
-  Widget _buildStatItem({
-    required IconData icon, required String value, required String unit,
-    required String label, required Color color, required bool isDark,
-  }) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, color: color, size: 22),
-        ),
-        const SizedBox(height: 12),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.baseline,
-          textBaseline: TextBaseline.alphabetic,
-          children: [
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w900,
-                color: isDark ? Colors.white : const Color(0xFF111827),
-                fontFamily: 'NotoSansArabic',
-              ),
-            ),
-            if (unit.isNotEmpty) ...[
-              const SizedBox(width: 4),
-              Text(
-                unit,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.white70 : const Color(0xFF6B7280),
-                  fontFamily: 'NotoSansArabic',
-                ),
-              ),
-            ],
-          ],
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 12,
-            color: AppColors.textGrey,
-            fontFamily: 'NotoSansArabic',
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDivider(bool isDark) {
-    return Container(
-      height: 50, width: 1,
-      color: isDark ? Colors.white12 : Colors.black.withValues(alpha: 0.05),
-    );
-  }
-
   Widget _buildCreativeSection({
     required bool isDark, required String title, required IconData icon,
     Color iconColor = AppColors.primary, required Widget child,
@@ -556,7 +467,7 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen>
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : const Color(0xFF111827),
                   fontFamily: 'NotoSansArabic',
@@ -564,15 +475,15 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen>
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E293B) : Colors.white,
+              color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: isDark ? Colors.white12 : Colors.black.withValues(alpha: 0.03),
+                color: isDark ? const Color(0xFF2C2C2C) : const Color(0xFFEDF2F7),
                 width: 1,
               ),
               boxShadow: [
@@ -605,6 +516,68 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen>
           init.toUpperCase(),
           style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w900, color: Colors.white),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTileCard({
+    required IconData icon,
+    required String title,
+    required String value,
+    required Color color,
+    required bool isDark,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 18),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 10.5,
+              fontWeight: FontWeight.w600,
+              color: isDark ? Colors.white60 : const Color(0xFF64748B),
+              fontFamily: 'NotoSansArabic',
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              color: isDark ? Colors.white : const Color(0xFF0F172A),
+              fontFamily: 'NotoSansArabic',
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -644,7 +617,7 @@ class _StickyBtn extends StatelessWidget {
               label,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 15,
+                fontSize: 14,
                 fontWeight: FontWeight.w800,
                 fontFamily: 'NotoSansArabic',
               ),

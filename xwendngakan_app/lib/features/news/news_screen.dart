@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/localization/app_localizations.dart';
 import '../../providers/news_provider.dart';
 import '../../shared/widgets/common_widgets.dart';
 import '../../data/models/post_model.dart';
@@ -25,15 +26,15 @@ class _NewsScreenState extends State<NewsScreen> {
     });
   }
 
-  String _timeAgo(String? raw) {
+  String _timeAgo(String? raw, AppLocalizations l) {
     if (raw == null) return '';
     try {
       final dt = DateTime.parse(raw).toLocal();
       final diff = DateTime.now().difference(dt);
-      if (diff.inMinutes < 1) return 'ئێستا';
-      if (diff.inMinutes < 60) return '${diff.inMinutes} خولەک پێش';
-      if (diff.inHours < 24) return '${diff.inHours} کاتژمێر پێش';
-      if (diff.inDays < 7) return '${diff.inDays} ڕۆژ پێش';
+      if (diff.inMinutes < 1) return l.timeNow;
+      if (diff.inMinutes < 60) return l.timeMinutesAgo(diff.inMinutes);
+      if (diff.inHours < 24) return l.timeHoursAgo(diff.inHours);
+      if (diff.inDays < 7) return l.timeDaysAgo(diff.inDays);
       final d = dt;
       return '${d.year}/${d.month.toString().padLeft(2, '0')}/${d.day.toString().padLeft(2, '0')}';
     } catch (_) {
@@ -53,161 +54,208 @@ class _NewsScreenState extends State<NewsScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l = AppLocalizations.of(context);
     final prov = Provider.of<NewsProvider>(context);
     final mixedItems = _buildMixedItems(prov);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
       child: Scaffold(
-        backgroundColor:
-            isDark ? const Color(0xFF121212) : const Color(0xFFF6F8FA),
-        body: NestedScrollView(
-          headerSliverBuilder: (ctx, innerScrolled) => [
-            SliverAppBar(
-              pinned: true,
-              floating: true,
-              snap: true,
-              elevation: 0,
-              backgroundColor:
-                  isDark ? const Color(0xFF1E1E1E) : Colors.white,
-              surfaceTintColor: Colors.transparent,
-              automaticallyImplyLeading: false,
-              titleSpacing: 0,
-              // Enhanced Premium App Bar Design
-              title: Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: isDark ? const Color(0xFF2C2C2C) : const Color(0xFFEFEFEF),
-                      width: 1,
+        backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF8FAFC),
+        body: RefreshIndicator(
+          onRefresh: () => prov.fetchAll(refresh: true),
+          color: AppColors.primary,
+          child: CustomScrollView(
+            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+            slivers: [
+              // ── BREATHTAKING GRADIENT APP BAR (Same style as Home Page Header) ──
+              SliverToBoxAdapter(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(40),
+                      bottomRight: Radius.circular(40),
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: 0.25),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
                   ),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                child: Row(
-                  children: [
-                    // Brand Indicator Icon
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Icons.space_dashboard_rounded,
-                        size: 18,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      'هەواڵەکان',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w900,
-                        fontFamily: 'NotoSansArabic',
-                        color: isDark ? Colors.white : AppColors.textDark,
-                        letterSpacing: -0.3,
-                      ),
-                    ),
-                    const Spacer(),
-                    // Premium Notifications Button
-                    GestureDetector(
-                      onTap: () => context.push('/notifications'),
-                      child: Container(
-                        width: 38,
-                        height: 38,
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? const Color(0xFF2C2C2C)
-                              : const Color(0xFFF1F5F9),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: isDark ? const Color(0xFF3C3C3C) : const Color(0xFFE2E8F0),
+                  child: Stack(
+                    children: [
+                      // Decorative Glowing Circles
+                      Positioned(
+                        top: -30,
+                        right: -20,
+                        child: Container(
+                          width: 140,
+                          height: 140,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.06),
                           ),
                         ),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Icon(
-                              Icons.notifications_none_rounded,
-                              size: 20,
-                              color: isDark ? Colors.white70 : AppColors.textDark,
-                            ),
-                            Positioned(
-                              top: 9,
-                              right: 9,
-                              child: Container(
-                                width: 7,
-                                height: 7,
-                                decoration: const BoxDecoration(
-                                  color: Colors.redAccent,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                            ),
-                          ],
+                      ),
+                      Positioned(
+                        bottom: -40,
+                        left: -30,
+                        child: Container(
+                          width: 180,
+                          height: 180,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.06),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+
+                      SafeArea(
+                        bottom: false,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+                          child: Row(
+                            children: [
+                              // Icon & Titles
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.15),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: const Icon(
+                                  Icons.space_dashboard_rounded,
+                                  size: 22,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(width: 14),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    l.news,
+                                    style: const TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w900,
+                                      color: Colors.white,
+                                      fontFamily: 'NotoSansArabic',
+                                      letterSpacing: -0.5,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    l.newsSubtitle,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white.withValues(alpha: 0.8),
+                                      fontFamily: 'NotoSansArabic',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Spacer(),
+
+                              // Notifications Button
+                              GestureDetector(
+                                onTap: () => context.push('/notifications'),
+                                child: Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      const Icon(
+                                        Icons.notifications_none_rounded,
+                                        size: 22,
+                                        color: Colors.white,
+                                      ),
+                                      Positioned(
+                                        top: 12,
+                                        right: 12,
+                                        child: Container(
+                                          width: 7,
+                                          height: 7,
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xFFFF4757),
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
-          body: RefreshIndicator(
-            onRefresh: () => prov.fetchAll(refresh: true),
-            color: AppColors.primary,
-            child: _buildBody(prov, mixedItems, isDark),
+
+              // ── Feed Content List ──
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 24, 16, 100),
+                sliver: prov.loading && mixedItems.isEmpty
+                    ? SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (_, __) => const Padding(
+                            padding: EdgeInsets.only(bottom: 14),
+                            child: ShimmerBox(width: double.infinity, height: 180, borderRadius: 20),
+                          ),
+                          childCount: 4,
+                        ),
+                      )
+                    : mixedItems.isEmpty
+                        ? SliverToBoxAdapter(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 80),
+                              child: EmptyState(
+                                icon: Icons.feed_outlined,
+                                message: l.noContent,
+                              ),
+                            ),
+                          )
+                        : SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (_, i) {
+                                final item = mixedItems[i];
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 14),
+                                  child: item.isPost
+                                      ? _PostCard(
+                                          post: item.post!,
+                                          isDark: isDark,
+                                          timeAgo: (s) => _timeAgo(s, l),
+                                        )
+                                      : _NewsCard(
+                                          news: item.news!,
+                                          isDark: isDark,
+                                          timeAgo: (s) => _timeAgo(s, l),
+                                          officialNews: l.officialNews,
+                                          newsTag: l.newsTag,
+                                          onTap: () => context.push('/news-detail', extra: item.news),
+                                        ),
+                                );
+                              },
+                              childCount: mixedItems.length,
+                            ),
+                          ),
+              ),
+            ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildBody(NewsProvider prov, List<_FeedItem> items, bool isDark) {
-    if (prov.loading && items.isEmpty) {
-      return ListView.builder(
-        padding: const EdgeInsets.only(top: 8, bottom: 100),
-        itemCount: 4,
-        itemBuilder: (_, __) => const Padding(
-          padding: EdgeInsets.only(bottom: 8),
-          child: ShimmerBox(
-              width: double.infinity, height: 180, borderRadius: 16),
-        ),
-      );
-    }
-
-    if (items.isEmpty) {
-      return EmptyState(
-        icon: Icons.feed_outlined,
-        message: 'هیچ ناوەرۆکێک نەدۆزرایەوە',
-      );
-    }
-
-    return ListView.separated(
-      padding: const EdgeInsets.only(top: 12, bottom: 100, left: 16, right: 16),
-      physics: const BouncingScrollPhysics(
-          parent: AlwaysScrollableScrollPhysics()),
-      itemCount: items.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (_, i) {
-        final item = items[i];
-        if (item.isPost) {
-          return _PostCard(
-            post: item.post!,
-            isDark: isDark,
-            timeAgo: _timeAgo,
-          );
-        } else {
-          return _NewsCard(
-            news: item.news!,
-            isDark: isDark,
-            timeAgo: _timeAgo,
-            onTap: () => context.push('/news-detail', extra: item.news),
-          );
-        }
-      },
     );
   }
 }
@@ -391,12 +439,16 @@ class _NewsCard extends StatelessWidget {
   final bool isDark;
   final String Function(String?) timeAgo;
   final VoidCallback onTap;
+  final String officialNews;
+  final String newsTag;
 
   const _NewsCard({
     required this.news,
     required this.isDark,
     required this.timeAgo,
     required this.onTap,
+    required this.officialNews,
+    required this.newsTag,
   });
 
   @override
@@ -445,7 +497,7 @@ class _NewsCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'هەواڵی فەرمی',
+                        officialNews,
                         style: TextStyle(
                           fontSize: 13.5,
                           fontWeight: FontWeight.w800,
@@ -479,9 +531,9 @@ class _NewsCard extends StatelessWidget {
                     color: AppColors.success.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Text(
-                    'هەواڵ',
-                    style: TextStyle(
+                  child: Text(
+                    newsTag,
+                    style: const TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
                       color: AppColors.success,

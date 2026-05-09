@@ -67,7 +67,7 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
         onPressed: () => context.push('/map'),
         backgroundColor: AppColors.primary,
         icon: const Icon(Icons.map_rounded, color: Colors.white),
-        label: const Text('نەخشە', style: TextStyle(color: Colors.white, fontFamily: 'NotoSansArabic', fontWeight: FontWeight.bold)),
+        label: Text(l.map, style: const TextStyle(color: Colors.white, fontFamily: 'NotoSansArabic', fontWeight: FontWeight.bold)),
       ),
       body: SafeArea(
         child: Column(
@@ -209,7 +209,7 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'فلتەری پێشکەوتوو',
+                      l.advancedFilter,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w800,
                             fontFamily: 'NotoSansArabic',
@@ -222,16 +222,16 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
                           tempType = '';
                         });
                       },
-                      child: const Text('پاکردنەوە',
-                          style: TextStyle(
+                      child: Text(l.clear,
+                          style: const TextStyle(
                               color: Colors.redAccent,
                               fontFamily: 'NotoSansArabic')),
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
-                const Text('شارەکان',
-                    style: TextStyle(
+                Text(l.cities,
+                    style: const TextStyle(
                         fontWeight: FontWeight.w700,
                         fontFamily: 'NotoSansArabic')),
                 const SizedBox(height: 12),
@@ -258,8 +258,8 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
                   }).toList(),
                 ),
                 const SizedBox(height: 24),
-                const Text('جۆری دامەزراوە',
-                    style: TextStyle(
+                Text(l.institutionType,
+                    style: const TextStyle(
                         fontWeight: FontWeight.w700,
                         fontFamily: 'NotoSansArabic')),
                 const SizedBox(height: 12),
@@ -292,7 +292,7 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
                 ),
                 const SizedBox(height: 32),
                 GradientButton(
-                  text: 'جێبەجێکردن',
+                  text: l.apply,
                   onPressed: () {
                     setState(() {
                       _selectedCity = tempCity.isEmpty ? null : tempCity;

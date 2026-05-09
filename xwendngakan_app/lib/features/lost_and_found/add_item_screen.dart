@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/localization/app_localizations.dart';
 import '../../shared/widgets/common_widgets.dart';
 
 class AddLostItemScreen extends StatefulWidget {
@@ -27,11 +28,12 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkBg : const Color(0xFFF5F6FA),
       appBar: AppBar(
-        title: const Text('بڵاوکردنەوەی نوێ', style: TextStyle(fontFamily: 'NotoSansArabic', fontWeight: FontWeight.bold)),
+        title: Text(l.publishNew, style: const TextStyle(fontFamily: 'NotoSansArabic', fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -56,7 +58,7 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          'ونبووە 🔴',
+                          '${l.lost} 🔴',
                           style: TextStyle(
                             fontFamily: 'NotoSansArabic',
                             fontWeight: FontWeight.bold,
@@ -80,7 +82,7 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          'دۆزراوەتەوە 🟢',
+                          '${l.found} 🟢',
                           style: TextStyle(
                             fontFamily: 'NotoSansArabic',
                             fontWeight: FontWeight.bold,
@@ -109,14 +111,14 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
                 children: [
                   Icon(Icons.add_a_photo_rounded, size: 40, color: AppColors.primary.withOpacity(0.7)),
                   const SizedBox(height: 8),
-                  const Text('وێنەیەک بۆ شتەکە دابنێ', style: TextStyle(fontFamily: 'NotoSansArabic', fontWeight: FontWeight.bold)),
+                  Text(l.addPhoto, style: const TextStyle(fontFamily: 'NotoSansArabic', fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
             const SizedBox(height: 32),
             
             // Form Fields
-            Text('ناوی شتەکە', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'NotoSansArabic', color: isDark ? Colors.white : AppColors.textDark)),
+            Text(l.itemName, style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'NotoSansArabic', color: isDark ? Colors.white : AppColors.textDark)),
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
@@ -129,15 +131,13 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
                 decoration: const InputDecoration(
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(16),
-                  hintText: 'بۆ نموونە: کلیل، باج، مۆبایل...',
-                  hintStyle: TextStyle(fontFamily: 'NotoSansArabic', fontSize: 14),
                   prefixIcon: Icon(Icons.title_rounded),
                 ),
               ),
             ),
             const SizedBox(height: 24),
             
-            Text('لە کوێ؟', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'NotoSansArabic', color: isDark ? Colors.white : AppColors.textDark)),
+            Text(l.where, style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'NotoSansArabic', color: isDark ? Colors.white : AppColors.textDark)),
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
@@ -150,15 +150,13 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
                 decoration: const InputDecoration(
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(16),
-                  hintText: 'زانکۆی سەلاحەدین، بەشی ئایتی...',
-                  hintStyle: TextStyle(fontFamily: 'NotoSansArabic', fontSize: 14),
                   prefixIcon: Icon(Icons.location_on_rounded),
                 ),
               ),
             ),
             const SizedBox(height: 24),
             
-            Text('زانیاری زیاتر', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'NotoSansArabic', color: isDark ? Colors.white : AppColors.textDark)),
+            Text(l.moreInfo, style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'NotoSansArabic', color: isDark ? Colors.white : AppColors.textDark)),
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
@@ -172,27 +170,25 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
                 decoration: const InputDecoration(
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(16),
-                  hintText: 'ڕەنگ، جۆر، یان هەر نیشانەیەکی تایبەت...',
-                  hintStyle: TextStyle(fontFamily: 'NotoSansArabic', fontSize: 14),
                 ),
               ),
             ),
             const SizedBox(height: 40),
             
             GradientButton(
-              text: 'بڵاوکردنەوە',
+              text: l.publish,
               icon: Icons.send_rounded,
               onPressed: () {
                 if (_titleController.text.isEmpty || _locationController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('تکایە هەموو زانیارییەکان پڕبکەرەوە', style: TextStyle(fontFamily: 'NotoSansArabic'))),
+                    SnackBar(content: Text(l.fillAllInfo, style: const TextStyle(fontFamily: 'NotoSansArabic'))),
                   );
                   return;
                 }
                 
                 context.pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('بە سەرکەوتوویی بڵاوکرایەوە!', style: TextStyle(fontFamily: 'NotoSansArabic'))),
+                  SnackBar(content: Text(l.publishedSuccess, style: const TextStyle(fontFamily: 'NotoSansArabic'))),
                 );
               },
             ),

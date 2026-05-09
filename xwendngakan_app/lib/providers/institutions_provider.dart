@@ -16,6 +16,7 @@ class InstitutionsProvider extends ChangeNotifier {
   bool _hasMore = true;
   String? _error;
   String _selectedType = '';
+  String _selectedSector = 'all';
   String _selectedCity = '';
   String _searchQuery = '';
   int _page = 1;
@@ -29,6 +30,7 @@ class InstitutionsProvider extends ChangeNotifier {
   bool get hasMore => _hasMore;
   String? get error => _error;
   String get selectedType => _selectedType;
+  String get selectedSector => _selectedSector;
   String get selectedCity => _selectedCity;
   String get searchQuery => _searchQuery;
   Map<String, dynamic> get stats => _stats;
@@ -66,6 +68,7 @@ class InstitutionsProvider extends ChangeNotifier {
 
     final result = await _api.getInstitutions(
       type: _selectedType,
+      sector: _selectedSector,
       city: _selectedCity,
       search: _searchQuery,
       page: _page,
@@ -109,9 +112,10 @@ class InstitutionsProvider extends ChangeNotifier {
     }
   }
 
-  void setFilter({String? type, String? city}) {
-    _selectedType = type ?? _selectedType;
-    _selectedCity = city ?? _selectedCity;
+  void setFilter({String? type, String? city, String? sector}) {
+    if (type != null) _selectedType = type == 'all' ? '' : type;
+    if (city != null) _selectedCity = city == 'all' ? '' : city;
+    if (sector != null) _selectedSector = sector == 'all' ? '' : sector;
     fetchInstitutions(refresh: true);
   }
 
@@ -122,6 +126,7 @@ class InstitutionsProvider extends ChangeNotifier {
 
   void clearFilters() {
     _selectedType = '';
+    _selectedSector = 'all';
     _selectedCity = '';
     _searchQuery = '';
     fetchInstitutions(refresh: true);

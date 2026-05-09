@@ -46,7 +46,7 @@ class _CvScreenState extends State<CvScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBg : const Color(0xFFF8F9FA),
+      backgroundColor: isDark ? const Color(0xFF111827) : const Color(0xFFF8FAFC),
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: RefreshIndicator(
@@ -56,162 +56,214 @@ class _CvScreenState extends State<CvScreen> {
             controller: _scrollCtrl,
             physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
             slivers: [
-              // Premium Header
+              // ── BEHANCE-LEVEL ARTISTIC APP BAR ──
               SliverToBoxAdapter(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: isDark ? AppColors.darkCard : Colors.white,
+                    gradient: AppColors.primaryGradient,
                     borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(32),
-                      bottomRight: Radius.circular(32),
+                      bottomLeft: Radius.circular(40),
+                      bottomRight: Radius.circular(40),
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: isDark ? Colors.black.withOpacity(0.3) : Colors.black.withOpacity(0.04),
-                        blurRadius: 24,
-                        offset: const Offset(0, 8),
+                        color: AppColors.primary.withValues(alpha: 0.25),
+                        blurRadius: 25,
+                        offset: const Offset(0, 10),
                       ),
                     ],
                   ),
-                  child: SafeArea(
-                    bottom: false,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 28),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Stack(
+                    children: [
+                      // Elegant background organic glowing shapes
+                      Positioned(
+                        top: -40,
+                        right: -30,
+                        child: Container(
+                          width: 160,
+                          height: 160,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.08),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: -50,
+                        left: -40,
+                        child: Container(
+                          width: 200,
+                          height: 200,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.06),
+                          ),
+                        ),
+                      ),
+
+                      SafeArea(
+                        bottom: false,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              Row(
                                 children: [
-                                  Text(
-                                    l.cvBank,
-                                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 32,
-                                      letterSpacing: -0.5,
-                                      color: isDark ? Colors.white : const Color(0xFF111827),
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    child: const Icon(
+                                      Icons.assignment_rounded,
+                                      size: 22,
+                                      color: Colors.white,
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primary.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Text(
-                                      '${prov.cvs.length} سیڤی بەردەستە',
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: AppColors.primary,
-                                        fontFamily: 'NotoSansArabic',
-                                        fontWeight: FontWeight.w700,
+                                  const SizedBox(width: 14),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        l.cvBank, 
+                                        style: const TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.white,
+                                          fontFamily: 'NotoSansArabic',
+                                          letterSpacing: -0.5,
+                                        ),
                                       ),
-                                    ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        l.cvBankSubtitle,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white.withValues(alpha: 0.7),
+                                          fontFamily: 'NotoSansArabic',
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
+                              const SizedBox(height: 32),
+
+                              // Floating pill search bar
                               Container(
-                                width: 56,
-                                height: 56,
+                                height: 54,
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
                                 decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [AppColors.primary, AppColors.primary.withOpacity(0.7)],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  shape: BoxShape.circle,
+                                  color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                                  borderRadius: BorderRadius.circular(30),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: AppColors.primary.withOpacity(0.3),
-                                      blurRadius: 16,
-                                      offset: const Offset(0, 8),
+                                      color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
+                                      blurRadius: 15,
+                                      offset: const Offset(0, 5),
                                     ),
                                   ],
                                 ),
-                                child: const Icon(Icons.assignment_rounded, color: Colors.white, size: 28),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 32),
-                          
-                          // Modern Search Bar
-                          Container(
-                            decoration: BoxDecoration(
-                              color: isDark ? const Color(0xFF1F2937) : const Color(0xFFF3F4F6),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
-                              ),
-                            ),
-                            child: AppSearchBar(
-                              controller: _searchCtrl,
-                              hint: l.searchHint,
-                              onChanged: (v) => prov.setSearch(v),
-                              onFilterTap: () => _showCityFilter(context, l),
-                            ),
-                          ),
-                          
-                          // Selected City Filter Badge
-                          if (_selectedCity != null) ...[
-                            const SizedBox(height: 20),
-                            Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                  decoration: BoxDecoration(
-                                    color: isDark ? const Color(0xFF374151) : Colors.white,
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(color: AppColors.primary.withOpacity(0.3)),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: AppColors.primary.withOpacity(0.08),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 4),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.search_rounded,
+                                      color: isDark ? Colors.white54 : AppColors.primaryLight,
+                                      size: 22,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: TextField(
+                                        controller: _searchCtrl,
+                                        onChanged: (v) => prov.setSearch(v),
+                                        style: TextStyle(
+                                          fontSize: 14.5,
+                                          fontWeight: FontWeight.w600,
+                                          fontFamily: 'NotoSansArabic',
+                                          color: isDark ? Colors.white : const Color(0xFF1F2937),
+                                        ),
+                                        decoration: InputDecoration(
+                                          hintText: l.searchCvHint,
+                                          hintStyle: const TextStyle(
+                                            fontSize: 13.5,
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: 'NotoSansArabic',
+                                            color: Colors.grey,
+                                          ),
+                                          border: InputBorder.none,
+                                          focusedBorder: InputBorder.none,
+                                          enabledBorder: InputBorder.none,
+                                          errorBorder: InputBorder.none,
+                                          disabledBorder: InputBorder.none,
+                                          contentPadding: EdgeInsets.symmetric(vertical: 10),
+                                          isDense: true,
+                                        ),
                                       ),
-                                    ],
+                                    ),
+                                    const SizedBox(width: 8),
+                                    GestureDetector(
+                                      onTap: () => _showCityFilter(context, l),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: isDark ? const Color(0xFF2D2D2D) : const Color(0xFFF3F4F6),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Icon(
+                                          Icons.tune_rounded,
+                                          color: isDark ? Colors.white70 : AppColors.primary,
+                                          size: 18,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              // Selected City Filter Badge
+                              if (_selectedCity != null) ...[
+                                const SizedBox(height: 16),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      const Icon(Icons.location_on_rounded, size: 18, color: AppColors.primary),
-                                      const SizedBox(width: 8),
+                                      const Icon(Icons.location_on_rounded, size: 16, color: Colors.white),
+                                      const SizedBox(width: 6),
                                       Text(
                                         _selectedCity!,
-                                        style: TextStyle(
-                                          color: isDark ? Colors.white : const Color(0xFF1F2937),
-                                          fontSize: 14,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12.5,
                                           fontFamily: 'NotoSansArabic',
                                           fontWeight: FontWeight.w700,
                                         ),
                                       ),
-                                      const SizedBox(width: 14),
+                                      const SizedBox(width: 10),
                                       GestureDetector(
                                         onTap: () {
                                           setState(() => _selectedCity = null);
                                           prov.fetchCvs(refresh: true);
                                         },
-                                        child: Container(
-                                          padding: const EdgeInsets.all(4),
-                                          decoration: BoxDecoration(
-                                            color: isDark ? const Color(0xFF4B5563) : const Color(0xFFF3F4F6),
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: const Icon(Icons.close_rounded, size: 14, color: AppColors.textGrey),
-                                        ),
+                                        child: const Icon(Icons.close_rounded, size: 16, color: Colors.white70),
                                       ),
                                     ],
                                   ),
                                 ),
                               ],
-                            ),
-                          ],
-                        ],
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ),
@@ -280,7 +332,7 @@ class _CvScreenState extends State<CvScreen> {
           borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 20,
               offset: const Offset(0, -5),
             )
@@ -298,7 +350,7 @@ class _CvScreenState extends State<CvScreen> {
                     width: 48,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.3),
+                      color: Colors.grey.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -327,7 +379,7 @@ class _CvScreenState extends State<CvScreen> {
                         duration: const Duration(milliseconds: 200),
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
-                          color: isSelected ? AppColors.primary.withOpacity(0.1) : Colors.transparent,
+                          color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.transparent,
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: isSelected ? AppColors.primary : (Theme.of(context).brightness == Brightness.dark ? Colors.white24 : Colors.black12),

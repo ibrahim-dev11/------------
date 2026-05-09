@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/localization/app_localizations.dart';
 import '../../providers/institutions_provider.dart';
 import '../../data/models/institution_model.dart';
 import '../../shared/widgets/common_widgets.dart';
@@ -22,11 +23,12 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     final prov = Provider.of<InstitutionsProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('نەخشەی دامەزراوەکان',
-            style: TextStyle(
+        title: Text(l10n.institutionMap,
+            style: const TextStyle(
                 fontFamily: 'NotoSansArabic', fontWeight: FontWeight.w800)),
         centerTitle: true,
         backgroundColor: isDark ? AppColors.darkBg : Colors.white,
@@ -98,6 +100,8 @@ class _MapScreenState extends State<MapScreen> {
 
   void _showInstitutionPreview(BuildContext context, InstitutionModel inst) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -138,7 +142,7 @@ class _MapScreenState extends State<MapScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        inst.name('ku'),
+                        inst.name(l10n.languageCode),
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -161,7 +165,7 @@ class _MapScreenState extends State<MapScreen> {
             ),
             const SizedBox(height: 20),
             GradientButton(
-              text: 'بۆ پەڕەی خوێندنگا',
+              text: l10n.viewDetails,
               onPressed: () {
                 Navigator.pop(context);
                 context.push('/institutions/${inst.id}');

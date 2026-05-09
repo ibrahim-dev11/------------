@@ -23,7 +23,8 @@ class AppConstants {
 
   // === LANGUAGES ===
   static const Map<String, Map<String, String>> languages = {
-    'ku': {'name': 'کوردی', 'flag': '🏳️', 'dir': 'rtl'},
+    'ku': {'name': 'کوردی (سۆرانی)', 'flag': '❤️☀️💚', 'dir': 'rtl'},
+    'kbd': {'name': 'کوردی (بادینی)', 'flag': '❤️☀️💚', 'dir': 'rtl'},
     'ar': {'name': 'العربية', 'flag': '🇮🇶', 'dir': 'rtl'},
     'en': {'name': 'English', 'flag': '🇬🇧', 'dir': 'ltr'},
     'tr': {'name': 'Türkçe', 'flag': '🇹🇷', 'dir': 'ltr'},

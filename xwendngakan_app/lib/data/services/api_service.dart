@@ -186,6 +186,7 @@ class ApiService {
     String? type,
     String? city,
     String? search,
+    String? sector,
     int page = 1,
   }) async {
     try {
@@ -193,6 +194,7 @@ class ApiService {
         if (type != null && type.isNotEmpty) 'type': type,
         if (city != null && city.isNotEmpty) 'city': city,
         if (search != null && search.isNotEmpty) 'search': search,
+        if (sector != null && sector.isNotEmpty && sector != 'all') 'sector': sector,
         'page': '$page',
         'per_page': '${AppConstants.pageSize}',
       };

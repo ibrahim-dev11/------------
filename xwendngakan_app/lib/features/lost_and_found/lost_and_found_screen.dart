@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/localization/app_localizations.dart';
 import '../../shared/widgets/common_widgets.dart';
 
 class LostAndFoundScreen extends StatefulWidget {
@@ -86,11 +87,12 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkBg : const Color(0xFFF5F6FA),
       appBar: AppBar(
-        title: const Text('ونبوو و دۆزراوە', style: TextStyle(fontFamily: 'NotoSansArabic', fontWeight: FontWeight.bold)),
+        title: Text(l.lostAndFound, style: const TextStyle(fontFamily: 'NotoSansArabic', fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -101,10 +103,10 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
           labelColor: AppColors.primary,
           unselectedLabelColor: isDark ? Colors.white54 : Colors.black54,
           labelStyle: const TextStyle(fontFamily: 'NotoSansArabic', fontWeight: FontWeight.bold),
-          tabs: const [
-            Tab(text: 'هەمووی'),
-            Tab(text: 'ونبووەکان'),
-            Tab(text: 'دۆزراوەکان'),
+          tabs: [
+            Tab(text: l.all),
+            Tab(text: l.losts),
+            Tab(text: l.founds),
           ],
         ),
       ),
@@ -112,14 +114,14 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
         onPressed: () => context.push('/lost-and-found/add'),
         backgroundColor: AppColors.primary,
         icon: const Icon(Icons.add_rounded, color: Colors.white),
-        label: const Text('بڵاوکردنەوە', style: TextStyle(fontFamily: 'NotoSansArabic', fontWeight: FontWeight.bold, color: Colors.white)),
+        label: Text(l.publish, style: const TextStyle(fontFamily: 'NotoSansArabic', fontWeight: FontWeight.bold, color: Colors.white)),
       ),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(20),
             child: AppSearchBar(
-              hint: 'گەڕان بەدوای کلیل، باج، مۆبایل...',
+              hint: l.searchHintLostFound,
               onChanged: (v) => setState(() => _searchQuery = v),
             ),
           ),
@@ -134,7 +136,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
                           Icon(Icons.search_off_rounded, size: 80, color: isDark ? Colors.white24 : Colors.black26),
                           const SizedBox(height: 16),
                           Text(
-                            'هیچ شتێک نەدۆزرایەوە',
+                            l.noItemsFound,
                             style: TextStyle(fontFamily: 'NotoSansArabic', color: isDark ? Colors.white54 : Colors.black54),
                           )
                         ],
@@ -197,7 +199,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
                                                 borderRadius: BorderRadius.circular(8),
                                               ),
                                               child: Text(
-                                                isLost ? 'ونبوو' : 'دۆزراوە',
+                                                isLost ? l.lost : l.found,
                                                 style: TextStyle(
                                                   color: isLost ? const Color(0xFFFF4757) : const Color(0xFF2ED573),
                                                   fontSize: 10,
@@ -252,6 +254,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
   }
 
   void _showItemDetails(BuildContext context, Map<String, dynamic> item, bool isDark) {
+    final l = AppLocalizations.of(context);
     final isLost = item['type'] == 'lost';
     
     showModalBottomSheet(
@@ -309,7 +312,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
-                          isLost ? '🔴 ونبووە' : '🟢 دۆزراوەتەوە',
+                          isLost ? '🔴 ${l.lost}' : '🟢 ${l.found}',
                           style: TextStyle(
                             color: isLost ? const Color(0xFFFF4757) : const Color(0xFF2ED573),
                             fontSize: 13,
@@ -347,7 +350,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('شوێن', style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : Colors.black54, fontFamily: 'NotoSansArabic')),
+                            Text(l.location, style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : Colors.black54, fontFamily: 'NotoSansArabic')),
                             Text(item['location'], style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, fontFamily: 'NotoSansArabic')),
                           ],
                         ),
@@ -357,7 +360,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
                   const SizedBox(height: 24),
                   
                   // Description
-                  const Text('زانیاری زیاتر', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'NotoSansArabic')),
+                  Text(l.moreInfo, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'NotoSansArabic')),
                   const SizedBox(height: 8),
                   Text(
                     item['description'],
@@ -383,7 +386,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('بڵاوکەرەوە', style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : Colors.black54, fontFamily: 'NotoSansArabic')),
+                              Text(l.publisher, style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : Colors.black54, fontFamily: 'NotoSansArabic')),
                               Text(item['user'], style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, fontFamily: 'NotoSansArabic')),
                             ],
                           ),
@@ -394,12 +397,12 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
                   
                   const SizedBox(height: 32),
                   GradientButton(
-                    text: isLost ? 'من دۆزیومەتەوە!' : 'ئەوە هی منە!',
+                    text: isLost ? l.iFoundIt : l.itIsMine,
                     icon: Icons.chat_bubble_rounded,
                     onPressed: () {
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('نامە نێردرا بۆ بڵاوکەرەوە بە سەرکەوتوویی!', style: TextStyle(fontFamily: 'NotoSansArabic'))),
+                        SnackBar(content: Text(l.messageSent, style: const TextStyle(fontFamily: 'NotoSansArabic'))),
                       );
                     },
                   ),
