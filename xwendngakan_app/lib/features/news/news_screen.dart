@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -7,8 +6,8 @@ import 'package:go_router/go_router.dart';
 import '../../core/constants/app_colors.dart';
 import '../../providers/news_provider.dart';
 import '../../shared/widgets/common_widgets.dart';
-import '../../data/models/news_model.dart';
 import '../../data/models/post_model.dart';
+import '../../data/models/news_model.dart';
 
 class NewsScreen extends StatefulWidget {
   const NewsScreen({super.key});
@@ -17,419 +16,259 @@ class NewsScreen extends StatefulWidget {
   State<NewsScreen> createState() => _NewsScreenState();
 }
 
-class _NewsScreenState extends State<NewsScreen>
-    with SingleTickerProviderStateMixin {
-  final _scrollCtrl = ScrollController();
-  late TabController _tabCtrl;
-
+class _NewsScreenState extends State<NewsScreen> {
   @override
   void initState() {
     super.initState();
-    _tabCtrl = TabController(length: 2, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<NewsProvider>(context, listen: false)
-          .fetchAll(refresh: true);
+      Provider.of<NewsProvider>(context, listen: false).fetchAll(refresh: true);
     });
   }
 
-  @override
-  void dispose() {
-    _scrollCtrl.dispose();
-    _tabCtrl.dispose();
-    super.dispose();
-  }
-
-  String _formatDate(String? raw) {
+  String _timeAgo(String? raw) {
     if (raw == null) return '';
     try {
-      final dt = DateTime.parse(raw);
-      return '${dt.year}/${dt.month.toString().padLeft(2, '0')}/${dt.day.toString().padLeft(2, '0')}';
+      final dt = DateTime.parse(raw).toLocal();
+      final diff = DateTime.now().difference(dt);
+      if (diff.inMinutes < 1) return 'ئێستا';
+      if (diff.inMinutes < 60) return '${diff.inMinutes} خولەک لەمەوبەر';
+      if (diff.inHours < 24) return '${diff.inHours} کاتژمێر لەمەوبەر';
+      if (diff.inDays < 7) return '${diff.inDays} ڕۆژ لەمەوبەر';
+      final d = dt;
+      return '${d.year}/${d.month.toString().padLeft(2, '0')}/${d.day.toString().padLeft(2, '0')}';
     } catch (_) {
       return raw.split('T').first;
     }
+  }
+
+  List<_FeedItem> _buildMixedItems(NewsProvider prov) {
+    final list = <_FeedItem>[
+      ...prov.posts.map((p) => _FeedItem(post: p, isPost: true, createdAt: p.createdAt)),
+      ...prov.news.map((n) => _FeedItem(news: n, isPost: false, createdAt: n.createdAt)),
+    ];
+    list.sort((a, b) => (b.createdAt ?? '').compareTo(a.createdAt ?? ''));
+    return list;
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final prov = Provider.of<NewsProvider>(context);
+    final mixedItems = _buildMixedItems(prov);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light,
+      value: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
       child: Scaffold(
-        backgroundColor: isDark ? AppColors.darkBg : AppColors.lightBg,
+        backgroundColor:
+            isDark ? const Color(0xFF151515) : const Color(0xFFF2F3F7),
         body: NestedScrollView(
-          headerSliverBuilder: (ctx, innerIsScrolled) => [
-            _buildAppBar(isDark, prov, innerIsScrolled),
-          ],
-          body: TabBarView(
-            controller: _tabCtrl,
-            children: [
-              _NewsTab(
-                prov: prov,
-                isDark: isDark,
-                formatDate: _formatDate,
-                onTap: (news) => context.push('/news-detail', extra: news),
-              ),
-              _PostsTab(
-                prov: prov,
-                isDark: isDark,
-                formatDate: _formatDate,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAppBar(bool isDark, NewsProvider prov, bool scrolled) {
-    return SliverAppBar(
-      expandedHeight: 200,
-      collapsedHeight: 70,
-      pinned: true,
-      stretch: true,
-      automaticallyImplyLeading: false,
-      elevation: 0,
-      backgroundColor: AppColors.primary,
-      systemOverlayStyle: SystemUiOverlayStyle.light,
-      flexibleSpace: FlexibleSpaceBar(
-        stretchModes: const [StretchMode.zoomBackground],
-        background: Stack(
-          fit: StackFit.expand,
-          children: [
-            // gradient bg
-            Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFF3E389A), Color(0xFF534AB7), Color(0xFF7F77DD)],
-                ),
-              ),
-            ),
-            // decorative circles
-            Positioned(
-              top: -40, right: -20,
-              child: _Circle(size: 170, opacity: 0.07),
-            ),
-            Positioned(
-              bottom: 30, left: -50,
-              child: _Circle(size: 200, opacity: 0.05),
-            ),
-            // header content
-            SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
+          headerSliverBuilder: (ctx, innerScrolled) => [
+            SliverAppBar(
+              pinned: true,
+              floating: true,
+              snap: true,
+              elevation: 0,
+              backgroundColor:
+                  isDark ? const Color(0xFF1E1E1E) : Colors.white,
+              surfaceTintColor: Colors.transparent,
+              automaticallyImplyLeading: false,
+              titleSpacing: 0,
+              title: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 44, height: 44,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+                    Text(
+                      'پۆستەکان',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w900,
+                        fontFamily: 'NotoSansArabic',
+                        color: isDark ? Colors.white : AppColors.textDark,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    if (mixedItems.isNotEmpty)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          '${mixedItems.length}',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primary,
                           ),
-                          child: const Icon(Icons.article_rounded, color: Colors.white, size: 24),
                         ),
-                        const SizedBox(width: 14),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('هەواڵ و پۆستەکان',
-                              style: TextStyle(
-                                fontSize: 24, fontWeight: FontWeight.w900,
-                                color: Colors.white, fontFamily: 'NotoSansArabic',
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                '${prov.news.length} هەواڵ · ${prov.posts.length} پۆست',
-                                style: const TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.w600,
-                                  color: Colors.white, fontFamily: 'NotoSansArabic',
-                                ),
-                              ),
-                            ),
-                          ],
+                      ),
+                    const Spacer(),
+                    GestureDetector(
+                      onTap: () => context.push('/notifications'),
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? AppColors.darkCard
+                              : const Color(0xFFF2F3F7),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      ],
+                        child: Icon(Icons.notifications_none_rounded,
+                            size: 22,
+                            color: isDark
+                                ? Colors.white70
+                                : AppColors.textDark),
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
           ],
-        ),
-      ),
-      // Collapsed title
-      title: AnimatedOpacity(
-        opacity: scrolled ? 1 : 0,
-        duration: const Duration(milliseconds: 200),
-        child: const Text('هەواڵ و پۆستەکان',
-          style: TextStyle(
-            fontSize: 18, fontWeight: FontWeight.w800,
-            color: Colors.white, fontFamily: 'NotoSansArabic',
+          body: RefreshIndicator(
+            onRefresh: () => prov.fetchAll(refresh: true),
+            color: AppColors.primary,
+            child: _buildBody(prov, mixedItems, isDark),
           ),
         ),
-      ),
-      bottom: TabBar(
-        controller: _tabCtrl,
-        indicatorColor: Colors.white,
-        indicatorWeight: 3,
-        indicatorSize: TabBarIndicatorSize.label,
-        labelColor: Colors.white,
-        unselectedLabelColor: Colors.white54,
-        labelStyle: const TextStyle(
-          fontSize: 15, fontWeight: FontWeight.w800, fontFamily: 'NotoSansArabic',
-        ),
-        unselectedLabelStyle: const TextStyle(
-          fontSize: 14, fontWeight: FontWeight.w500, fontFamily: 'NotoSansArabic',
-        ),
-        tabs: [
-          Tab(
-            child: Row(mainAxisSize: MainAxisSize.min, children: [
-              const Icon(Icons.newspaper_rounded, size: 18),
-              const SizedBox(width: 6),
-              Text('هەواڵ (${prov.news.length})'),
-            ]),
-          ),
-          Tab(
-            child: Row(mainAxisSize: MainAxisSize.min, children: [
-              const Icon(Icons.dashboard_rounded, size: 18),
-              const SizedBox(width: 6),
-              Text('پۆستەکان (${prov.posts.length})'),
-            ]),
-          ),
-        ],
       ),
     );
   }
-}
 
-// ── News Tab ─────────────────────────────────────────────────────────
-class _NewsTab extends StatelessWidget {
-  final NewsProvider prov;
-  final bool isDark;
-  final String Function(String?) formatDate;
-  final void Function(NewsModel) onTap;
-
-  const _NewsTab({
-    required this.prov,
-    required this.isDark,
-    required this.formatDate,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (prov.loadingNews && prov.news.isEmpty) {
+  Widget _buildBody(NewsProvider prov, List<_FeedItem> items, bool isDark) {
+    if (prov.loading && items.isEmpty) {
       return ListView.builder(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+        padding: const EdgeInsets.only(top: 8, bottom: 100),
         itemCount: 4,
         itemBuilder: (_, __) => const Padding(
-          padding: EdgeInsets.only(bottom: 16),
-          child: ShimmerBox(width: double.infinity, height: 260, borderRadius: 20),
+          padding: EdgeInsets.only(bottom: 8),
+          child: ShimmerBox(
+              width: double.infinity, height: 220, borderRadius: 0),
         ),
       );
     }
 
-    if (prov.news.isEmpty) {
-      return EmptyState(icon: Icons.newspaper_outlined, message: 'هیچ هەواڵێک نەدۆزرایەوە');
+    if (items.isEmpty) {
+      return EmptyState(
+        icon: Icons.feed_outlined,
+        message: 'هیچ ناوەرۆکێک نەدۆزرایەوە',
+      );
     }
 
-    return RefreshIndicator(
-      onRefresh: () async => prov.fetchNews(refresh: true),
-      color: AppColors.primary,
-      child: ListView.builder(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
-        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-        itemCount: prov.news.length,
-        itemBuilder: (_, i) {
-          final news = prov.news[i];
-          if (i == 0) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: _FeaturedNewsCard(
-                news: news, isDark: isDark,
-                formatDate: formatDate, onTap: () => onTap(news),
-              ),
-            );
-          }
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 14),
-            child: _NewsCard(news: news, isDark: isDark, formatDate: formatDate, onTap: () => onTap(news)),
+    return ListView.separated(
+      padding: const EdgeInsets.only(top: 8, bottom: 100),
+      physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics()),
+      itemCount: items.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      itemBuilder: (_, i) {
+        final item = items[i];
+        if (item.isPost) {
+          return _PostCard(
+            post: item.post!,
+            isDark: isDark,
+            timeAgo: _timeAgo,
           );
-        },
-      ),
+        } else {
+          return _NewsCard(
+            news: item.news!,
+            isDark: isDark,
+            timeAgo: _timeAgo,
+            onTap: () => context.push('/news-detail', extra: item.news),
+          );
+        }
+      },
     );
   }
 }
 
-// ── Posts Tab ─────────────────────────────────────────────────────────
-class _PostsTab extends StatelessWidget {
-  final NewsProvider prov;
-  final bool isDark;
-  final String Function(String?) formatDate;
+// ── Mixed Feed Item Holder ──────────────────────────────────────────
+class _FeedItem {
+  final PostModel? post;
+  final NewsModel? news;
+  final bool isPost;
+  final String? createdAt;
 
-  const _PostsTab({required this.prov, required this.isDark, required this.formatDate});
-
-  @override
-  Widget build(BuildContext context) {
-    if (prov.loadingPosts && prov.posts.isEmpty) {
-      return ListView.builder(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
-        itemCount: 4,
-        itemBuilder: (_, __) => const Padding(
-          padding: EdgeInsets.only(bottom: 16),
-          child: ShimmerBox(width: double.infinity, height: 180, borderRadius: 20),
-        ),
-      );
-    }
-
-    if (prov.posts.isEmpty) {
-      return EmptyState(icon: Icons.dashboard_outlined, message: 'هیچ پۆستێک نەدۆزرایەوە');
-    }
-
-    return RefreshIndicator(
-      onRefresh: () async => prov.fetchPosts(refresh: true),
-      color: AppColors.primary,
-      child: ListView.builder(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
-        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-        itemCount: prov.posts.length,
-        itemBuilder: (_, i) => Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: _PostCard(post: prov.posts[i], isDark: isDark, formatDate: formatDate),
-        ),
-      ),
-    );
-  }
+  _FeedItem({this.post, this.news, required this.isPost, this.createdAt});
 }
 
-// ── Featured News Card ────────────────────────────────────────────────
-class _FeaturedNewsCard extends StatelessWidget {
-  final NewsModel news;
+// ── Post Card (social style) ──────────────────────────────────────────
+class _PostCard extends StatefulWidget {
+  final PostModel post;
   final bool isDark;
-  final VoidCallback onTap;
-  final String Function(String?) formatDate;
+  final String Function(String?) timeAgo;
 
-  const _FeaturedNewsCard({
-    required this.news, required this.isDark,
-    required this.onTap, required this.formatDate,
-  });
+  const _PostCard(
+      {required this.post, required this.isDark, required this.timeAgo});
+
+  @override
+  State<_PostCard> createState() => _PostCardState();
+}
+
+class _PostCardState extends State<_PostCard> {
+  bool _expanded = false;
+  bool _liked = false;
 
   @override
   Widget build(BuildContext context) {
+    final p = widget.post;
+    final isDark = widget.isDark;
+    final hasImage = p.imageUrl.isNotEmpty;
+    final isLong = p.content.length > 160;
+
     return GestureDetector(
-      onTap: onTap,
+      onTap: () => context.push('/news-detail', extra: widget.post),
       child: Container(
-        height: 280,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.2),
-              blurRadius: 20, offset: const Offset(0, 10),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              if (news.imageUrl != null)
-                CachedNetworkImage(
-                  imageUrl: news.imageUrl!, fit: BoxFit.cover,
-                  errorWidget: (_, __, ___) => _NoImage(isDark: isDark),
-                )
-              else
-                _NoImage(isDark: isDark),
-
-              // gradient overlay
-              Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter, end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Color(0xAA000000), Color(0xDD000000)],
-                    stops: [0.3, 0.6, 1.0],
-                  ),
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _InstitutionAvatar(
+                  logoUrl: p.logoUrl,
+                  name: p.displayName,
+                  type: p.institutionType,
+                  size: 46,
                 ),
-              ),
-
-              // tag
-              Positioned(
-                top: 16, right: 16,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary, borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.star_rounded, color: Colors.white, size: 12),
-                      SizedBox(width: 4),
-                      Text('تازەترین',
-                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700,
-                            color: Colors.white, fontFamily: 'NotoSansArabic'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              // bottom content
-              Positioned(
-                bottom: 0, left: 0, right: 0,
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
+                const SizedBox(width: 12),
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(news.title, maxLines: 2, overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w900,
-                            color: Colors.white, fontFamily: 'NotoSansArabic', height: 1.3),
+                      Text(
+                        p.displayName,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                          fontFamily: 'NotoSansArabic',
+                          color: isDark ? Colors.white : AppColors.textDark,
+                        ),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 2),
                       Row(
                         children: [
-                          const Icon(Icons.access_time_rounded, size: 13, color: Colors.white70),
+                          Icon(Icons.access_time_rounded,
+                              size: 12,
+                              color: isDark
+                                  ? AppColors.textGrey
+                                  : AppColors.textMuted),
                           const SizedBox(width: 4),
-                          Text(formatDate(news.createdAt),
-                            style: const TextStyle(fontSize: 12, color: Colors.white70),
-                          ),
-                          const Spacer(),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
-                            ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text('خوێندنەوە',
-                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700,
-                                      color: Colors.white, fontFamily: 'NotoSansArabic'),
-                                ),
-                                SizedBox(width: 4),
-                                Icon(Icons.arrow_forward_ios_rounded, size: 10, color: Colors.white),
-                              ],
+                          Text(
+                            widget.timeAgo(p.createdAt),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontFamily: 'NotoSansArabic',
+                              color: isDark
+                                  ? AppColors.textGrey
+                                  : AppColors.textMuted,
                             ),
                           ),
                         ],
@@ -437,150 +276,276 @@ class _FeaturedNewsCard extends StatelessWidget {
                     ],
                   ),
                 ),
-              ),
-            ],
+                Icon(Icons.more_horiz_rounded,
+                    color: isDark ? Colors.white30 : Colors.black26),
+              ],
+            ),
           ),
-        ),
-      ),
-    );
-  }
-}
 
-// ── Regular News Card ─────────────────────────────────────────────────
-class _NewsCard extends StatelessWidget {
-  final NewsModel news;
-  final bool isDark;
-  final VoidCallback onTap;
-  final String Function(String?) formatDate;
-
-  const _NewsCard({required this.news, required this.isDark, required this.onTap, required this.formatDate});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: isDark ? AppColors.darkCard : Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05),
-              blurRadius: 14, offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Thumbnail
-            ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20), bottomLeft: Radius.circular(20),
-              ),
-              child: SizedBox(
-                width: 110, height: 110,
-                child: news.imageUrl != null
-                    ? CachedNetworkImage(
-                        imageUrl: news.imageUrl!, fit: BoxFit.cover,
-                        errorWidget: (_, __, ___) => _ThumbPlaceholder(isDark: isDark),
-                      )
-                    : _ThumbPlaceholder(isDark: isDark),
-              ),
-            ),
-            // Content
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(14),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(news.title, maxLines: 2, overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800,
-                          fontFamily: 'NotoSansArabic', height: 1.4,
-                          color: isDark ? Colors.white : AppColors.textDark),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(news.content, maxLines: 2, overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 12, height: 1.5, fontFamily: 'NotoSansArabic',
-                          color: isDark ? AppColors.textGrey : AppColors.textMuted),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Container(width: 6, height: 6,
-                          decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
-                        ),
-                        const SizedBox(width: 5),
-                        Text(formatDate(news.createdAt),
-                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.primary),
-                        ),
-                      ],
-                    ),
-                  ],
+          // Title
+          if (p.title != null && p.title!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              child: Text(
+                p.title!,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  fontFamily: 'NotoSansArabic',
+                  color: isDark ? Colors.white : AppColors.textDark,
                 ),
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
-// ── Post Card ─────────────────────────────────────────────────────────
-class _PostCard extends StatelessWidget {
-  final PostModel post;
-  final bool isDark;
-  final String Function(String?) formatDate;
+          // Content
+          if (p.content.isNotEmpty)
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                  16, (p.title != null && p.title!.isNotEmpty) ? 8 : 12, 16, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    p.content,
+                    maxLines: _expanded ? null : 3,
+                    overflow: _expanded ? null : TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 14,
+                      height: 1.7,
+                      fontFamily: 'NotoSansArabic',
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.85)
+                          : AppColors.textDark,
+                    ),
+                  ),
+                  if (isLong && !_expanded)
+                    GestureDetector(
+                      onTap: () => setState(() => _expanded = true),
+                      child: const Padding(
+                        padding: EdgeInsets.only(top: 4),
+                        child: Text(
+                          'بینینی زیاتر',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primary,
+                            fontFamily: 'NotoSansArabic',
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
 
-  const _PostCard({required this.post, required this.isDark, required this.formatDate});
+          // Image
+          if (hasImage)
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: AspectRatio(
+                aspectRatio: 1.0,
+                child: CachedNetworkImage(
+                  imageUrl: p.imageUrl,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  placeholder: (_, __) => Container(
+                    color: isDark
+                        ? const Color(0xFF252525)
+                        : const Color(0xFFF0EFFF),
+                  ),
+                  errorWidget: (_, __, ___) => Container(
+                    color: isDark
+                        ? const Color(0xFF252525)
+                        : const Color(0xFFF0EFFF),
+                    child: Icon(Icons.image_outlined,
+                        size: 48,
+                        color: AppColors.primary.withValues(alpha: 0.25)),
+                  ),
+                ),
+              ),
+            ),
 
-  @override
-  Widget build(BuildContext context) {
-    final hasImage = post.imageUrl.isNotEmpty;
+          // Actions
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+            child: Row(
+              children: [
+                // Like
+                GestureDetector(
+                  onTap: () => setState(() => _liked = !_liked),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: _liked
+                          ? Colors.red.withValues(alpha: 0.1)
+                          : (isDark
+                              ? AppColors.darkBorder
+                              : const Color(0xFFF2F3F7)),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          _liked
+                              ? Icons.favorite_rounded
+                              : Icons.favorite_border_rounded,
+                          size: 17,
+                          color: _liked
+                              ? Colors.redAccent
+                              : (isDark ? Colors.white54 : Colors.black38),
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          _liked ? '١' : 'لایک',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'NotoSansArabic',
+                            color: _liked
+                                ? Colors.redAccent
+                                : (isDark
+                                    ? Colors.white54
+                                    : Colors.black45),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                // Comment
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? AppColors.darkBorder
+                        : const Color(0xFFF2F3F7),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.chat_bubble_outline_rounded,
+                          size: 17,
+                          color: isDark ? Colors.white54 : Colors.black38),
+                      const SizedBox(width: 5),
+                      Text(
+                        'کۆمێنت',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'NotoSansArabic',
+                          color:
+                              isDark ? Colors.white54 : Colors.black45,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Spacer(),
+                // Share
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? AppColors.darkBorder
+                        : const Color(0xFFF2F3F7),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(Icons.share_outlined,
+                      size: 18,
+                      color: isDark ? Colors.white54 : Colors.black38),
+                ),
+              ],
+            ),
+          ),
 
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? AppColors.darkCard : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05),
-            blurRadius: 14, offset: const Offset(0, 5),
+          // Divider
+          Divider(
+            height: 1,
+            thickness: 1,
+            color:
+                isDark ? AppColors.darkBorder : const Color(0xFFEEEEEE),
           ),
         ],
       ),
+    ),);
+  }
+}
+
+// ── News Card (social style) ──────────────────────────────────────────
+class _NewsCard extends StatelessWidget {
+  final NewsModel news;
+  final bool isDark;
+  final String Function(String?) timeAgo;
+  final VoidCallback onTap;
+
+  const _NewsCard({
+    required this.news,
+    required this.isDark,
+    required this.timeAgo,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final hasImage = news.displayImageUrl.isNotEmpty;
+
+    return Container(
+      color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header — institution info
+          // Header
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
             child: Row(
               children: [
                 Container(
-                  width: 38, height: 38,
+                  width: 46, height: 46,
                   decoration: BoxDecoration(
-                    gradient: AppColors.primaryGradient,
-                    borderRadius: BorderRadius.circular(10),
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFE040FB), Color(0xFF00E5FF)],
+                    ),
+                    borderRadius: BorderRadius.circular(13),
                   ),
-                  child: const Icon(Icons.account_balance_rounded, color: Colors.white, size: 20),
+                  child: const Icon(Icons.newspaper_rounded,
+                      color: Colors.white, size: 24),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        post.authorName ?? 'دامەزراوە',
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800,
-                            fontFamily: 'NotoSansArabic',
-                            color: isDark ? Colors.white : AppColors.textDark),
+                        'هەواڵی فەرمی',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                          fontFamily: 'NotoSansArabic',
+                          color: isDark ? Colors.white : AppColors.textDark,
+                        ),
                       ),
-                      Text(formatDate(post.createdAt),
-                        style: TextStyle(fontSize: 11, fontFamily: 'NotoSansArabic',
-                            color: isDark ? AppColors.textGrey : AppColors.textMuted),
+                      const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          Icon(Icons.access_time_rounded,
+                              size: 12,
+                              color: isDark ? AppColors.textGrey : AppColors.textMuted),
+                          const SizedBox(width: 4),
+                          Text(
+                            timeAgo(news.createdAt),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontFamily: 'NotoSansArabic',
+                              color: isDark ? AppColors.textGrey : AppColors.textMuted,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -588,105 +553,206 @@ class _PostCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.1),
+                    color: AppColors.success.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Text('پۆست',
-                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700,
-                        color: AppColors.primary, fontFamily: 'NotoSansArabic'),
+                  child: const Text(
+                    'هەواڵ',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.success,
+                      fontFamily: 'NotoSansArabic',
+                    ),
                   ),
                 ),
               ],
             ),
           ),
 
-          // Title (if exists)
-          if (post.title != null && post.title!.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-              child: Text(post.title!,
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800,
-                    fontFamily: 'NotoSansArabic',
-                    color: isDark ? Colors.white : AppColors.textDark),
+          // Title
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: Text(
+              news.title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                fontFamily: 'NotoSansArabic',
+                color: isDark ? Colors.white : AppColors.textDark,
               ),
             ),
+          ),
 
           // Content
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: Text(post.content, maxLines: 3, overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 13, height: 1.6, fontFamily: 'NotoSansArabic',
-                  color: isDark ? Colors.white70 : AppColors.textMuted),
+            child: Text(
+              news.content,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 14,
+                height: 1.7,
+                fontFamily: 'NotoSansArabic',
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.85)
+                    : AppColors.textDark,
+              ),
             ),
           ),
 
-          // Image (if exists)
+          // Image
           if (hasImage)
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(14),
+              padding: const EdgeInsets.only(top: 12),
+              child: AspectRatio(
+                aspectRatio: 1.0,
                 child: CachedNetworkImage(
-                  imageUrl: post.imageUrl,
-                  height: 180, width: double.infinity, fit: BoxFit.cover,
-                  errorWidget: (_, __, ___) => _NoImage(isDark: isDark, height: 180),
+                  imageUrl: news.displayImageUrl,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  placeholder: (_, __) => Container(
+                    color: isDark
+                        ? const Color(0xFF252525)
+                        : const Color(0xFFF0EFFF),
+                  ),
+                  errorWidget: (_, __, ___) => Container(
+                    color: isDark
+                        ? const Color(0xFF252525)
+                        : const Color(0xFFF0EFFF),
+                    child: Icon(Icons.image_outlined,
+                        size: 48,
+                        color: AppColors.primary.withValues(alpha: 0.25)),
+                  ),
                 ),
               ),
             ),
 
-          const SizedBox(height: 14),
+          // Read more action bar
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: onTap,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.auto_stories_rounded,
+                            size: 14, color: AppColors.primary),
+                        SizedBox(width: 6),
+                        Text(
+                          'خوێندنەوەی هەواڵ',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primary,
+                            fontFamily: 'NotoSansArabic',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? AppColors.darkBorder
+                        : const Color(0xFFF2F3F7),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(Icons.share_outlined,
+                      size: 18,
+                      color: isDark ? Colors.white54 : Colors.black38),
+                ),
+              ],
+            ),
+          ),
+
+          // Divider
+          Divider(
+            height: 1,
+            thickness: 1,
+            color:
+                isDark ? AppColors.darkBorder : const Color(0xFFEEEEEE),
+          ),
         ],
       ),
     );
   }
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────
-class _Circle extends StatelessWidget {
+// ── Institution Avatar ────────────────────────────────────────────────
+class _InstitutionAvatar extends StatelessWidget {
+  final String logoUrl;
+  final String name;
+  final String? type;
   final double size;
-  final double opacity;
-  const _Circle({required this.size, required this.opacity});
+
+  const _InstitutionAvatar({
+    required this.logoUrl,
+    required this.name,
+    this.type,
+    required this.size,
+  });
+
+  Color get _typeColor {
+    switch (type) {
+      case 'university':
+        return const Color(0xFF534AB7);
+      case 'school':
+        return const Color(0xFF1D9E75);
+      case 'language_center':
+        return const Color(0xFF3A7DD4);
+      case 'kindergarten':
+        return const Color(0xFFD4A017);
+      default:
+        return AppColors.primary;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: size, height: size,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.white.withValues(alpha: opacity),
+        borderRadius: BorderRadius.circular(13),
+        color: _typeColor.withValues(alpha: 0.1),
+        border: Border.all(color: _typeColor.withValues(alpha: 0.2)),
       ),
+      child: logoUrl.isNotEmpty
+          ? ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: CachedNetworkImage(
+                imageUrl: logoUrl,
+                fit: BoxFit.cover,
+                errorWidget: (_, __, ___) => _fallback,
+              ),
+            )
+          : _fallback,
     );
   }
-}
 
-class _NoImage extends StatelessWidget {
-  final bool isDark;
-  final double height;
-  const _NoImage({required this.isDark, this.height = double.infinity});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: height,
-      color: isDark ? const Color(0xFF1E293B) : const Color(0xFFECEAFF),
-      child: Center(
-        child: Icon(Icons.newspaper_rounded, size: 56,
-            color: AppColors.primary.withValues(alpha: 0.35)),
-      ),
-    );
-  }
-}
-
-class _ThumbPlaceholder extends StatelessWidget {
-  final bool isDark;
-  const _ThumbPlaceholder({required this.isDark});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: isDark ? const Color(0xFF1E293B) : const Color(0xFFECEAFF),
-      child: Icon(Icons.newspaper_rounded, size: 32,
-          color: AppColors.primary.withValues(alpha: 0.35)),
-    );
-  }
+  Widget get _fallback => Center(
+        child: Text(
+          name.isNotEmpty ? name[0] : 'د',
+          style: TextStyle(
+            fontSize: size * 0.38,
+            fontWeight: FontWeight.w900,
+            color: _typeColor,
+            fontFamily: 'NotoSansArabic',
+          ),
+        ),
+      );
 }

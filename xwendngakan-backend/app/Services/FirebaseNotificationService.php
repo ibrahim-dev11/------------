@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Log;
 
 class FirebaseNotificationService
 {
-    protected Messaging $messaging;
+    protected ?Messaging $messaging;
 
-    public function __construct(Messaging $messaging)
+    public function __construct(?Messaging $messaging = null)
     {
         $this->messaging = $messaging;
     }
@@ -31,6 +31,11 @@ class FirebaseNotificationService
         string $body,
         array $data = []
     ): bool {
+        if (!$this->messaging) {
+            Log::warning('Firebase messaging is disabled (no credentials).');
+            return false;
+        }
+
         try {
             $message = CloudMessage::fromArray([
                 'token' => $token,
@@ -108,6 +113,11 @@ class FirebaseNotificationService
         string $body,
         array $data = []
     ): bool {
+        if (!$this->messaging) {
+            Log::warning('Firebase messaging is disabled (no credentials).');
+            return false;
+        }
+
         try {
             $message = CloudMessage::fromArray([
                 'topic' => $topic,
@@ -137,6 +147,11 @@ class FirebaseNotificationService
      */
     public function subscribeToTopic(string $topic, array $tokens): bool
     {
+        if (!$this->messaging) {
+            Log::warning('Firebase messaging is disabled (no credentials).');
+            return false;
+        }
+
         try {
             $this->messaging->subscribeToTopic($topic, ...$tokens);
             return true;
@@ -155,6 +170,11 @@ class FirebaseNotificationService
      */
     public function unsubscribeFromTopic(string $topic, array $tokens): bool
     {
+        if (!$this->messaging) {
+            Log::warning('Firebase messaging is disabled (no credentials).');
+            return false;
+        }
+
         try {
             $this->messaging->unsubscribeFromTopic($topic, ...$tokens);
             return true;

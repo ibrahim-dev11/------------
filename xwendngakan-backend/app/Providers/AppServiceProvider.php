@@ -38,18 +38,19 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton('firebase', function ($app) {
             $credentialsPath = config('firebase.credentials');
 
-            if (!file_exists($credentialsPath)) {
-                throw new \Exception(
-                    "Firebase credentials file not found at: {$credentialsPath}. " .
-                    "Please download your credentials from Google Cloud Console and place them in storage/app/ or set FIREBASE_CREDENTIALS_JSON in .env"
+            if (!$credentialsPath || !file_exists($credentialsPath)) {
+                \Illuminate\Support\Facades\Log::warning(
+                    "Firebase credentials file not found at: {$credentialsPath}. Firebase features are disabled."
                 );
+                return null;
             }
 
             return (new Factory())->withServiceAccount($credentialsPath);
         });
 
         $this->app->singleton('firebase.messaging', function ($app) {
-            return $app['firebase']->createMessaging();
+            $firebase = $app['firebase'];
+            return $firebase ? $firebase->createMessaging() : null;
         });
     }
 }

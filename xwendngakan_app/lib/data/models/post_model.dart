@@ -1,3 +1,5 @@
+import '../../core/constants/app_constants.dart';
+
 class PostModel {
   final int id;
   final int institutionId;
@@ -28,13 +30,17 @@ class PostModel {
   String get imageUrl {
     if (image == null || image!.isEmpty) return '';
     if (image!.startsWith('http')) return image!;
-    return 'http://localhost:8000$image';
+    final base = AppConstants.baseUrl.replaceAll('/api', '');
+    final path = image!.startsWith('/') ? image! : '/$image';
+    return '$base$path';
   }
 
   String get logoUrl {
     if (institutionLogo == null || institutionLogo!.isEmpty) return '';
     if (institutionLogo!.startsWith('http')) return institutionLogo!;
-    return 'http://localhost:8000$institutionLogo';
+    final base = AppConstants.baseUrl.replaceAll('/api', '');
+    final path = institutionLogo!.startsWith('/') ? institutionLogo! : '/$institutionLogo';
+    return '$base$path';
   }
 
   String get displayName =>

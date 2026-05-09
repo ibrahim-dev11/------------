@@ -29,9 +29,11 @@ import '../features/profile/privacy_policy_screen.dart';
 import '../features/home/qr_scanner_screen.dart';
 import '../features/news/news_detail_screen.dart';
 import '../data/models/news_model.dart';
+import '../data/models/post_model.dart';
 import '../features/pathfinder/path_finder_screen.dart';
 import '../features/lost_and_found/lost_and_found_screen.dart';
 import '../features/lost_and_found/add_item_screen.dart';
+ 
 
 GoRouter createRouter(BuildContext context) {
   final auth = Provider.of<AuthProvider>(context, listen: false);
@@ -189,11 +191,18 @@ GoRouter createRouter(BuildContext context) {
         path: '/scan',
         builder: (context, state) => const QrScannerScreen(),
       ),
+
+
       GoRoute(
         path: '/news-detail',
         builder: (context, state) {
-          final news = state.extra as NewsModel;
-          return NewsDetailScreen(news: news);
+          final extra = state.extra;
+          if (extra is NewsModel) {
+            return NewsDetailScreen(news: extra);
+          } else if (extra is PostModel) {
+            return NewsDetailScreen(post: extra);
+          }
+          return const SizedBox.shrink();
         },
       ),
       GoRoute(
