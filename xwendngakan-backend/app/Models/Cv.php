@@ -20,6 +20,7 @@ class Cv extends Model
         'education_level',
         'experience',
         'skills',
+        'languages',
         'notes',
         'photo',
         'is_reviewed',

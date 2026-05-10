@@ -1,0 +1,124 @@
+/* ═══════════════════════════════════════════════════
+   خوێندنگاکانم — فیلامێنت کاستۆم CSS (Compact RTL)
+   ═══════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --font-family-main: 'Noto Kufi Arabic', sans-serif;
+}
+
+/* ── گشتی ── */
+html, body, .fi-body {
+    direction: rtl !important;
+    text-align: right !important;
+    font-family: var(--font-family-main) !important;
+}
+
+* {
+    font-family: var(--font-family-main) !important;
+}
+
+.fi-main-ctn {
+    padding: 0 !important;
+}
+
+.fi-main {
+    padding: 1.5rem !important;
+}
+
+/* ── Sidebar ── */
+@media (min-width: 1024px) {
+    .fi-sidebar {
+        right: 0 !important;
+        left: auto !important;
+        position: fixed !important;
+        height: 100vh !important;
+    }
+
+    .fi-main-ctn {
+        margin-left: 0 !important;
+        margin-right: var(--sidebar-width) !important;
+    }
+
+    .fi-sidebar-collapsed .fi-main-ctn {
+        margin-right: var(--collapsed-sidebar-width) !important;
+        margin-left: 0 !important;
+    }
+}
+
+/* ── Topbar ── */
+.fi-topbar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 20 !important;
+}
+
+@media (min-width: 1024px) {
+    .fi-topbar {
+        right: var(--sidebar-width) !important;
+        left: 0 !important;
+        width: auto !important;
+    }
+
+    .fi-sidebar-collapsed .fi-topbar {
+        right: var(--collapsed-sidebar-width) !important;
+        left: 0 !important;
+    }
+}
+
+/* ── ناوەڕۆکی ناو Topbar ── */
+.fi-topbar-header {
+    display: flex !important;
+    flex-direction: row !important; /* وەک خۆی بێت چونکە direction: rtl هەیە */
+    justify-content: space-between !important;
+    padding-inline: 1rem !important;
+}
+
+/* پڕۆفایل و سێرچ */
+.fi-user-menu {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+}
+
+.fi-global-search {
+    margin-inline: 1rem !important;
+}
+
+/* ── ئایکۆنەکانی سیدەبار ── */
+.fi-sidebar-item-icon {
+    margin-left: 0.75rem !important;
+    margin-right: 0 !important;
+}
+
+/* ── خشتەکان (Tables) ── */
+.fi-ta-header-cell-label {
+    justify-content: flex-start !important;
+    text-align: right !important;
+}
+
+.fi-ta-cell {
+    text-align: right !important;
+}
+
+/* ── دوگمەکان و فۆرمەکان ── */
+.fi-fo-field-wrp-label {
+    margin-bottom: 0.25rem !important;
+}
+
+.fi-btn {
+    gap: 0.5rem !important;
+}
+
+/* ڕێگەگرتن لەوەی سیدەبار ناوەڕۆک بپۆشێت لە مۆبایل */
+@media (max-width: 1023px) {
+    .fi-sidebar {
+        right: 0 !important;
+        left: auto !important;
+        transform: translateX(100%) !important;
+    }
+    
+    .fi-sidebar-open .fi-sidebar {
+        transform: translateX(0) !important;
+    }
+}

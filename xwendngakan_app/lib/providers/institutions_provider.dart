@@ -20,6 +20,7 @@ class InstitutionsProvider extends ChangeNotifier {
   String _selectedCity = '';
   String _searchQuery = '';
   int _page = 1;
+  List<Map<String, dynamic>> _banners = [];
   Map<String, dynamic> _stats = {};
   List<InstitutionTypeModel> _institutionTypes = [];
 
@@ -33,6 +34,7 @@ class InstitutionsProvider extends ChangeNotifier {
   String get selectedSector => _selectedSector;
   String get selectedCity => _selectedCity;
   String get searchQuery => _searchQuery;
+  List<Map<String, dynamic>> get banners => _banners;
   Map<String, dynamic> get stats => _stats;
   List<InstitutionTypeModel> get institutionTypes => _institutionTypes;
 
@@ -49,7 +51,7 @@ class InstitutionsProvider extends ChangeNotifier {
     _initialized = true;
     await _loadFavorites();
     fetchStats();
-    fetchInstitutionTypes();
+    fetchAppData();
     fetchInstitutions(refresh: true);
   }
 
@@ -103,11 +105,15 @@ class InstitutionsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchInstitutionTypes() async {
+  Future<void> fetchAppData() async {
     final result = await _api.getAppData();
     if (result.success && result.data != null) {
       final List typesJson = result.data!['types'] ?? [];
       _institutionTypes = typesJson.map((e) => InstitutionTypeModel.fromJson(e)).toList();
+      
+      final List bannersJson = result.data!['banners'] ?? [];
+      _banners = bannersJson.map((e) => Map<String, dynamic>.from(e)).toList();
+      
       notifyListeners();
     }
   }

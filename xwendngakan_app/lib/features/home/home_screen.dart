@@ -16,7 +16,6 @@ import '../../providers/theme_provider.dart';
 import '../../data/models/institution_type_model.dart';
 import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/common_widgets.dart';
-import 'widgets/home_drawer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -47,7 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final _searchCtrl = TextEditingController();
   String _selectedParentFilter = 'all'; // 'all', 'moe', 'mhe', 'others'
   String _selectedChildFilterId = 'all'; // unique id for sub-filter
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   // Dynamic filters will be populated from provider
 
@@ -84,8 +82,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final isDark = theme.isDark;
 
     return Scaffold(
-      key: _scaffoldKey,
-      drawer: const HomeDrawer(),
       backgroundColor: isDark ? AppColors.darkBg : AppColors.lightBg,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
@@ -111,12 +107,16 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    l.educationTypes,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      fontFamily: 'NotoSansArabic',
+                  Expanded(
+                    child: Text(
+                      l.educationTypes,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        fontFamily: 'NotoSansArabic',
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   GestureDetector(
@@ -335,65 +335,47 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Top Row: User info & Actions
+                  // Simplified Premium Header Row
                   Padding(
-                    padding: EdgeInsets.zero,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // User Avatar (Opens Drawer)
-                        GestureDetector(
-                          onTap: () => _scaffoldKey.currentState?.openDrawer(),
-                          child: Transform.translate(
-                            offset: const Offset(10, 0),
-                            child: Container(
-                              width: 100,
-                              height: 100,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.transparent,
-                              ),
-                              child: Image.asset(
-                                'assets/images/app_logo.png',
-                                fit: BoxFit.contain,
-                              ),
-                            ),
+                        // Logo
+                        SizedBox(
+                          width: 80,
+                          height: 80,
+                          child: Image.asset(
+                            'assets/images/app_logo.png',
+                            fit: BoxFit.contain,
                           ),
                         ),
-                        // Brand & User info Group
+                
+                        // Brand Name
                         Expanded(
-                          child: Transform.translate(
-                            offset: const Offset(30, -2),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  "Edu Book",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w900,
-                                    color: Colors.white,
-                                    fontFamily: GoogleFonts.outfit().fontFamily,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                               
-                              ],
+                          child: Text(
+                            "Edu Book",
+                            style: TextStyle(
+                              fontSize: 26,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                              fontFamily: GoogleFonts.outfit().fontFamily,
+                              letterSpacing: -0.5,
                             ),
                           ),
                         ),
-                        // Action buttons
+                        // Action Buttons
                         Row(
                           children: [
                             _buildNotificationButton(context),
-                            const SizedBox(width: 12),
+                            const SizedBox(width: 10),
                             _buildGlassButton(
                               icon: isDark
                                   ? Icons.light_mode_rounded
                                   : Icons.dark_mode_rounded,
                               onTap: () => theme.toggle(),
+                              size: 40,
+                              iconSize: 20,
                             ),
-                            const SizedBox(width: 16),
                           ],
                         ),
                       ],
@@ -691,19 +673,23 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildGlassButton(
-      {required IconData icon, required VoidCallback onTap}) {
+  Widget _buildGlassButton({
+    required IconData icon,
+    required VoidCallback onTap,
+    double size = 44,
+    double iconSize = 22,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 44,
-        height: 44,
+        width: size,
+        height: size,
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.15),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
         ),
-        child: Icon(icon, color: Colors.white, size: 22),
+        child: Icon(icon, color: Colors.white, size: iconSize),
       ),
     );
   }

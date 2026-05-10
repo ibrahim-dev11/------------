@@ -1,3 +1,5 @@
+import 'package:xwendngakan_app/core/constants/app_constants.dart';
+
 class TeacherModel {
   final int id;
   final String name;
@@ -33,18 +35,30 @@ class TeacherModel {
     this.videoUrl,
   });
 
-  static const _baseUrl = 'http://localhost:8000';
-
   String get photoUrl {
     if (photo == null || photo!.isEmpty) return '';
     if (photo!.startsWith('http')) return photo!;
-    return '$_baseUrl$photo';
+    
+    final baseDomain = AppConstants.baseUrl.replaceAll(RegExp(r'/api/?$'), '');
+    final path = photo!.startsWith('/') ? photo! : '/$photo';
+    
+    if (!path.startsWith('/storage/')) {
+      return '$baseDomain/storage$path';
+    }
+    return '$baseDomain$path';
   }
 
   String get subjectPhotoUrl {
     if (subjectPhoto == null || subjectPhoto!.isEmpty) return '';
     if (subjectPhoto!.startsWith('http')) return subjectPhoto!;
-    return '$_baseUrl$subjectPhoto';
+    
+    final baseDomain = AppConstants.baseUrl.replaceAll(RegExp(r'/api/?$'), '');
+    final path = subjectPhoto!.startsWith('/') ? subjectPhoto! : '/$subjectPhoto';
+    
+    if (!path.startsWith('/storage/')) {
+      return '$baseDomain/storage$path';
+    }
+    return '$baseDomain$path';
   }
 
   factory TeacherModel.fromJson(Map<String, dynamic> json) {

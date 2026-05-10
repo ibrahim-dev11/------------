@@ -1,3 +1,5 @@
+import 'package:xwendngakan_app/core/constants/app_constants.dart';
+
 class CvModel {
   final int id;
   final String name;
@@ -11,6 +13,7 @@ class CvModel {
   final String? educationLevel;
   final String? experience;
   final String? skills;
+  final String? languages;
   final String? notes;
   final String? photo;
   final bool isReviewed;
@@ -30,6 +33,7 @@ class CvModel {
     this.educationLevel,
     this.experience,
     this.skills,
+    this.languages,
     this.notes,
     this.photo,
     this.isReviewed = false,
@@ -37,33 +41,44 @@ class CvModel {
     this.createdAt,
   });
 
-  static const _baseUrl = 'http://localhost:8000';
-
   String get photoUrl {
     if (photo == null || photo!.isEmpty) return '';
     if (photo!.startsWith('http')) return photo!;
-    return '$_baseUrl$photo';
+    
+    // Extract base domain from AppConstants.baseUrl (remove '/api' suffix)
+    final baseDomain = AppConstants.baseUrl.replaceAll(RegExp(r'/api/?$'), '');
+    
+    // Ensure the path has a leading slash
+    final path = photo!.startsWith('/') ? photo! : '/$photo';
+    
+    // Add /storage prefix if the backend didn't add it
+    if (!path.startsWith('/storage/')) {
+      return '$baseDomain/storage$path';
+    }
+    
+    return '$baseDomain$path';
   }
 
   factory CvModel.fromJson(Map<String, dynamic> json) {
     return CvModel(
       id: json['id'] ?? 0,
       name: json['name'] ?? '',
-      phone: json['phone'],
-      email: json['email'],
-      city: json['city'],
-      age: json['age'],
-      gender: json['gender'],
-      graduationYear: json['graduation_year'],
-      field: json['field'],
-      educationLevel: json['education_level'],
-      experience: json['experience'],
-      skills: json['skills'],
-      notes: json['notes'],
-      photo: json['photo'],
-      isReviewed: json['is_reviewed'] ?? false,
-      genderLabel: json['gender_label'],
-      createdAt: json['created_at'],
+      phone: json['phone']?.toString(),
+      email: json['email']?.toString(),
+      city: json['city']?.toString(),
+      age: json['age'] != null ? int.tryParse(json['age'].toString()) : null,
+      gender: json['gender']?.toString(),
+      graduationYear: json['graduation_year'] != null ? int.tryParse(json['graduation_year'].toString()) : null,
+      field: json['field']?.toString(),
+      educationLevel: json['education_level']?.toString(),
+      experience: json['experience']?.toString(),
+      skills: json['skills']?.toString(),
+      languages: json['languages']?.toString(),
+      notes: json['notes']?.toString(),
+      photo: json['photo']?.toString(),
+      isReviewed: json['is_reviewed'] == true || json['is_reviewed'] == 1 || json['is_reviewed'] == '1',
+      genderLabel: json['gender_label']?.toString(),
+      createdAt: json['created_at']?.toString(),
     );
   }
 
@@ -79,6 +94,7 @@ class CvModel {
     'education_level': educationLevel,
     'experience': experience,
     'skills': skills,
+    'languages': languages,
     'notes': notes,
   };
 }

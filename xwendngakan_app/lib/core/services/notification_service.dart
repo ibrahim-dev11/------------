@@ -8,11 +8,11 @@ class NotificationService {
   factory NotificationService() => _instance;
   NotificationService._internal();
 
-  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
-
   Future<void> initialize() async {
+    final FirebaseMessaging fcm = FirebaseMessaging.instance;
+    
     // Request permission for iOS
-    NotificationSettings settings = await _fcm.requestPermission(
+    NotificationSettings settings = await fcm.requestPermission(
       alert: true,
       badge: true,
       sound: true,
@@ -22,14 +22,14 @@ class NotificationService {
       debugPrint('User granted permission');
       
       // Get FCM Token
-      String? token = await _fcm.getToken();
+      String? token = await fcm.getToken();
       if (token != null) {
         debugPrint('FCM Token: $token');
         await ApiService().updateFcmToken(token);
       }
 
       // Handle token refresh
-      _fcm.onTokenRefresh.listen((newToken) async {
+      fcm.onTokenRefresh.listen((newToken) async {
         await ApiService().updateFcmToken(newToken);
       });
 

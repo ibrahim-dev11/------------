@@ -52,6 +52,8 @@ class AppLocalizations {
   String get viewDetails => _t({'ku': 'وردەکاریەکان ببینە', 'kbd': 'بینینا هویرکاریان', 'ar': 'عرض التفاصيل', 'en': 'View Details', 'tr': 'Detayları Gör'});
 
   // =====================
+
+  // =====================
   // ONBOARDING
   // =====================
   String get onboardingTitle1 => _t({'ku': 'edu book بدۆزەرەوە', 'kbd': 'edu book بدۆزەرەوە', 'ar': 'اكتشف edu book', 'en': 'Discover edu book', 'tr': 'edu book\'u Keşfet'});
@@ -248,6 +250,8 @@ class AppLocalizations {
   String get clear => _t({'ku': 'پاکردنەوە', 'kbd': 'پاقژکرن', 'ar': 'مسح', 'en': 'Clear', 'tr': 'Temizle'});
   String get institutionType => _t({'ku': 'جۆری دامەزراوە', 'kbd': 'جۆرێ دەزگەهی', 'ar': 'نوع المؤسسة', 'en': 'Institution Type', 'tr': 'Kurum Türü'});
   String get scanQr => _t({'ku': 'سکانی کۆدی QR', 'kbd': 'سکانا کۆدا QR', 'ar': 'مسح رمز QR', 'en': 'Scan QR Code', 'tr': 'QR Kodunu Tara'});
+  String get qrCode => _t({'ku': 'کۆدی QR', 'kbd': 'کۆدا QR', 'ar': 'رمز QR', 'en': 'QR Code', 'tr': 'QR Kodu'});
+  String get watchVideo => _t({'ku': 'بینینی ڤیدیۆ', 'kbd': 'دیتنا ڤیدیۆیێ', 'ar': 'مشاهدة الفيديو', 'en': 'Watch Video', 'tr': 'Videoyu İzle'});
   String get update => _t({'ku': 'نوێکردنەوە', 'kbd': 'نویکرنەڤە', 'ar': 'تحديث', 'en': 'Update', 'tr': 'Güncelle'});
   String get publishNew => _t({'ku': 'بڵاوکردنەوەی نوێ', 'kbd': 'بەلاڤکرنا نوێ', 'ar': 'نشر جديد', 'en': 'Publish New', 'tr': 'Yeni Yayınla'});
   String get addPhoto => _t({'ku': 'وێنەیەک بۆ شتەکە دابنێ', 'kbd': 'وێنەیەکێ بۆ تشتێ خوە دابنێ', 'ar': 'أضف صورة للشيء', 'en': 'Add photo for item', 'tr': 'Öğe için fotoğraf ekle'});
@@ -394,7 +398,12 @@ class AppLocalizations {
   String get curriculumSection => _t({'ku': 'کتێب و مەنهەج', 'kbd': 'کتێب و مەنهەج', 'ar': 'الكتاب والمنهج', 'en': 'Book & Curriculum', 'tr': 'Kitap & Müfredat'});
   String get curriculumCaption => _t({'ku': 'پوختەی مەنهەجی خوێندن بە شێوازێکی مۆدێرن لایەن مامۆستاوە ئامادەکراوە.', 'kbd': 'پوختەیا مەنهەجێ خوەندنێ بە شێوازێ مۆدێرن لا مامۆستایێ ئامادەکراوە.', 'ar': 'ملخص المنهج الدراسي أعده المعلم بأسلوب عصري.', 'en': 'Curriculum summary prepared by the teacher in a modern style.', 'tr': 'Öğretmen tarafından modern bir tarzda hazırlanan müfredat özeti.'});
   String get contactPhone => _t({'ku': 'پەیوەندی تەلەفۆنی', 'kbd': 'پەیوەندیا تەلەفۆنی', 'ar': 'اتصال هاتفي', 'en': 'Phone Call', 'tr': 'Telefon Ara'});
-  String get contactWhatsapp => _t({'ku': 'نامەی واتساپ', 'kbd': 'نامەیا واتساپ', 'ar': 'واتساب', 'en': 'WhatsApp', 'tr': 'WhatsApp'});
+  String get contactWhatsapp => _t({'ku': 'واتسئەپ', 'kbd': 'وەتسئەپ', 'ar': 'واتساب', 'en': 'WhatsApp', 'tr': 'WhatsApp'});
+  String get whatsApp => _t({'ku': 'واتسئەپ', 'kbd': 'وەتسئەپ', 'ar': 'واتساب', 'en': 'WhatsApp', 'tr': 'WhatsApp'});
+  String get languages => _t({'ku': 'زمانەکان', 'kbd': 'زمان', 'ar': 'اللغات', 'en': 'Languages', 'tr': 'Diller'});
+  String get specializationLabel => _t({'ku': 'پسپۆڕی', 'kbd': 'پسپۆری', 'ar': 'التخصص', 'en': 'Specialization', 'tr': 'Uzmanlık'});
+  String get currencyIqd => _t({'ku': 'دینار', 'kbd': 'دینار', 'ar': 'د.ع', 'en': 'IQD', 'tr': 'IQD'});
+  String get perHour => _t({'ku': '', 'kbd': '', 'ar': 'ساعة', 'en': 'hr', 'tr': 'sa'});
 
   // =====================
   // CV SCREEN & DETAIL

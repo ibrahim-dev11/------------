@@ -440,7 +440,7 @@ class TeacherCard extends StatelessWidget {
   final String lang;
   final VoidCallback? onTap;
   final VoidCallback? onContact;
-  final bool isFavorite;
+  final bool isFavorite; // Kept for logic if needed elsewhere, but UI removed
   final VoidCallback? onFavorite;
 
   const TeacherCard({
@@ -514,60 +514,27 @@ class TeacherCard extends StatelessWidget {
                   children: [
                     // Brand New Premium Circular Avatar Frame
                     Container(
-                      width: 76,
-                      height: 76,
-                      padding: const EdgeInsets.all(3),
+                      width: 60,
+                      height: 60,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          colors: [
-                            typeColor,
-                            typeColor.withValues(alpha: 0.3),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        color: isDark ? const Color(0xFF2C2C2C) : const Color(0xFFF1F5F9),
                       ),
-                      child: Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color:
-                              isDark ? const Color(0xFF1E1E1E) : Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            ClipOval(
-                              child: teacher.photoUrl.isNotEmpty
-                                  ? CachedNetworkImage(
-                                      imageUrl: teacher.photoUrl,
-                                      fit: BoxFit.cover,
-                                      errorWidget: (_, __, ___) =>
-                                          _avatarFallback(
-                                              teacher.name, typeColor),
-                                    )
-                                  : _avatarFallback(teacher.name, typeColor),
-                            ),
-                            // Verified Small Badge
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Container(
-                                padding: const EdgeInsets.all(2),
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.verified_rounded,
-                                  size: 14,
-                                  color: Color(0xFF10B981),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          ClipOval(
+                            child: teacher.photoUrl.isNotEmpty
+                                ? CachedNetworkImage(
+                                    imageUrl: teacher.photoUrl,
+                                    fit: BoxFit.cover,
+                                    errorWidget: (_, __, ___) =>
+                                        _avatarFallback(
+                                            teacher.name, typeColor),
+                                  )
+                                : _avatarFallback(teacher.name, typeColor),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(width: 14),
@@ -709,28 +676,19 @@ class TeacherCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
 
-                    // Favorite button
-                    GestureDetector(
-                      onTap: onFavorite,
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: isFavorite
-                              ? const Color(0xFFFF4757).withValues(alpha: 0.1)
-                              : (isDark
-                                  ? const Color(0xFF2C2C2C)
-                                  : const Color(0xFFF8FAFC)),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          isFavorite
-                              ? Icons.favorite_rounded
-                              : Icons.favorite_border_rounded,
-                          size: 16,
-                          color: isFavorite
-                              ? const Color(0xFFFF4757)
-                              : const Color(0xFF94A3B8),
-                        ),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? const Color(0xFF2D2D2D)
+                            : const Color(0xFFF1F5F9),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 12,
+                        color:
+                            isDark ? Colors.white70 : const Color(0xFF64748B),
                       ),
                     ),
                   ],
@@ -796,82 +754,115 @@ class CvCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
+        margin: const EdgeInsets.only(bottom: 14),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDark ? AppColors.darkCard : AppColors.lightCard,
-          borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
+            ),
+          ],
           border: Border.all(
-            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
-            width: 0.8,
+            color: isDark ? const Color(0xFF2C2C2C) : const Color(0xFFEDF2F7),
+            width: 1,
           ),
         ),
         child: Row(
           children: [
-            // Avatar
-            Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: AppColors.purple.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(12),
+            // ── Avatar ──
+            SizedBox(
+              width: 68,
+              height: 68,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  ClipOval(
+                    child: cv.photoUrl.isNotEmpty
+                        ? CachedNetworkImage(
+                            imageUrl: cv.photoUrl,
+                            fit: BoxFit.cover,
+                            errorWidget: (_, __, ___) => _initials(cv.name),
+                          )
+                        : _initials(cv.name),
+                  ),
+                ],
               ),
-              child: cv.photoUrl.isNotEmpty
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: CachedNetworkImage(
-                        imageUrl: cv.photoUrl,
-                        fit: BoxFit.cover,
-                        errorWidget: (_, __, ___) => _initials(cv.name),
-                      ),
-                    )
-                  : _initials(cv.name),
             ),
-            const SizedBox(width: 14),
+            const SizedBox(width: 16),
+
+            // ── Content ──
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     cv.name,
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                      color: isDark ? Colors.white : const Color(0xFF1A202C),
+                      fontFamily: 'NotoSansArabic',
+                      height: 1.2,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 3),
+                  const SizedBox(height: 6),
                   if (cv.field != null)
                     Text(
                       cv.field!,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall
-                          ?.copyWith(color: AppColors.primary),
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.primary,
+                        fontFamily: 'NotoSansArabic',
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 10),
+
+                  // Row of badges
                   Wrap(
-                    spacing: 6,
+                    spacing: 8,
+                    runSpacing: 8,
                     children: [
                       if (cv.city != null)
-                        AppBadge(
+                        _CvSmallBadge(
+                          icon: Icons.location_on_rounded,
                           text: cv.city!,
-                          color: AppColors.info,
-                          icon: Icons.location_on_outlined,
+                          color: const Color(0xFF64748B),
+                          isDark: isDark,
                         ),
                       if (cv.educationLevel != null)
-                        AppBadge(
+                        _CvSmallBadge(
+                          icon: Icons.school_rounded,
                           text: cv.educationLevel!,
-                          color: AppColors.purple,
+                          color: const Color(0xFF8B5CF6),
+                          isDark: isDark,
                         ),
                     ],
                   ),
                 ],
               ),
             ),
-            const Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 14,
-              color: AppColors.textGrey,
+
+            // ── Action Indicator ──
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF2D2D2D) : const Color(0xFFF1F5F9),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 12,
+                color: isDark ? Colors.white70 : const Color(0xFF64748B),
+              ),
             ),
           ],
         ),
@@ -884,11 +875,56 @@ class CvCard extends StatelessWidget {
       child: Text(
         name.isNotEmpty ? name[0].toUpperCase() : '?',
         style: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w700,
-          color: AppColors.purple,
+          fontSize: 24,
+          fontWeight: FontWeight.w900,
+          color: AppColors.primary,
           fontFamily: 'NotoSansArabic',
         ),
+      ),
+    );
+  }
+}
+
+class _CvSmallBadge extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  final Color color;
+  final bool isDark;
+
+  const _CvSmallBadge({
+    required this.icon,
+    required this.text,
+    required this.color,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF2C2C2C) : const Color(0xFFF1F5F9),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 11, color: isDark ? Colors.white70 : color),
+          const SizedBox(width: 4),
+          Flexible(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white70 : color,
+                fontFamily: 'NotoSansArabic',
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
       ),
     );
   }

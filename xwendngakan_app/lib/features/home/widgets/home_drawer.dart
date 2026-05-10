@@ -158,7 +158,7 @@ class HomeDrawer extends StatelessWidget {
                 const SizedBox(height: 24),
                 _buildDrawerItem(
                   context,
-                  icon: Icons.logout_rounded,
+                  icon: Icons.exit_to_app_rounded,
                   title: l.drawerLogout,
                   color: Colors.red,
                   onTap: () {

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/localization/app_localizations.dart';
 import '../../data/models/teacher_model.dart';
@@ -84,6 +85,67 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen>
     if (await canLaunchUrl(uri)) await launchUrl(uri);
   }
 
+  void _shareTeacher(TeacherModel t, AppLocalizations l) {
+    final text = 'EduBook Teacher: ${t.name}\n${t.subject ?? ""}\n\nDownloaded from EduBook App';
+    Share.share(text);
+  }
+
+  void _showContactSheet(TeacherModel t, AppLocalizations l, bool isDark) {
+    if (t.phone == null || t.phone!.isEmpty) return;
+    
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(10))),
+            const SizedBox(height: 24),
+            Text(l.contactTeacher, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black87, fontFamily: 'NotoSansArabic')),
+            const SizedBox(height: 24),
+            _buildContactOption(Icons.phone_rounded, l.contactPhone, const Color(0xFF3B82F6), () {
+              Navigator.pop(context);
+              _launch('tel:${t.phone}');
+            }, isDark),
+            const SizedBox(height: 12),
+            _buildContactOption(Icons.wechat_rounded, l.whatsApp, const Color(0xFF10B981), () {
+              Navigator.pop(context);
+              final phone = t.phone!.replaceAll(RegExp(r'[^0-9]'), '');
+              _launch('https://wa.me/$phone');
+            }, isDark),
+            const SizedBox(height: 32),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContactOption(IconData icon, String label, Color color, VoidCallback onTap, bool isDark) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20)),
+        child: Row(
+          children: [
+            Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color, shape: BoxShape.circle), child: Icon(icon, color: Colors.white, size: 20)),
+            const SizedBox(width: 16),
+            Text(label, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: isDark ? Colors.white : Colors.black87, fontFamily: 'NotoSansArabic')),
+            const Spacer(),
+            Icon(Icons.arrow_forward_ios_rounded, size: 14, color: color.withValues(alpha: 0.5)),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
@@ -91,20 +153,14 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen>
 
     if (_loading) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF111827) : const Color(0xFFF8FAFC),
+        backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
         body: const Center(child: CircularProgressIndicator(color: AppColors.primary)),
       );
     }
 
     if (_error != null || _teacher == null) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF111827) : const Color(0xFFF8FAFC),
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded),
-            onPressed: _goBack,
-          ),
-        ),
+        backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
         body: EmptyState(
           icon: Icons.person_off_outlined,
           message: _error ?? l.noData,
@@ -115,254 +171,256 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen>
     }
 
     final t = _teacher!;
+    final accentColor = AppColors.primary;
+    final bgColor = isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC);
+    final cardColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+
     final String displaySubject = t.subject != null && t.subject!.trim().isNotEmpty
-        ? l.teacherOf(t.subject!.trim())
+        ? '${l.specializationLabel}: ${t.subject!.trim()}'
         : (t.typeLabel ?? l.educationSpecialization);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.light,
+      value: SystemUiOverlayStyle.light,
       child: Scaffold(
-        backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
-        bottomNavigationBar: _buildStickyContact(t, l, isDark),
-        body: FadeTransition(
-          opacity: _fadeAnim,
-          child: SlideTransition(
-            position: _slideAnim,
-            child: CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                // ── CURVED HERO HEADER ──
-                SliverToBoxAdapter(
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      ClipRRect(
-                        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(36)),
-                        child: t.videoUrl != null && t.videoUrl!.isNotEmpty
-                            ? Container(
-                                padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-                                color: Colors.black,
-                                child: AspectRatio(
-                                  aspectRatio: 16 / 9,
-                                  child: _buildVideoPlayer(t),
-                                ),
-                              )
-                            : Container(
-                                height: 200,
-                                width: double.infinity,
-                                decoration: const BoxDecoration(
-                                  gradient: AppColors.primaryGradient,
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Positioned(
-                                      top: -30, right: -30,
-                                      child: Container(
-                                        width: 140, height: 140,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.white.withValues(alpha: 0.08),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                      ),
-
-                      // Floating Back Button
-                      SafeArea(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                          child: GestureDetector(
-                            onTap: _goBack,
-                            child: Container(
-                              width: 40, height: 40,
-                              decoration: BoxDecoration(
-                                color: Colors.black.withValues(alpha: 0.25),
-                                shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
-                              ),
-                              child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 16),
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // Avatar
-                      Positioned(
-                        bottom: -48,
-                        left: 0, right: 0,
-                        child: Center(
-                          child: Container(
-                            width: 96, height: 96,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
-                              border: Border.all(color: const Color(0xFFF59E0B), width: 3.5),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.primary.withValues(alpha: 0.2),
-                                  blurRadius: 16,
-                                  offset: const Offset(0, 8),
-                                ),
-                              ],
-                            ),
-                            child: ClipOval(
-                              child: t.photoUrl.isNotEmpty
-                                  ? CachedNetworkImage(imageUrl: t.photoUrl, fit: BoxFit.cover)
-                                  : _avatarFallback(t.name, AppColors.primary),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SliverToBoxAdapter(child: SizedBox(height: 60)),
-
-                // ── PROFILE CONTENT ──
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      // Name + subject badge
-                      Center(
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    t.name,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w900,
-                                      color: isDark ? Colors.white : const Color(0xFF0F172A),
-                                      fontFamily: 'NotoSansArabic',
-                                    ),
-                                  ),
-                                ),
-                                if (t.isApproved) ...[
-                                  const SizedBox(width: 6),
-                                  const Icon(Icons.verified_rounded, color: Color(0xFF10B981), size: 22),
-                                ],
-                              ],
-                            ),
-                            const SizedBox(height: 6),
-                            if (displaySubject.isNotEmpty)
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary.withValues(alpha: 0.08),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  displaySubject,
-                                  style: const TextStyle(
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.primary,
-                                    fontFamily: 'NotoSansArabic',
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 28),
-
-                      // ── THREE TILE CARDS ──
-                      Row(
+        backgroundColor: bgColor,
+        body: Stack(
+          children: [
+            FadeTransition(
+              opacity: _fadeAnim,
+              child: SlideTransition(
+                position: _slideAnim,
+                child: CustomScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Stack(
+                        clipBehavior: Clip.none,
                         children: [
-                          Expanded(
-                            child: _buildTileCard(
-                              icon: Icons.history_edu_rounded,
-                              title: l.tileExperience,
-                              value: t.experienceYears != null ? '${t.experienceYears} ${l.yearsUnit}' : '—',
-                              color: const Color(0xFFF59E0B),
-                              isDark: isDark,
+                          ClipRRect(
+                            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(40)),
+                            child: t.videoUrl != null && t.videoUrl!.isNotEmpty
+                                ? Container(
+                                    padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                                    color: Colors.black,
+                                    child: AspectRatio(aspectRatio: 16 / 9, child: _buildVideoPlayer(t)),
+                                  )
+                                : Container(
+                                    height: 200, width: double.infinity,
+                                    decoration: const BoxDecoration(gradient: AppColors.primaryGradient),
+                                    child: Stack(
+                                      children: [
+                                        Positioned(
+                                          top: -40, right: -40,
+                                          child: Container(width: 160, height: 160, decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.1), shape: BoxShape.circle)),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                          ),
+                          
+                          SafeArea(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  _buildCircleAction(Icons.arrow_back_ios_new_rounded, _goBack),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                                    ),
+                                    child: Text(l.profile, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w900, fontFamily: 'NotoSansArabic')),
+                                  ),
+                                  _buildCircleAction(Icons.ios_share_rounded, () => _shareTeacher(t, l)),
+                                ],
+                              ),
                             ),
                           ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: _buildTileCard(
-                              icon: Icons.location_on_rounded,
-                              title: l.tileProvince,
-                              value: t.city ?? '—',
-                              color: const Color(0xFF3B82F6),
-                              isDark: isDark,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: _buildTileCard(
-                              icon: Icons.menu_book_rounded,
-                              title: l.tileCurriculum,
-                              value: t.subject ?? l.specializationFallback,
-                              color: const Color(0xFF8B5CF6),
-                              isDark: isDark,
+
+                          Positioned(
+                            bottom: -45,
+                            left: 0, right: 0,
+                            child: Center(
+                              child: Container(
+                                width: 96, height: 96,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: cardColor,
+                                  border: Border.all(color: Colors.white, width: 4),
+                                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 15, offset: const Offset(0, 8))],
+                                ),
+                                child: ClipOval(
+                                  child: t.photoUrl.isNotEmpty 
+                                    ? CachedNetworkImage(imageUrl: t.photoUrl, fit: BoxFit.cover)
+                                    : _avatarFallback(t.name, accentColor),
+                                ),
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 24),
+                    ),
 
-                      // Biography
-                      if (t.about != null && t.about!.isNotEmpty)
-                        _buildCreativeSection(
-                          isDark: isDark,
-                          title: l.about,
-                          icon: Icons.info_outline_rounded,
-                          child: Text(
-                            t.about!,
-                            style: TextStyle(
-                              fontSize: 14,
-                              height: 1.8,
-                              color: isDark ? Colors.white70 : const Color(0xFF4B5563),
-                              fontFamily: 'NotoSansArabic',
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
+                    const SliverToBoxAdapter(child: SizedBox(height: 55)),
 
-                      // Subject Photo / Curriculum
-                      if (t.subjectPhotoUrl.isNotEmpty)
-                        _buildCreativeSection(
-                          isDark: isDark,
-                          title: l.curriculumSection,
-                          icon: Icons.auto_stories_rounded,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate([
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
-                                child: CachedNetworkImage(
-                                  imageUrl: t.subjectPhotoUrl,
-                                  width: double.infinity,
-                                  height: 200,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                l.curriculumCaption,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: 'NotoSansArabic',
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textGrey,
-                                ),
+                              Flexible(
+                                child: Text(t.name, textAlign: TextAlign.center, style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black87, fontFamily: 'NotoSansArabic')),
                               ),
                             ],
                           ),
-                        ),
-                    ]),
-                  ),
+                          const SizedBox(height: 4),
+                          Center(
+                            child: Text(displaySubject, style: TextStyle(fontSize: 15, color: accentColor, fontWeight: FontWeight.w700, fontFamily: 'NotoSansArabic')),
+                          ),
+                          
+                          const SizedBox(height: 28),
+
+                          Row(
+                            children: [
+                              Expanded(child: _buildInfoTile(Icons.history_edu_rounded, l.tileExperience, t.experienceYears != null ? '${t.experienceYears} ${l.yearsUnit}' : '—', const Color(0xFFF59E0B), isDark)),
+                              const SizedBox(width: 10),
+                              Expanded(child: _buildInfoTile(Icons.location_on_rounded, l.tileProvince, t.city ?? '—', const Color(0xFF3B82F6), isDark)),
+                              const SizedBox(width: 10),
+                              Expanded(child: _buildInfoTile(Icons.menu_book_rounded, l.tileCurriculum, t.subject ?? l.specializationFallback, const Color(0xFF10B981), isDark)),
+                            ],
+                          ),
+
+                          const SizedBox(height: 24),
+                          
+                          if (t.about != null && t.about!.isNotEmpty)
+                            _buildSectionCard(l.about, Icons.info_outline_rounded, 
+                              Text(t.about!, style: TextStyle(fontSize: 15, height: 1.8, color: isDark ? Colors.white70 : Colors.black87, fontFamily: 'NotoSansArabic')), 
+                              isDark, accentColor, cardColor),
+
+                          if (t.hourlyRate != null && t.hourlyRate! > 0)
+                            _buildSectionCard(l.hourlyRate, Icons.payments_rounded, 
+                              Text(l.perHour.isEmpty ? '${t.hourlyRate} ${l.currencyIqd}' : '${t.hourlyRate} ${l.currencyIqd} / ${l.perHour}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: accentColor, fontFamily: 'NotoSansArabic')), 
+                              isDark, accentColor, cardColor),
+
+                          if (t.subjectPhotoUrl.isNotEmpty)
+                            _buildSectionCard(l.curriculumSection, Icons.auto_stories_rounded, 
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: CachedNetworkImage(imageUrl: t.subjectPhotoUrl, width: double.infinity, height: 200, fit: BoxFit.cover),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(l.curriculumCaption, style: const TextStyle(fontSize: 12, fontFamily: 'NotoSansArabic', fontWeight: FontWeight.w600, color: AppColors.textGrey)),
+                                ],
+                              ), isDark, accentColor, cardColor),
+                          
+                          const SizedBox(height: 120),
+                        ]),
+                      ),
+                    ),
+                  ],
                 ),
+              ),
+            ),
+
+            _buildPremiumFooter(t, isDark, accentColor, l),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCircleAction(IconData icon, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 40, height: 40,
+        decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), shape: BoxShape.circle),
+        child: Icon(icon, color: Colors.white, size: 18),
+      ),
+    );
+  }
+
+  Widget _buildInfoTile(IconData icon, String label, String value, Color color, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 4))],
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+            child: Icon(icon, color: color, size: 18),
+          ),
+          const SizedBox(height: 10),
+          Text(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: isDark ? Colors.white38 : Colors.black45, fontFamily: 'NotoSansArabic')),
+          const SizedBox(height: 2),
+          Text(value, textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black87, fontFamily: 'NotoSansArabic')),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionCard(String title, IconData icon, Widget content, bool isDark, Color accent, Color cardColor) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 20, offset: const Offset(0, 8))],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 18, color: accent),
+              const SizedBox(width: 12),
+              Text(title.toUpperCase(), style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 1, color: isDark ? Colors.white38 : Colors.black45, fontFamily: 'NotoSansArabic')),
+            ],
+          ),
+          const SizedBox(height: 20),
+          content,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPremiumFooter(TeacherModel t, bool isDark, Color accent, AppLocalizations l) {
+    if (t.phone == null || t.phone!.isEmpty) return const SizedBox.shrink();
+
+    return Positioned(
+      bottom: 24, left: 30, right: 30,
+      child: Container(
+        height: 60,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(colors: [accent, accent.withValues(alpha: 0.8)]),
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [BoxShadow(color: accent.withValues(alpha: 0.4), blurRadius: 20, offset: const Offset(0, 10))],
+        ),
+        child: InkWell(
+          onTap: () => _showContactSheet(t, l, isDark),
+          borderRadius: BorderRadius.circular(30),
+          child: Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.phone_rounded, color: Colors.white, size: 20),
+                const SizedBox(width: 12),
+                Text(l.contactTeacher, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16, fontFamily: 'NotoSansArabic')),
               ],
             ),
           ),
@@ -371,50 +429,10 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen>
     );
   }
 
-  Widget _buildStickyContact(TeacherModel t, AppLocalizations l, bool isDark) {
-    if (t.phone == null || t.phone!.isEmpty) return const SizedBox.shrink();
-
-    return Container(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 20,
-            offset: const Offset(0, -5),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _StickyBtn(
-              icon: Icons.call_rounded,
-              label: l.contactPhone,
-              color: const Color(0xFF3B82F6),
-              onTap: () => _launch('tel:${t.phone}'),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _StickyBtn(
-              icon: Icons.wechat_rounded,
-              label: l.contactWhatsapp,
-              color: const Color(0xFF10B981),
-              onTap: () => _launch('https://wa.me/${t.phone?.replaceAll(RegExp(r'[^0-9]'), '')}'),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildVideoPlayer(TeacherModel t) {
     if (_youtubeController != null) {
       return ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(40)),
         child: YoutubePlayer(
           controller: _youtubeController!,
           showVideoProgressIndicator: true,
@@ -425,24 +443,17 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen>
     return GestureDetector(
       onTap: () => _launch(t.videoUrl!),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(40)),
         child: Stack(
           alignment: Alignment.center,
           children: [
             _ytVideoId != null
-                ? CachedNetworkImage(
-                    imageUrl: 'https://img.youtube.com/vi/$_ytVideoId/hqdefault.jpg',
-                    height: 220, width: double.infinity, fit: BoxFit.cover,
-                  )
+                ? CachedNetworkImage(imageUrl: 'https://img.youtube.com/vi/$_ytVideoId/hqdefault.jpg', height: 220, width: double.infinity, fit: BoxFit.cover)
                 : Container(height: 220, color: const Color(0xFF1E293B)),
             Container(height: 220, color: Colors.black.withValues(alpha: 0.3)),
             Container(
               width: 64, height: 64,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 20)],
-              ),
+              decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 20)]),
               child: const Icon(Icons.play_arrow_rounded, color: Color(0xFFEF4444), size: 38),
             ),
           ],
@@ -451,180 +462,14 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen>
     );
   }
 
-  Widget _buildCreativeSection({
-    required bool isDark, required String title, required IconData icon,
-    Color iconColor = AppColors.primary, required Widget child,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, color: iconColor, size: 22),
-              const SizedBox(width: 8),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : const Color(0xFF111827),
-                  fontFamily: 'NotoSansArabic',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(
-                color: isDark ? const Color(0xFF2C2C2C) : const Color(0xFFEDF2F7),
-                width: 1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.02),
-                  blurRadius: 15,
-                  offset: const Offset(0, 5),
-                ),
-              ],
-            ),
-            child: child,
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _avatarFallback(String name, Color color) {
     final parts = name.split(RegExp(r'\s+')).where((e) => e.isNotEmpty).toList();
     String init = '?';
-    if (parts.length >= 2) {
-      init = '${parts[0][0]}${parts[1][0]}';
-    } else if (name.isNotEmpty) {
-      init = name[0];
-    }
+    if (parts.length >= 2) init = '${parts[0][0]}${parts[1][0]}';
+    else if (name.isNotEmpty) init = name[0];
     return Container(
       color: color,
-      child: Center(
-        child: Text(
-          init.toUpperCase(),
-          style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w900, color: Colors.white),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTileCard({
-    required IconData icon,
-    required String title,
-    required String value,
-    required Color color,
-    required bool isDark,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: color, size: 18),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 10.5,
-              fontWeight: FontWeight.w600,
-              color: isDark ? Colors.white60 : const Color(0xFF64748B),
-              fontFamily: 'NotoSansArabic',
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w800,
-              color: isDark ? Colors.white : const Color(0xFF0F172A),
-              fontFamily: 'NotoSansArabic',
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StickyBtn extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
-
-  const _StickyBtn({required this.icon, required this.label, required this.color, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 56,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: color.withValues(alpha: 0.3),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: Colors.white, size: 22),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w800,
-                fontFamily: 'NotoSansArabic',
-              ),
-            ),
-          ],
-        ),
-      ),
+      child: Center(child: Text(init.toUpperCase(), style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w900, color: Colors.white))),
     );
   }
 }

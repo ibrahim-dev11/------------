@@ -127,6 +127,8 @@ class CvProvider extends ChangeNotifier {
   bool _hasMore = true;
   String? _error;
   String _searchQuery = '';
+  String? _selectedCity;
+  String? _selectedEducation;
   int _page = 1;
 
   List<CvModel> get cvs => _cvs;
@@ -134,6 +136,8 @@ class CvProvider extends ChangeNotifier {
   bool get loading => _loading;
   bool get hasMore => _hasMore;
   String? get error => _error;
+  String? get selectedCity => _selectedCity;
+  String? get selectedEducation => _selectedEducation;
 
   CvProvider() {
     fetchCvs(refresh: true);
@@ -155,6 +159,8 @@ class CvProvider extends ChangeNotifier {
 
     final result = await _api.getCvs(
       search: _searchQuery,
+      city: _selectedCity,
+      educationLevel: _selectedEducation,
       page: _page,
     );
 
@@ -181,6 +187,12 @@ class CvProvider extends ChangeNotifier {
       _educationLevels = result.data!;
       notifyListeners();
     }
+  }
+
+  void setFilter({String? city, String? education}) {
+    _selectedCity = city;
+    _selectedEducation = education;
+    fetchCvs(refresh: true);
   }
 
   void setSearch(String query) {

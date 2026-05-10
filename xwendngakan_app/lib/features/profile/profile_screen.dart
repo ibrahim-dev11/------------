@@ -499,7 +499,7 @@ class _LogoutTile extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.logout_rounded, color: Color(0xFFFF4757), size: 20),
+            const Icon(Icons.exit_to_app_rounded, color: Color(0xFFFF4757), size: 20),
             const SizedBox(width: 10),
             Text(
               l.logout,

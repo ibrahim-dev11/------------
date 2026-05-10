@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_constants.dart';
 
@@ -419,16 +418,7 @@ class AppSearchBar extends StatelessWidget {
             color: isDark ? Colors.white54 : const Color(0xFF9CA3AF),
             size: 22,
           ),
-          const SizedBox(width: 8),
-          GestureDetector(
-            onTap: () => context.push('/scan'),
-            child: Icon(
-              Icons.qr_code_scanner_rounded,
-              color: AppColors.primary.withOpacity(0.8),
-              size: 22,
-            ),
-          ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           Expanded(
             child: TextField(
               controller: controller,

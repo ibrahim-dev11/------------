@@ -380,11 +380,6 @@ class _TeachersScreenState extends State<TeachersScreen> {
                                   teacher: displayTeachers[i],
                                   lang: lang,
                                   onTap: () => context.push('/teachers/${displayTeachers[i].id}'),
-                                  isFavorite: prov.isFavorite(displayTeachers[i].id),
-                                  onFavorite: () {
-                                    HapticFeedback.lightImpact();
-                                    prov.toggleFavorite(displayTeachers[i].id);
-                                  },
                                 );
                               },
                               childCount: displayTeachers.length + (prov.hasMore ? 1 : 0),

@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'post_model.dart';
+import 'package:xwendngakan_app/core/constants/app_constants.dart';
 
 class InstitutionModel {
   final int id;
@@ -75,16 +77,28 @@ class InstitutionModel {
   String get logoUrl {
     if (logo == null || logo!.isEmpty) return '';
     if (logo!.startsWith('http')) return logo!;
-    return '${_baseUrl}${logo}';
+    
+    final baseDomain = AppConstants.baseUrl.replaceAll(RegExp(r'/api/?$'), '');
+    final path = logo!.startsWith('/') ? logo! : '/$logo';
+    
+    if (!path.startsWith('/storage/')) {
+      return '$baseDomain/storage$path';
+    }
+    return '$baseDomain$path';
   }
 
   String get imgUrl {
     if (img == null || img!.isEmpty) return '';
     if (img!.startsWith('http')) return img!;
-    return '${_baseUrl}${img}';
+    
+    final baseDomain = AppConstants.baseUrl.replaceAll(RegExp(r'/api/?$'), '');
+    final path = img!.startsWith('/') ? img! : '/$img';
+    
+    if (!path.startsWith('/storage/')) {
+      return '$baseDomain/storage$path';
+    }
+    return '$baseDomain$path';
   }
-
-  static const _baseUrl = 'http://localhost:8000';
 
   factory InstitutionModel.fromJson(Map<String, dynamic> json) {
     return InstitutionModel(
@@ -102,8 +116,8 @@ class InstitutionModel {
       desc: json['desc'],
       lat: json['lat']?.toDouble(),
       lng: json['lng']?.toDouble(),
-      colleges: json['colleges'],
-      depts: json['depts'],
+      colleges: json['colleges'] is String ? json['colleges'] : jsonEncode(json['colleges']),
+      depts: json['depts'] is String ? json['depts'] : jsonEncode(json['depts']),
       fb: json['fb'],
       ig: json['ig'],
       tg: json['tg'],
