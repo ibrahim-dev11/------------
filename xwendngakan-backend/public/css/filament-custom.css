@@ -13,19 +13,96 @@ html, body, .fi-body {
 }
 * { font-family: 'Noto Kufi Arabic', sans-serif !important; }
 
-/* ══ داخستنی سایدبار ══ */
+/* ══ لەیاوت و سایز ══ */
+html, body {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    min-height: 100vh !important;
+}
+
+/* داخستنی سایدبار */
 .fi-sidebar,
 aside.fi-sidebar,
 [class*="fi-sidebar"] {
     display: none !important;
     width: 0 !important;
     max-width: 0 !important;
+    min-width: 0 !important;
     overflow: hidden !important;
+    flex: 0 0 0 !important;
 }
-.fi-main-ctn,
-.fi-layout .fi-main {
+
+/* ناوەرۆک تەواو پان */
+.fi-layout,
+.fi-body,
+.fi-simple-layout {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.fi-main-ctn {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
     margin-inline-start: 0 !important;
     padding-inline-start: 0 !important;
+}
+
+.fi-main {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-inline-start: 0 !important;
+    padding-inline-start: 0 !important;
+    flex: 1 1 auto !important;
+}
+
+/* پێشگیری لە margin/padding زیادەی Filament */
+.fi-layout-sidebar-open .fi-main,
+.fi-layout-sidebar-open .fi-main-ctn {
+    margin-inline-start: 0 !important;
+    padding-inline-start: 0 !important;
+}
+
+/* ناوەرۆکی ناوەندی */
+.fi-page,
+.fi-page-content {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* گرید و ویجێتەکان */
+.fi-wi-stats-overview,
+.fi-dashboard-widgets {
+    width: 100% !important;
+}
+
+/* ریسپۆنسیڤ — مۆبایل */
+@media (max-width: 767px) {
+    .fi-topbar-nav {
+        flex-wrap: wrap !important;
+        overflow-x: auto !important;
+    }
+    .fi-ta-ctn {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    .fi-wi-stats-overview {
+        grid-template-columns: 1fr !important;
+    }
+    .fi-page-header {
+        padding: .75rem 1rem !important;
+    }
+    .fi-section,
+    .fi-card {
+        border-radius: 10px !important;
+        margin-inline: 0 !important;
+    }
 }
 
 /* ═══════════════════════════════
