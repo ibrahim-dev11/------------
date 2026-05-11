@@ -11,6 +11,7 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Assets\Css;
+use Filament\Enums\ThemeMode;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -28,21 +29,22 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandName('خوێندنگاکانم')
+            ->brandName('EduBook')
             ->brandLogo(fn () => view('filament.components.logo'))
             ->favicon(asset('favicon.ico'))
             ->colors([
-                'primary' => Color::Violet,
-                'danger' => Color::Rose,
-                'gray' => Color::Gray,
-                'info' => Color::Indigo,
+                'primary' => Color::hex('#c49a3c'),
+                'danger'  => Color::Rose,
+                'gray'    => Color::Slate,
+                'info'    => Color::Sky,
                 'success' => Color::Emerald,
                 'warning' => Color::Amber,
             ])
             ->font('Noto Kufi Arabic')
+            ->defaultThemeMode(ThemeMode::Dark)
             ->renderHook(
                 'panels::head.end',
-                fn (): string => '<link rel="stylesheet" href="' . asset('css/filament-custom.css?v=7.1.0') . '">'
+                fn (): string => '<link rel="stylesheet" href="' . asset('css/filament-custom.css?v=8.1.0') . '">'
             )
             ->navigationGroups([
                 'سەرەکی',
