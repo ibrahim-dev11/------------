@@ -20,9 +20,6 @@ class CreateInstitution extends CreateRecord
             unset($data['colleges_data']);
         }
 
-        // Auto-set country
-        $data['country'] = 'عێراق';
-
         return $data;
     }
 }

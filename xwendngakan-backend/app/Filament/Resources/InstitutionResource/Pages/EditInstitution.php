@@ -38,9 +38,6 @@ class EditInstitution extends EditRecord
             unset($data['colleges_data']);
         }
 
-        // Auto-set country
-        $data['country'] = 'عێراق';
-
         return $data;
     }
 }

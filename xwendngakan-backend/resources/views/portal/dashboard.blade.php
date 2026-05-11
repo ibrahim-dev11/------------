@@ -537,11 +537,25 @@
             </div>
             <div class="f-group">
               <label class="f-label">وڵات <span class="f-req">*</span></label>
-              <input type="text" name="country" class="f-input" placeholder="وڵات..." value="{{ old('country', $institution?->country ?? 'کوردستان') }}" required>
+              <select name="country" class="f-input" required>
+                <option value="کوردستان" {{ old('country', $institution?->country ?? 'کوردستان') == 'کوردستان' ? 'selected' : '' }}>🏔️ کوردستان</option>
+                <option value="عێراق" {{ old('country', $institution?->country) == 'عێراق' ? 'selected' : '' }}>🇮🇶 عێراق</option>
+              </select>
             </div>
             <div class="f-group">
               <label class="f-label">شار <span class="f-req">*</span></label>
-              <input type="text" name="city" class="f-input" placeholder="شار..." value="{{ old('city', $institution?->city) }}" required>
+              <select name="city" class="f-input" required>
+                <option value="" disabled {{ !old('city', $institution?->city) ? 'selected' : '' }}>هەڵبژێرە...</option>
+                @foreach([
+                    'هەولێر', 'سلێمانی', 'دهۆک', 'زاخۆ', 'ئامێدی', 'سیمێل', 'شێخان', 'دیانا', 'چۆمان', 'سۆران',
+                    'کەرکووک', 'هەڵەبجە', 'رانیە', 'کەلار', 'قلادزێ', 'دوکان', 'دەربەندیخان', 'کفری', 'چەمچەماڵ',
+                    'شارەزووری', 'پێنجوێن', 'سەید سادق', 'دوزەخوڕماتو', 'بەغداد', 'مووسڵ', 'بەسرە', 'نەجەف',
+                    'کەربەلا', 'حیللە', 'سامەراء', 'تکریت', 'رمادی', 'فەللووجە', 'نەسیریە', 'عەماره', 'کووت',
+                    'دیوانیە', 'بعقووبە', 'سینجار', 'تەلاعەفەر'
+                ] as $c)
+                    <option value="{{ $c }}" {{ old('city', $institution?->city) == $c ? 'selected' : '' }}>{{ $c }}</option>
+                @endforeach
+              </select>
             </div>
             <div class="f-group">
               <label class="f-label">ناونیشان</label>
