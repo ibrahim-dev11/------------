@@ -26,14 +26,15 @@ class TeacherRequestResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')->required(),
-                Forms\Components\TextInput::make('phone')->required(),
-                Forms\Components\Textarea::make('message')->nullable(),
+                Forms\Components\TextInput::make('name')->label('ناو')->required(),
+                Forms\Components\TextInput::make('phone')->label('مۆبایل')->required(),
+                Forms\Components\Textarea::make('message')->label('پێغام')->nullable(),
                 Forms\Components\Select::make('status')
+                    ->label('دۆخ')
                     ->options([
-                        'pending' => 'Pending',
-                        'approved' => 'Approved',
-                        'rejected' => 'Rejected',
+                        'pending' => 'بریتیگ',
+                        'approved' => 'پەسەندکراو',
+                        'rejected' => 'ڕەتکراو',
                     ])
                     ->default('pending')
                     ->required(),
@@ -44,26 +45,34 @@ class TeacherRequestResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('phone')->searchable(),
+                Tables\Columns\TextColumn::make('name')->label('ناو')->searchable(),
+                Tables\Columns\TextColumn::make('phone')->label('مۆبایل')->searchable(),
                 Tables\Columns\TextColumn::make('status')
+                    ->label('دۆخ')
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'pending' => 'بریتیگ',
+                        'approved' => 'پەسەندکراو',
+                        'rejected' => 'ڕەتکراو',
+                        default => $state,
+                    })
                     ->color(fn (string $state): string => match ($state) {
                         'pending' => 'warning',
                         'approved' => 'success',
                         'rejected' => 'danger',
+                        default => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable(),
+                Tables\Columns\TextColumn::make('created_at')->label('بەروار')->dateTime()->sortable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->label('دەستکاری'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->label('سڕینەوە'),
                 ]),
             ]);
     }

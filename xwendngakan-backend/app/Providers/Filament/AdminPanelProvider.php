@@ -42,13 +42,18 @@ class AdminPanelProvider extends PanelProvider
             ->font('Noto Kufi Arabic')
             ->renderHook(
                 'panels::head.end',
-                fn (): string => '<link rel="stylesheet" href="' . asset('css/filament-custom.css?v=7.0.0') . '">'
+                fn (): string => '<link rel="stylesheet" href="' . asset('css/filament-custom.css?v=7.1.0') . '">'
             )
             ->navigationGroups([
                 'سەرەکی',
+                'دامەزراوەکان',
                 'داواکارییەکان',
+                'خزمەتگوزاری',
+                'ناوەڕۆک',
+                'بەڕێوەبردن',
                 'هەموو بابەتەکان',
             ])
+            ->topNavigation()
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

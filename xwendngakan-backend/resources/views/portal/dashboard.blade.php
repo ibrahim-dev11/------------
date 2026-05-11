@@ -295,6 +295,148 @@
 }
 .fee-row .f-input { margin-bottom: 0; }
 
+/* ── College nested cards ── */
+.college-wrap { display: flex; flex-direction: column; gap: .75rem; }
+
+.college-card {
+  border: 1px solid rgba(196,154,60,.22);
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(160deg, rgba(196,154,60,.04) 0%, rgba(15,22,36,.7) 100%);
+  transition: border-color .2s, box-shadow .2s;
+}
+.college-card:hover { border-color: rgba(196,154,60,.38); box-shadow: 0 6px 26px rgba(0,0,0,.28); }
+
+.college-header {
+  display: flex; align-items: center; gap: .6rem;
+  background: rgba(196,154,60,.06);
+  border-bottom: 1px solid rgba(196,154,60,.13);
+  padding: .7rem 1rem;
+}
+.college-badge {
+  font-size: .65rem; font-weight: 900;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--gold); white-space: nowrap; flex-shrink: 0;
+  display: flex; align-items: center; gap: 5px;
+}
+.college-badge::before {
+  content: ''; width: 6px; height: 6px;
+  background: var(--gold); border-radius: 50%;
+  box-shadow: 0 0 7px rgba(196,154,60,.75); flex-shrink: 0;
+}
+.college-header .clg-name {
+  flex: 1; min-width: 0; margin-bottom: 0;
+  font-weight: 700; font-size: .92rem;
+}
+.college-del-btn {
+  flex-shrink: 0; width: 30px; height: 30px; border-radius: 8px;
+  background: rgba(255,70,70,.09); color: #ff7070;
+  border: 1px solid rgba(255,70,70,.2); font-size: .85rem;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background .15s, transform .12s;
+}
+.college-del-btn:hover { background: rgba(255,70,70,.22); transform: scale(1.07); }
+
+/* College fee strip */
+.college-fee-strip {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: .5rem; padding: .6rem 1rem;
+  border-bottom: 1px solid rgba(196,154,60,.09);
+  background: rgba(0,0,0,.12);
+}
+.college-fee-field { display: flex; flex-direction: column; gap: 4px; }
+.college-fee-label {
+  font-size: .62rem; font-weight: 800;
+  color: var(--txt3); letter-spacing: .05em;
+  padding-right: 3px;
+}
+.college-fee-strip .f-input { margin-bottom: 0; font-size: .87rem; }
+
+.college-body { padding: .85rem 1rem 1rem; }
+
+.depts-header-row {
+  display: flex; align-items: center; gap: 8px; margin-bottom: .5rem;
+}
+.depts-header-label {
+  font-size: .64rem; font-weight: 900; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--txt3); white-space: nowrap;
+}
+.depts-header-line { flex: 1; height: 1px; background: var(--border); }
+
+.dept-col-labels {
+  display: grid; grid-template-columns: 1fr 120px 78px 30px;
+  gap: .4rem; padding: 0 1px; margin-bottom: .3rem;
+}
+.dept-col-labels span {
+  font-size: .63rem; font-weight: 800; color: var(--txt3); letter-spacing: .04em;
+}
+
+.dept-row {
+  display: grid; grid-template-columns: 1fr 120px 78px 30px;
+  gap: .4rem; align-items: center; margin-bottom: .35rem;
+}
+.dept-row .f-input {
+  margin-bottom: 0; font-size: .86rem;
+  background: rgba(9,13,22,.6); border-color: rgba(255,255,255,.07);
+}
+.dept-row .f-input:focus { background: var(--bg4); }
+
+.dept-del-btn {
+  width: 30px; height: 36px; border-radius: 8px;
+  background: rgba(255,70,70,.07); color: #ff7070;
+  border: 1px solid rgba(255,70,70,.15); font-size: .85rem;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background .15s; flex-shrink: 0;
+}
+.dept-del-btn:hover { background: rgba(255,70,70,.2); }
+
+.add-dept-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 13px; border-radius: 8px;
+  background: rgba(100,160,255,.05); color: #84b8ff;
+  border: 1px dashed rgba(100,160,255,.22);
+  font-family: inherit; font-size: .74rem; font-weight: 700;
+  cursor: pointer; margin-top: .2rem;
+  transition: background .15s, border-color .15s;
+}
+.add-dept-btn:hover { background: rgba(100,160,255,.12); border-color: rgba(100,160,255,.4); }
+
+.add-college-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 12px;
+  border-radius: 12px;
+  background: rgba(196,154,60,.04);
+  border: 1.5px dashed rgba(196,154,60,.25);
+  color: var(--gold);
+  font-family: inherit; font-size: .83rem; font-weight: 800;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.add-college-btn:hover { background: rgba(196,154,60,.1); border-color: rgba(196,154,60,.5); }
+
+/* ── Simple dept/fee rows ── */
+.fee-header {
+  display: grid; grid-template-columns: 1fr 120px 78px 30px;
+  gap: .4rem; margin-bottom: .35rem; padding: 0 1px;
+}
+.fee-header span { font-size: .63rem; font-weight: 800; color: var(--txt3); }
+.fee-row {
+  display: grid; grid-template-columns: 1fr 120px 78px 30px;
+  gap: .4rem; align-items: center; margin-bottom: .35rem;
+}
+.fee-row .f-input { margin-bottom: 0; }
+
+@media (max-width: 600px) {
+  .college-header-inputs { flex-wrap: wrap; }
+  .clg-fee, .clg-disc { width: calc(50% - .2rem); }
+  .dept-col-labels, .dept-row,
+  .fee-header, .fee-row { grid-template-columns: 1fr 30px; }
+  .dept-col-labels span:nth-child(2), .dept-col-labels span:nth-child(3),
+  .fee-header span:nth-child(2), .fee-header span:nth-child(3) { display: none; }
+  .dept-row .f-input:nth-child(2), .dept-row .f-input:nth-child(3),
+  .fee-row .f-input:nth-child(2), .fee-row .f-input:nth-child(3) { display: none; }
+}
+
 /* ── Buttons ── */
 .btn-primary {
   display: inline-flex; align-items: center; gap: 8px;
@@ -536,7 +678,7 @@
               </select>
             </div>
             <div class="f-group">
-              <label class="f-label">وڵات <span class="f-req">*</span></label>
+              <label class="f-label">وڵات / هەرێم <span class="f-req">*</span></label>
               <select name="country" class="f-input" required>
                 <option value="کوردستان" {{ old('country', $institution?->country ?? 'کوردستان') == 'کوردستان' ? 'selected' : '' }}>🏔️ کوردستان</option>
                 <option value="عێراق" {{ old('country', $institution?->country) == 'عێراق' ? 'selected' : '' }}>🇮🇶 عێراق</option>
@@ -544,8 +686,8 @@
             </div>
             <div class="f-group">
               <label class="f-label">شار <span class="f-req">*</span></label>
-              <select name="city" class="f-input" required>
-                <option value="" disabled {{ !old('city', $institution?->city) ? 'selected' : '' }}>هەڵبژێرە...</option>
+              <input type="text" name="city" class="f-input" list="cities_list" placeholder="شار هەڵبژێرە یان بنووسە..." value="{{ old('city', $institution?->city) }}" required>
+              <datalist id="cities_list">
                 @foreach([
                     'هەولێر', 'سلێمانی', 'دهۆک', 'زاخۆ', 'ئامێدی', 'سیمێل', 'شێخان', 'دیانا', 'چۆمان', 'سۆران',
                     'کەرکووک', 'هەڵەبجە', 'رانیە', 'کەلار', 'قلادزێ', 'دوکان', 'دەربەندیخان', 'کفری', 'چەمچەماڵ',
@@ -553,9 +695,9 @@
                     'کەربەلا', 'حیللە', 'سامەراء', 'تکریت', 'رمادی', 'فەللووجە', 'نەسیریە', 'عەماره', 'کووت',
                     'دیوانیە', 'بعقووبە', 'سینجار', 'تەلاعەفەر'
                 ] as $c)
-                    <option value="{{ $c }}" {{ old('city', $institution?->city) == $c ? 'selected' : '' }}>{{ $c }}</option>
+                    <option value="{{ $c }}">
                 @endforeach
-              </select>
+              </datalist>
             </div>
             <div class="f-group">
               <label class="f-label">ناونیشان</label>
@@ -592,88 +734,168 @@
           $showSection  = $flags['has_colleges'] || $flags['has_departments'];
           $showColleges = $flags['has_colleges'];
           $showDepts    = $flags['has_departments'];
-          $collegesList = array_filter(array_map('trim', explode("\n", $institution?->colleges ?? '')));
-          $deptsList    = array_filter(array_map('trim', explode("\n", $institution?->depts ?? '')));
+          // Parse colleges — handles: new JSON (with depts+fee), Filament JSON, legacy newline text
+          $collegesData = [];
+          if (!empty($institution?->colleges)) {
+              $decoded = json_decode($institution->colleges, true);
+              if (is_array($decoded) && count($decoded)) {
+                  foreach ($decoded as $col) {
+                      if (!isset($col['name'])) continue;
+                      $depts = [];
+                      foreach (($col['depts'] ?? $col['departments'] ?? []) as $d) {
+                          $depts[] = [
+                              'name'     => is_string($d) ? $d : ($d['name'] ?? $d['dept_name'] ?? ''),
+                              'fee'      => $d['fee'] ?? '',
+                              'discount' => $d['discount'] ?? '',
+                          ];
+                      }
+                      $collegesData[] = [
+                          'name'     => $col['name'],
+                          'fee'      => $col['fee'] ?? '',
+                          'discount' => $col['discount'] ?? '',
+                          'depts'    => $depts,
+                      ];
+                  }
+              } else {
+                  foreach (array_filter(array_map('trim', explode("\n", $institution->colleges))) as $line) {
+                      $collegesData[] = ['name' => $line, 'fee' => '', 'discount' => '', 'depts' => []];
+                  }
+              }
+          }
+          $nextCiSeed   = count($collegesData);
+          // Simple dept rows (for school/non-college types)
           $tuitionList  = is_array($institution?->tuition_plans)
                           ? $institution->tuition_plans
                           : (json_decode($institution?->tuition_plans ?? '[]', true) ?: []);
+          $deptsList    = array_filter(array_map('trim', explode("\n", $institution?->depts ?? '')));
+          $simpleDeptRows = (count($tuitionList) && !$showColleges)
+                          ? $tuitionList
+                          : array_map(fn($d) => ['dept' => $d, 'fee' => '', 'discount' => ''], $deptsList);
         @endphp
 
         <div id="academic-section" class="db-card" style="{{ $showSection ? '' : 'display:none' }}">
           <div class="db-card-head">
-            <div class="db-card-title">📚 <span id="academic-title">{{ $showColleges ? 'کۆلێژ و بەشەکان' : 'بەشەکان' }}</span></div>
+            <div class="db-card-title">📚 <span id="academic-title">{{ $showColleges ? 'کۆلێژ و بەشەکان' : 'بەشەکان و پارەدان' }}</span></div>
           </div>
 
+          {{-- Mode 1: Colleges → nested depts + fee/discount per dept --}}
           <div id="group-colleges" style="{{ $showColleges ? '' : 'display:none' }}">
-            <div class="f-group">
-              <label class="f-label">ناوی کۆلێژەکان</label>
-              <div id="colleges-list">
-                @forelse($collegesList as $college)
-                  <div class="item-row">
-                    <input type="text" name="colleges[]" class="f-input" value="{{ $college }}" placeholder="بۆنموونە: کۆلێژی ئەندازیاری">
-                    <button type="button" class="rm-btn" onclick="removeRow(this)">×</button>
+            <div id="colleges-container" class="college-wrap">
+              @forelse($collegesData as $col)
+                @php $ci = $loop->index; @endphp
+                <div class="college-card" data-ci="{{ $ci }}">
+                  <div class="college-header">
+                    <span class="college-badge">کۆلێژ</span>
+                    <input type="text" name="clg[{{ $ci }}][name]" class="f-input clg-name" value="{{ $col['name'] }}" placeholder="بۆ نموونە: کۆلێژی ئەندازیاری">
+                    <button type="button" class="college-del-btn" onclick="removeCollege(this)" title="سڕینەوە">✕</button>
                   </div>
-                @empty
-                  <div class="item-row">
-                    <input type="text" name="colleges[]" class="f-input" placeholder="بۆنموونە: کۆلێژی ئەندازیاری">
-                    <button type="button" class="rm-btn" onclick="removeRow(this)">×</button>
+                  <div class="college-fee-strip">
+                    <div class="college-fee-field">
+                      <span class="college-fee-label">پارەی کۆلێژ (دینار)</span>
+                      <input type="text" name="clg[{{ $ci }}][fee]" class="f-input" value="{{ $col['fee'] }}" placeholder="بۆ نموونە: 500,000">
+                    </div>
+                    <div class="college-fee-field">
+                      <span class="college-fee-label">داشکاندنی کۆلێژ %</span>
+                      <input type="text" name="clg[{{ $ci }}][discount]" class="f-input" value="{{ $col['discount'] }}" placeholder="بۆ نموونە: 10%">
+                    </div>
                   </div>
-                @endforelse
-              </div>
-              <button type="button" class="add-row-btn" onclick="addItem('colleges-list','colleges[]','بۆنموونە: کۆلێژی پزیشکی')">+ کۆلێژ زیاد بکە</button>
+                  <div class="college-body">
+                    <div class="depts-header-row">
+                      <span class="depts-header-label">بەشەکان</span>
+                      <span class="depts-header-line"></span>
+                    </div>
+                    <div class="dept-col-labels">
+                      <span>ناوی بەش</span><span>پارە (دینار)</span><span>داشکان %</span><span></span>
+                    </div>
+                    <div class="depts-wrap">
+                      @forelse($col['depts'] as $dept)
+                        @php $di = $loop->index; @endphp
+                        <div class="dept-row">
+                          <input type="text" name="clg[{{ $ci }}][depts][{{ $di }}][name]" class="f-input" value="{{ $dept['name'] }}" placeholder="بۆ نموونە: بەشی کۆمپیوتەر">
+                          <input type="text" name="clg[{{ $ci }}][depts][{{ $di }}][fee]" class="f-input" value="{{ $dept['fee'] }}" placeholder="150,000">
+                          <input type="text" name="clg[{{ $ci }}][depts][{{ $di }}][discount]" class="f-input" value="{{ $dept['discount'] }}" placeholder="10%">
+                          <button type="button" class="dept-del-btn" onclick="removeDept(this)">✕</button>
+                        </div>
+                      @empty
+                        <div class="dept-row">
+                          <input type="text" name="clg[{{ $ci }}][depts][0][name]" class="f-input" placeholder="بۆ نموونە: بەشی کۆمپیوتەر">
+                          <input type="text" name="clg[{{ $ci }}][depts][0][fee]" class="f-input" placeholder="150,000">
+                          <input type="text" name="clg[{{ $ci }}][depts][0][discount]" class="f-input" placeholder="10%">
+                          <button type="button" class="dept-del-btn" onclick="removeDept(this)">✕</button>
+                        </div>
+                      @endforelse
+                    </div>
+                    <button type="button" class="add-dept-btn" onclick="addDept(this)">＋ بەش زیاد بکە</button>
+                  </div>
+                </div>
+              @empty
+                <div class="college-card" data-ci="0">
+                  <div class="college-header">
+                    <span class="college-badge">کۆلێژ</span>
+                    <input type="text" name="clg[0][name]" class="f-input clg-name" placeholder="بۆ نموونە: کۆلێژی ئەندازیاری">
+                    <button type="button" class="college-del-btn" onclick="removeCollege(this)">✕</button>
+                  </div>
+                  <div class="college-fee-strip">
+                    <div class="college-fee-field">
+                      <span class="college-fee-label">پارەی کۆلێژ (دینار)</span>
+                      <input type="text" name="clg[0][fee]" class="f-input" placeholder="بۆ نموونە: 500,000">
+                    </div>
+                    <div class="college-fee-field">
+                      <span class="college-fee-label">داشکاندنی کۆلێژ %</span>
+                      <input type="text" name="clg[0][discount]" class="f-input" placeholder="بۆ نموونە: 10%">
+                    </div>
+                  </div>
+                  <div class="college-body">
+                    <div class="depts-header-row">
+                      <span class="depts-header-label">بەشەکان</span>
+                      <span class="depts-header-line"></span>
+                    </div>
+                    <div class="dept-col-labels">
+                      <span>ناوی بەش</span><span>پارە (دینار)</span><span>داشکان %</span><span></span>
+                    </div>
+                    <div class="depts-wrap">
+                      <div class="dept-row">
+                        <input type="text" name="clg[0][depts][0][name]" class="f-input" placeholder="بۆ نموونە: بەشی کۆمپیوتەر">
+                        <input type="text" name="clg[0][depts][0][fee]" class="f-input" placeholder="150,000">
+                        <input type="text" name="clg[0][depts][0][discount]" class="f-input" placeholder="10%">
+                        <button type="button" class="dept-del-btn" onclick="removeDept(this)">✕</button>
+                      </div>
+                    </div>
+                    <button type="button" class="add-dept-btn" onclick="addDept(this)">＋ بەش زیاد بکە</button>
+                  </div>
+                </div>
+              @endforelse
             </div>
+            <button type="button" class="add-college-btn" onclick="addCollege()">🏛️ کۆلێژی نوێ زیاد بکە</button>
           </div>
 
-          <div id="group-depts" style="{{ $showDepts ? '' : 'display:none' }}">
-            <div class="f-group">
-              <label class="f-label">ناوی بەشەکان</label>
-              <div id="depts-list">
-                @forelse($deptsList as $dept)
-                  <div class="item-row">
-                    <input type="text" name="depts[]" class="f-input" value="{{ $dept }}" placeholder="بۆنموونە: بەشی کۆمپیوتەر">
-                    <button type="button" class="rm-btn" onclick="removeRow(this)">×</button>
-                  </div>
-                @empty
-                  <div class="item-row">
-                    <input type="text" name="depts[]" class="f-input" placeholder="بۆنموونە: بەشی کۆمپیوتەر">
-                    <button type="button" class="rm-btn" onclick="removeRow(this)">×</button>
-                  </div>
-                @endforelse
-              </div>
-              <button type="button" class="add-row-btn" onclick="addItem('depts-list','depts[]','بۆنموونە: بەشی کارگێڕی کار')">+ بەش زیاد بکە</button>
+          {{-- Mode 2: Simple depts + fees (schools etc.) --}}
+          <div id="group-depts" style="{{ (!$showColleges && $showDepts) ? '' : 'display:none' }}">
+            <div class="fee-header">
+              <span>ناوی بەش</span>
+              <span>پارە (دینار)</span>
+              <span>داشکان %</span>
+              <span></span>
             </div>
+            <div id="depts-list">
+              @forelse($simpleDeptRows as $row)
+                <div class="fee-row">
+                  <input type="text" name="simple_dept[]" class="f-input" value="{{ $row['dept'] ?? $row['name'] ?? '' }}" placeholder="بۆ نموونە: بەشی کۆمپیوتەر">
+                  <input type="text" name="simple_fee[]" class="f-input" value="{{ $row['fee'] ?? '' }}" placeholder="150,000">
+                  <input type="text" name="simple_discount[]" class="f-input" value="{{ $row['discount'] ?? '' }}" placeholder="10%">
+                  <button type="button" class="dept-del-btn" onclick="removeRow(this)">✕</button>
+                </div>
+              @empty
+                <div class="fee-row">
+                  <input type="text" name="simple_dept[]" class="f-input" placeholder="بۆ نموونە: بەشی کۆمپیوتەر">
+                  <input type="text" name="simple_fee[]" class="f-input" placeholder="150,000">
+                  <input type="text" name="simple_discount[]" class="f-input" placeholder="10%">
+                  <button type="button" class="dept-del-btn" onclick="removeRow(this)">✕</button>
+                </div>
+              @endforelse
+            </div>
+            <button type="button" class="add-row-btn" onclick="addSimpleDeptRow()">＋ بەش زیاد بکە</button>
           </div>
-        </div>
-
-        {{-- پارەدان و داشکان --}}
-        <div id="fees-section" class="db-card" style="{{ $showDepts ? '' : 'display:none' }}">
-          <div class="db-card-head">
-            <div class="db-card-title">💰 پارەدان و داشکان</div>
-          </div>
-          <div class="fee-header">
-            <span>ناوی بەش / کۆلێژ</span>
-            <span>بڕی پارە (دینار)</span>
-            <span>داشکان %</span>
-            <span></span>
-          </div>
-          <div id="fees-list">
-            @forelse($tuitionList as $row)
-              <div class="fee-row">
-                <input type="text" name="tuition_dept[]"     class="f-input" value="{{ $row['dept'] ?? '' }}"     placeholder="ناوی بەش">
-                <input type="text" name="tuition_fee[]"      class="f-input" value="{{ $row['fee'] ?? '' }}"      placeholder="150000">
-                <input type="text" name="tuition_discount[]" class="f-input" value="{{ $row['discount'] ?? '' }}" placeholder="10">
-                <button type="button" class="rm-btn" onclick="removeRow(this)">×</button>
-              </div>
-            @empty
-              <div class="fee-row">
-                <input type="text" name="tuition_dept[]"     class="f-input" placeholder="ناوی بەش">
-                <input type="text" name="tuition_fee[]"      class="f-input" placeholder="150000">
-                <input type="text" name="tuition_discount[]" class="f-input" placeholder="10">
-                <button type="button" class="rm-btn" onclick="removeRow(this)">×</button>
-              </div>
-            @endforelse
-          </div>
-          <button type="button" class="add-row-btn" onclick="addFeeRow()">+ ڕیزەی نوێ</button>
         </div>
 
         {{-- دەربارە --}}
@@ -744,7 +966,7 @@
                 <input type="file" id="logo-input" name="logo" accept="image/*" onchange="previewImg(this,'logo-prev')">
                 <div class="f-file-icon">🏷</div>
                 <div class="f-file-text">لۆگۆ هەڵبژێرە</div>
-                <div class="f-file-hint">PNG, JPG · max 2MB</div>
+                <div class="f-file-hint">PNG, JPG · max 10MB</div>
               </label>
               @if($institution?->logo)
                 <img src="{{ $institution->logo }}" class="f-preview" style="display:block" alt="">
@@ -758,7 +980,7 @@
                 <input type="file" id="img-input" name="img" accept="image/*" onchange="previewImg(this,'img-prev')">
                 <div class="f-file-icon">📸</div>
                 <div class="f-file-text">وێنەی سەرەکی هەڵبژێرە</div>
-                <div class="f-file-hint">PNG, JPG · max 4MB</div>
+                <div class="f-file-hint">PNG, JPG · max 10MB</div>
               </label>
               @if($institution?->img)
                 <img src="{{ $institution->img }}" class="f-preview" style="display:block" alt="">
@@ -933,43 +1155,102 @@ function handleTypeChange(type) {
     const section  = document.getElementById('academic-section');
     const grpCol   = document.getElementById('group-colleges');
     const grpDept  = document.getElementById('group-depts');
-    const feeSec   = document.getElementById('fees-section');
     const title    = document.getElementById('academic-title');
     const flags    = TYPE_FLAGS[type] || { has_colleges: false, has_departments: false };
     if (!flags.has_colleges && !flags.has_departments) {
-        section.style.display = 'none'; feeSec.style.display = 'none'; return;
+        section.style.display = 'none'; return;
     }
     section.style.display = '';
-    feeSec.style.display  = flags.has_departments ? '' : 'none';
-    title.textContent     = flags.has_colleges ? 'کۆلێژ و بەشەکان' : 'بەشەکان';
+    title.textContent     = flags.has_colleges ? 'کۆلێژ و بەشەکان' : 'بەشەکان و پارەدان';
     grpCol.style.display  = flags.has_colleges ? '' : 'none';
-    grpDept.style.display = flags.has_departments ? '' : 'none';
+    grpDept.style.display = (!flags.has_colleges && flags.has_departments) ? '' : 'none';
 }
-function addItem(listId, inputName, placeholder) {
-    const list = document.getElementById(listId);
+let _nextCi = {{ $nextCiSeed ?? 1 }};
+function addCollege() {
+    const container = document.getElementById('colleges-container');
+    const ci = _nextCi++;
+    const card = document.createElement('div');
+    card.className = 'college-card';
+    card.dataset.ci = ci;
+    card.innerHTML =
+        `<div class="college-header">` +
+          `<span class="college-badge">کۆلێژ</span>` +
+          `<input type="text" name="clg[${ci}][name]" class="f-input clg-name" placeholder="بۆ نموونە: کۆلێژی ئەندازیاری">` +
+          `<button type="button" class="college-del-btn" onclick="removeCollege(this)">✕</button>` +
+        `</div>` +
+        `<div class="college-fee-strip">` +
+          `<div class="college-fee-field">` +
+            `<span class="college-fee-label">پارەی کۆلێژ (دینار)</span>` +
+            `<input type="text" name="clg[${ci}][fee]" class="f-input" placeholder="بۆ نموونە: 500,000">` +
+          `</div>` +
+          `<div class="college-fee-field">` +
+            `<span class="college-fee-label">داشکاندنی کۆلێژ %</span>` +
+            `<input type="text" name="clg[${ci}][discount]" class="f-input" placeholder="بۆ نموونە: 10%">` +
+          `</div>` +
+        `</div>` +
+        `<div class="college-body">` +
+          `<div class="depts-header-row">` +
+            `<span class="depts-header-label">بەشەکان</span>` +
+            `<span class="depts-header-line"></span>` +
+          `</div>` +
+          `<div class="dept-col-labels">` +
+            `<span>ناوی بەش</span><span>پارە (دینار)</span><span>داشکان %</span><span></span>` +
+          `</div>` +
+          `<div class="depts-wrap">` +
+            `<div class="dept-row">` +
+              `<input type="text" name="clg[${ci}][depts][0][name]" class="f-input" placeholder="بۆ نموونە: بەشی کۆمپیوتەر">` +
+              `<input type="text" name="clg[${ci}][depts][0][fee]" class="f-input" placeholder="150,000">` +
+              `<input type="text" name="clg[${ci}][depts][0][discount]" class="f-input" placeholder="10%">` +
+              `<button type="button" class="dept-del-btn" onclick="removeDept(this)">✕</button>` +
+            `</div>` +
+          `</div>` +
+          `<button type="button" class="add-dept-btn" onclick="addDept(this)">＋ بەش زیاد بکە</button>` +
+        `</div>`;
+    container.appendChild(card);
+    card.querySelector('input').focus();
+}
+function removeCollege(btn) {
+    const card = btn.closest('.college-card');
+    if (card.parentElement.children.length > 1) card.remove();
+    else card.querySelectorAll('input').forEach(i => i.value = '');
+}
+function addDept(btn) {
+    const card = btn.closest('.college-card');
+    const ci   = card.dataset.ci;
+    const wrap = card.querySelector('.depts-wrap');
+    const di   = wrap.children.length;
     const row  = document.createElement('div');
-    row.className = 'item-row';
-    row.innerHTML = `<input type="text" name="${inputName}" class="f-input" placeholder="${placeholder}"><button type="button" class="rm-btn" onclick="removeRow(this)">×</button>`;
-    list.appendChild(row);
+    row.className = 'dept-row';
+    row.innerHTML =
+        `<input type="text" name="clg[${ci}][depts][${di}][name]" class="f-input" placeholder="بۆ نموونە: بەشی کۆمپیوتەر">` +
+        `<input type="text" name="clg[${ci}][depts][${di}][fee]" class="f-input" placeholder="150,000">` +
+        `<input type="text" name="clg[${ci}][depts][${di}][discount]" class="f-input" placeholder="10%">` +
+        `<button type="button" class="dept-del-btn" onclick="removeDept(this)">✕</button>`;
+    wrap.appendChild(row);
     row.querySelector('input').focus();
 }
-function addFeeRow() {
-    const list = document.getElementById('fees-list');
+function removeDept(btn) {
+    const row = btn.parentElement;
+    if (row.parentElement.children.length > 1) row.remove();
+    else row.querySelectorAll('input').forEach(i => i.value = '');
+}
+function addSimpleDeptRow() {
+    const list = document.getElementById('depts-list');
     const row  = document.createElement('div');
     row.className = 'fee-row';
     row.innerHTML =
-        `<input type="text" name="tuition_dept[]"     class="f-input" placeholder="ناوی بەش">` +
-        `<input type="text" name="tuition_fee[]"      class="f-input" placeholder="150000">` +
-        `<input type="text" name="tuition_discount[]" class="f-input" placeholder="10">` +
-        `<button type="button" class="rm-btn" onclick="removeRow(this)">×</button>`;
+        `<input type="text" name="simple_dept[]" class="f-input" placeholder="بۆ نموونە: بەشی کۆمپیوتەر">` +
+        `<input type="text" name="simple_fee[]" class="f-input" placeholder="150,000">` +
+        `<input type="text" name="simple_discount[]" class="f-input" placeholder="10%">` +
+        `<button type="button" class="dept-del-btn" onclick="removeRow(this)">✕</button>`;
     list.appendChild(row);
     row.querySelector('input').focus();
 }
 function removeRow(btn) {
-    const row = btn.parentElement;
+    const row  = btn.parentElement;
     const list = row.parentElement;
-    if (list.children.length > 1) { row.remove(); }
-    else { row.querySelectorAll('input').forEach(i => i.value = ''); }
+    if (list.children.length > 1) row.remove();
+    else row.querySelectorAll('input').forEach(i => i.value = '');
 }
 </script>
 @endsection

@@ -1,132 +1,234 @@
 /* ═══════════════════════════════════════════════════
-   خوێندنگاکانم — فیلامێنت کاستۆم CSS (Premium UI)
+   خوێندنگاکانم — فیلامێنت کاستۆم CSS
    ═══════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;500;600;700;800&display=swap');
 
-:root {
-    --font-family-main: 'Noto Kufi Arabic', sans-serif;
-}
-
-/* ── گشتی ── */
+/* ══ گشتی ══ */
 html, body, .fi-body {
     direction: rtl !important;
     text-align: right !important;
-    font-family: var(--font-family-main) !important;
-    background-color: #f8fafc !important;
+    font-family: 'Noto Kufi Arabic', sans-serif !important;
+    background-color: #f1f5f9 !important;
+}
+* { font-family: 'Noto Kufi Arabic', sans-serif !important; }
+
+/* ══ هێدەر/ناڤبار ══ */
+.fi-topbar {
+    background: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 8px rgba(0,0,0,.06) !important;
 }
 
-* {
-    font-family: var(--font-family-main) !important;
-}
-
-/* ── دیزاینی کارتەکان ── */
-.fi-wi-stats-overview-stat {
-    border-radius: 20px !important;
-    border: 1px solid rgba(0,0,0,0.05) !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
-    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
-}
-
-.fi-wi-stats-overview-stat:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08) !important;
-}
-
-/* ── سیدەبار (Sidebar) ── */
-.fi-sidebar {
-    background-color: #fff !important;
-    border-left: 1px solid #e2e8f0 !important;
-}
-
-.fi-sidebar-item-button {
-    border-radius: 12px !important;
-    margin-inline: 0.5rem !important;
-    padding-inline: 1rem !important;
-    transition: all 0.2s ease !important;
-}
-
-.fi-sidebar-group-label {
-    font-weight: 800 !important;
-    letter-spacing: 0 !important;
-    color: #64748b !important;
-    margin-top: 1.5rem !important;
-}
-
-/* ── خشتەکان (Tables) ── */
-.fi-ta-ctn {
-    border-radius: 20px !important;
-    border: 1px solid #e2e8f0 !important;
+/* ══ داخستنی سایدبار ══ */
+.fi-sidebar,
+.fi-sidebar-nav,
+aside.fi-sidebar,
+.fi-layout-sidebar,
+[class*="fi-sidebar"] {
+    display: none !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
     overflow: hidden !important;
+}
+
+/* ناوەرۆک تەواو پان بێت */
+.fi-body-scrollable,
+.fi-main-ctn,
+.fi-layout-sidebar-open .fi-main,
+.fi-layout .fi-main {
+    margin-inline-start: 0 !important;
+    padding-inline-start: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* لینکەکانی ناڤبار */
+.fi-topbar-nav .fi-nav-group-label,
+.fi-topbar-nav .fi-nav-group-item-label {
+    font-size: .82rem !important;
+    font-weight: 700 !important;
+}
+
+/* دراپداون ناڤبار */
+.fi-dropdown-panel {
+    border-radius: 14px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 8px 30px rgba(0,0,0,.1) !important;
+    overflow: hidden !important;
+}
+.fi-dropdown-list-item-label { font-size: .84rem !important; font-weight: 600 !important; }
+
+/* ══ ناوەرۆکی سەرەکی ══ */
+.fi-main { background-color: #f1f5f9 !important; }
+
+.fi-page-header {
+    border-bottom: 1px solid #e2e8f0 !important;
     background: #fff !important;
 }
+.fi-page-header-heading {
+    font-size: 1.1rem !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+}
 
+/* ══ کارتەکان/سێکشنەکان ══ */
+.fi-section,
+.fi-card,
+.fi-ta-ctn {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,.04) !important;
+    overflow: hidden !important;
+}
+
+.fi-section-header {
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+.fi-section-header-heading {
+    font-size: .9rem !important;
+    font-weight: 800 !important;
+    color: #1e293b !important;
+}
+
+/* ══ خشتەکان ══ */
 .fi-ta-header {
     background-color: #f8fafc !important;
     border-bottom: 1px solid #e2e8f0 !important;
 }
-
 .fi-ta-header-cell {
     font-weight: 700 !important;
     color: #475569 !important;
+    font-size: .8rem !important;
     text-transform: none !important;
+    letter-spacing: 0 !important;
 }
+.fi-ta-row {
+    border-bottom: 1px solid #f1f5f9 !important;
+    transition: background .15s !important;
+}
+.fi-ta-row:hover { background: #f8fafc !important; }
+.fi-ta-cell { font-size: .86rem !important; }
 
-/* ── فۆرمەکان ── */
-.fi-fo-field-wrp-label {
+/* ══ فۆرمەکان ══ */
+.fi-fo-field-wrp-label > label {
     font-weight: 700 !important;
+    font-size: .83rem !important;
     color: #334155 !important;
 }
+.fi-fo-helper-text,
+.fi-fo-field-wrp-hint-text { font-size: .76rem !important; color: #64748b !important; }
 
-input, select, textarea {
-    border-radius: 12px !important;
-    border-color: #e2e8f0 !important;
+input[type="text"], input[type="email"], input[type="number"],
+input[type="password"], input[type="url"], input[type="tel"],
+select, textarea {
+    border-radius: 10px !important;
+    border-color: #cbd5e1 !important;
+    font-size: .88rem !important;
+    transition: border-color .15s, box-shadow .15s !important;
 }
-
 input:focus, select:focus, textarea:focus {
-    border-color: var(--primary-600) !important;
-    ring-color: var(--primary-600) !important;
+    box-shadow: 0 0 0 3px rgba(var(--primary-500),.12) !important;
 }
 
-/* ── Topbar ── */
-.fi-topbar {
-    background-color: rgba(255, 255, 255, 0.8) !important;
-    backdrop-filter: blur(12px) !important;
-    border-bottom: 1px solid #e2e8f0 !important;
-}
-
-/* ── ئاراستەی سیدەبار لە RTL ── */
-@media (min-width: 1024px) {
-    .fi-sidebar {
-        right: 0 !important;
-        left: auto !important;
-        position: fixed !important;
-    }
-
-    .fi-main-ctn {
-        margin-left: 0 !important;
-        margin-right: var(--sidebar-width) !important;
-    }
-
-    .fi-sidebar-collapsed .fi-main-ctn {
-        margin-right: var(--collapsed-sidebar-width) !important;
-        margin-left: 0 !important;
-    }
-}
-
-/* ── چاککردنی ستوونی کردارەکان ── */
-.fi-ta-actions {
-    justify-content: flex-end !important;
-    gap: 0.5rem !important;
-}
-
+/* ══ دوگمەکان ══ */
 .fi-btn {
     border-radius: 10px !important;
     font-weight: 700 !important;
+    font-size: .83rem !important;
+    transition: opacity .15s, transform .1s !important;
+}
+.fi-btn:hover { opacity: .88 !important; }
+.fi-btn:active { transform: scale(.97) !important; }
+
+/* ══ بادجەکان ══ */
+.fi-badge {
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+    font-size: .75rem !important;
 }
 
-/* ── دۆخی تاریک (Dark Mode) ── */
-.dark .fi-sidebar { background-color: #0f172a !important; border-left-color: #1e293b !important; }
-.dark .fi-ta-ctn { background-color: #0f172a !important; border-color: #1e293b !important; }
-.dark .fi-ta-header { background-color: #1e293b !important; }
-.dark .fi-topbar { background-color: rgba(15, 23, 42, 0.8) !important; border-bottom-color: #1e293b !important; }
+/* ══ ئامارە خێراکان ══ */
+.fi-wi-stats-overview-stat {
+    border-radius: 16px !important;
+    border: 1px solid #e2e8f0 !important;
+    background: #fff !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04) !important;
+    transition: transform .2s, box-shadow .2s !important;
+}
+.fi-wi-stats-overview-stat:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,.08) !important;
+}
+.fi-wi-stats-overview-stat-label {
+    font-size: .8rem !important;
+    font-weight: 700 !important;
+    color: #64748b !important;
+}
+.fi-wi-stats-overview-stat-value {
+    font-size: 1.7rem !important;
+    font-weight: 800 !important;
+}
+
+/* ══ نۆتیفیکەیشن ══ */
+.fi-no {
+    border-radius: 14px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,.1) !important;
+}
+.fi-no-title { font-weight: 800 !important; }
+
+/* ══ مۆداڵ ══ */
+.fi-modal-window {
+    border-radius: 18px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 20px 60px rgba(0,0,0,.15) !important;
+}
+.fi-modal-header { border-bottom: 1px solid #f1f5f9 !important; }
+.fi-modal-heading { font-size: 1rem !important; font-weight: 800 !important; }
+
+/* ══ پاگینیشن ══ */
+.fi-pagination-item button {
+    border-radius: 9px !important;
+    font-weight: 700 !important;
+    font-size: .83rem !important;
+}
+
+/* ══ گلۆبەڵ سێرچ ══ */
+.fi-global-search-field {
+    border-radius: 12px !important;
+    border-color: #e2e8f0 !important;
+    background: #f8fafc !important;
+    font-size: .86rem !important;
+}
+
+/* ══ تابەکان ══ */
+.fi-tabs-tab {
+    font-weight: 700 !important;
+    font-size: .84rem !important;
+}
+
+/* ══ دۆخی تاریک ══ */
+.dark .fi-topbar { background: #0f172a !important; border-bottom-color: #1e293b !important; }
+.dark .fi-main { background: #060d1a !important; }
+.dark .fi-section, .dark .fi-card, .dark .fi-ta-ctn {
+    background: #0f172a !important; border-color: #1e293b !important;
+}
+.dark .fi-ta-header { background: #1e293b !important; border-bottom-color: #334155 !important; }
+.dark .fi-ta-row { border-bottom-color: #1e293b !important; }
+.dark .fi-ta-row:hover { background: #1e293b !important; }
+.dark .fi-page-header { background: #0f172a !important; border-color: #1e293b !important; }
+.dark .fi-page-header-heading { color: #f1f5f9 !important; }
+.dark .fi-section-header { border-color: #1e293b !important; }
+.dark .fi-section-header-heading { color: #e2e8f0 !important; }
+.dark .fi-fo-field-wrp-label > label { color: #cbd5e1 !important; }
+.dark input, .dark select, .dark textarea {
+    background: #1e293b !important; border-color: #334155 !important; color: #f1f5f9 !important;
+}
+.dark .fi-wi-stats-overview-stat { background: #0f172a !important; border-color: #1e293b !important; }
+.dark .fi-dropdown-panel { background: #0f172a !important; border-color: #1e293b !important; }
+.dark .fi-modal-window { background: #0f172a !important; border-color: #1e293b !important; }

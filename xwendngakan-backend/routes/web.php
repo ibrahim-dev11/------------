@@ -114,21 +114,26 @@ Route::prefix('portal')->name('portal.')->group(function () {
                 'desc_en'  => 'nullable|string',
                 'desc_ar'  => 'nullable|string',
                 'web'      => 'nullable|url|max:255',
-                'colleges'         => 'nullable|array',
-                'colleges.*'       => 'nullable|string|max:255',
-                'depts'            => 'nullable|array',
-                'depts.*'          => 'nullable|string|max:255',
-                'tuition_dept'     => 'nullable|array',
-                'tuition_fee'      => 'nullable|array',
-                'tuition_discount' => 'nullable|array',
+                'clg'                    => 'nullable|array',
+                'clg.*.name'             => 'nullable|string|max:255',
+                'clg.*.fee'              => 'nullable|string|max:50',
+                'clg.*.discount'         => 'nullable|string|max:20',
+                'clg.*.depts'            => 'nullable|array',
+                'clg.*.depts.*.name'     => 'nullable|string|max:255',
+                'clg.*.depts.*.fee'      => 'nullable|string|max:50',
+                'clg.*.depts.*.discount' => 'nullable|string|max:20',
+                'simple_dept'            => 'nullable|array',
+                'simple_dept.*'          => 'nullable|string|max:255',
+                'simple_fee'             => 'nullable|array',
+                'simple_discount'        => 'nullable|array',
                 'fb'               => 'nullable|string|max:255',
                 'ig'       => 'nullable|string|max:255',
                 'tg'       => 'nullable|string|max:255',
                 'wa'       => 'nullable|string|max:50',
                 'tk'       => 'nullable|string|max:255',
                 'yt'       => 'nullable|string|max:255',
-                'img'      => 'nullable|image|max:4096',
-                'logo'     => 'nullable|image|max:2048',
+                'img'      => 'nullable|image|max:10240',
+                'logo'     => 'nullable|image|max:10240',
             ]);
 
             if ($request->hasFile('img')) {
@@ -140,24 +145,55 @@ Route::prefix('portal')->name('portal.')->group(function () {
                 $data['logo'] = '/storage/' . $path;
             }
 
-            // Convert colleges[] array → newline string
-            $data['colleges'] = implode("\n", array_filter(array_map('trim', $data['colleges'] ?? [])));
-            $data['depts']    = implode("\n", array_filter(array_map('trim', $data['depts'] ?? [])));
+            // Build unified colleges JSON + tuition_plans from new nested form
+            $clgInput    = $data['clg'] ?? [];
+            $simpleDepts = $data['simple_dept'] ?? [];
+            $simpleFees  = $data['simple_fee'] ?? [];
+            $simpleDiscs = $data['simple_discount'] ?? [];
+            unset($data['clg'], $data['simple_dept'], $data['simple_fee'], $data['simple_discount']);
 
-            // Build tuition_plans JSON from parallel arrays
-            $tuitionDepts     = $data['tuition_dept'] ?? [];
-            $tuitionFees      = $data['tuition_fee'] ?? [];
-            $tuitionDiscounts = $data['tuition_discount'] ?? [];
-            unset($data['tuition_dept'], $data['tuition_fee'], $data['tuition_discount']);
+            $collegesJson = [];
             $tuitionPlans = [];
-            foreach ($tuitionDepts as $i => $dept) {
-                if (!empty(trim((string)$dept))) {
-                    $tuitionPlans[] = [
-                        'dept'     => trim((string)$dept),
-                        'fee'      => trim((string)($tuitionFees[$i] ?? '')),
-                        'discount' => trim((string)($tuitionDiscounts[$i] ?? '')),
+            $allDeptNames = [];
+
+            if (!empty($clgInput)) {
+                // Mode 1: has colleges (universities, institutes)
+                foreach (array_values($clgInput) as $col) {
+                    $colName = trim((string)($col['name'] ?? ''));
+                    if (!$colName) continue;
+                    $depts = [];
+                    foreach (array_values($col['depts'] ?? []) as $dept) {
+                        $dn = trim((string)($dept['name'] ?? ''));
+                        if (!$dn) continue;
+                        $fee  = trim((string)($dept['fee'] ?? ''));
+                        $disc = trim((string)($dept['discount'] ?? ''));
+                        $depts[]        = ['name' => $dn, 'fee' => $fee, 'discount' => $disc];
+                        $allDeptNames[] = $dn;
+                        $tuitionPlans[] = ['dept' => $dn, 'fee' => $fee, 'discount' => $disc];
+                    }
+                    $collegesJson[] = [
+                        'name'     => $colName,
+                        'fee'      => trim((string)($col['fee'] ?? '')),
+                        'discount' => trim((string)($col['discount'] ?? '')),
+                        'depts'    => $depts,
                     ];
                 }
+                $data['colleges'] = json_encode($collegesJson, JSON_UNESCAPED_UNICODE);
+                $data['depts']    = implode("\n", $allDeptNames);
+            } else {
+                // Mode 2: simple depts (schools etc.)
+                foreach ($simpleDepts as $i => $dn) {
+                    $dn = trim((string)$dn);
+                    if (!$dn) continue;
+                    $allDeptNames[] = $dn;
+                    $tuitionPlans[] = [
+                        'dept'     => $dn,
+                        'fee'      => trim((string)($simpleFees[$i] ?? '')),
+                        'discount' => trim((string)($simpleDiscs[$i] ?? '')),
+                    ];
+                }
+                $data['colleges'] = '';
+                $data['depts']    = implode("\n", $allDeptNames);
             }
             $data['tuition_plans'] = json_encode($tuitionPlans, JSON_UNESCAPED_UNICODE);
 

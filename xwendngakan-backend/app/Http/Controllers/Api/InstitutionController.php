@@ -79,8 +79,8 @@ class InstitutionController extends Controller
         $request->validate([
             'nku'  => 'required|string|max:255',
             'type' => 'required|string',
-            'logo' => 'nullable|image|max:3072',
-            'img'  => 'nullable|image|max:5120',
+            'logo' => 'nullable|image|max:10240',
+            'img'  => 'nullable|image|max:10240',
         ]);
 
         $data = $request->except(['logo', 'img', 'kgAge', 'kgHours']);
@@ -151,7 +151,7 @@ class InstitutionController extends Controller
 
         // Handle logo file upload on update
         if ($request->hasFile('logo')) {
-            $request->validate(['logo' => 'image|max:3072']);
+            $request->validate(['logo' => 'image|max:10240']);
             $file = $request->file('logo');
             $filename = 'logos/' . uniqid() . '.png';
 
@@ -170,7 +170,7 @@ class InstitutionController extends Controller
         
         // Handle main image update
         if ($request->hasFile('img')) {
-            $request->validate(['img' => 'image|max:5120']);
+            $request->validate(['img' => 'image|max:10240']);
             $file = $request->file('img');
             $filename = 'logos/' . uniqid() . '_img.webp';
 
