@@ -27,7 +27,7 @@ class InstitutionResource extends Resource
 
     protected static ?string $pluralModelLabel = 'خوێندنگاکان';
 
-    protected static ?string $navigationGroup = 'بەڕێوەبردن';
+    protected static ?string $navigationGroup = 'سەرەکی';
 
     protected static ?int $navigationSort = 1;
 
@@ -138,53 +138,34 @@ class InstitutionResource extends Resource
                     ])->columns(2)->collapsible(),
 
                 // ─── ٢. بەشەکان ───
-                Forms\Components\Section::make('بەشەکان')
-                    ->description('کۆلێژ و بەش و لقەکان')
+                Forms\Components\Section::make('بەش و لقەکان')
+                    ->description('بەشەکان و لقەکانی دامەزراوەکە')
                     ->icon('heroicon-o-building-library')
                     ->schema([
                         Forms\Components\Repeater::make('colleges_data')
                             ->label('')
                             ->schema([
                                 Forms\Components\TextInput::make('name')
-                                    ->label(fn (Forms\Get $get): string =>
-                                        in_array($get('../../type'), ['gov', 'priv', 'eve_uni'])
-                                            ? 'ناوی کۆلێژ'
-                                            : 'ناوی بەش'
-                                    )
+                                    ->label('ناوی بەش')
                                     ->required()
                                     ->maxLength(255)
                                     ->prefixIcon('heroicon-o-building-library'),
                                 Forms\Components\Repeater::make('departments')
-                                    ->label(fn (Forms\Get $get): string =>
-                                        in_array($get('../../type'), ['gov', 'priv', 'eve_uni'])
-                                            ? 'بەشەکان'
-                                            : 'لقەکان'
-                                    )
+                                    ->label('لقەکان')
+                                    ->visible(fn (Forms\Get $get): bool => $get('../../type') !== 'inst2')
                                     ->simple(
                                         Forms\Components\TextInput::make('dept_name')
-                                            ->placeholder(fn (Forms\Get $get): string =>
-                                                in_array($get('../../../../type'), ['gov', 'priv', 'eve_uni'])
-                                                    ? 'ناوی بەش...'
-                                                    : 'ناوی لق...'
-                                            )
+                                            ->placeholder('ناوی لق...')
                                             ->required()
                                             ->maxLength(255),
                                     )
-                                    ->addActionLabel(fn (Forms\Get $get): string =>
-                                        in_array($get('../../type'), ['gov', 'priv', 'eve_uni'])
-                                            ? 'زیادکردنی بەش'
-                                            : 'زیادکردنی لق'
-                                    )
+                                    ->addActionLabel('زیادکردنی لق')
                                     ->defaultItems(0)
                                     ->columnSpanFull(),
                             ])
                             ->columns(1)
                             ->itemLabel(fn (array $state): ?string => $state['name'] ?? null)
-                            ->addActionLabel(fn (Forms\Get $get): string =>
-                                in_array($get('type'), ['gov', 'priv', 'eve_uni'])
-                                    ? 'زیادکردنی کۆلێژ'
-                                    : 'زیادکردنی بەش'
-                            )
+                            ->addActionLabel('زیادکردنی بەش')
                             ->collapsible()
                             ->defaultItems(0)
                             ->columnSpanFull(),
@@ -342,21 +323,22 @@ class InstitutionResource extends Resource
             ->filtersFormColumns(3)
             ->filtersLayout(Tables\Enums\FiltersLayout::AboveContent)
             ->actions([
+                Tables\Actions\Action::make('toggleApproval')
+                    ->label(fn (Institution $record) => $record->approved ? 'ڕەتکردنەوە' : 'پەسەندکردن')
+                    ->icon(fn (Institution $record) => $record->approved ? 'heroicon-m-x-circle' : 'heroicon-m-check-circle')
+                    ->color(fn (Institution $record) => $record->approved ? 'danger' : 'success')
+                    ->button()
+                    ->requiresConfirmation()
+                    ->action(function (Institution $record) {
+                        $record->update(['approved' => !$record->approved]);
+                        \Filament\Notifications\Notification::make()
+                            ->title($record->approved ? 'پەسەندکرا' : 'ڕەتکرایەوە')
+                            ->success()
+                            ->send();
+                    }),
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make()->label('بینین'),
                     Tables\Actions\EditAction::make()->label('دەستکاری'),
-                    Tables\Actions\Action::make('toggleApproval')
-                        ->label(fn (Institution $record) => $record->approved ? 'ڕەتکردنەوە' : 'پەسەندکردن')
-                        ->icon(fn (Institution $record) => $record->approved ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle')
-                        ->color(fn (Institution $record) => $record->approved ? 'danger' : 'success')
-                        ->requiresConfirmation()
-                        ->action(function (Institution $record) {
-                            $record->update(['approved' => !$record->approved]);
-                            Notification::make()
-                                ->title($record->approved ? 'پەسەندکرا' : 'ڕەتکرایەوە')
-                                ->success()
-                                ->send();
-                        }),
                     Tables\Actions\DeleteAction::make()->label('سڕینەوە'),
                 ])->tooltip('کردارەکان'),
             ])

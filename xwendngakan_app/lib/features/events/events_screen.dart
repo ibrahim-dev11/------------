@@ -41,8 +41,13 @@ class _EventsScreenState extends State<EventsScreen>
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkBg : const Color(0xFFF8F9FA),
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
+      body: RefreshIndicator(
+        onRefresh: () async => prov.fetchEvents(refresh: true),
+        color: AppColors.primary,
+        edgeOffset: 120,
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics()),
         slivers: [
           // Header
           SliverToBoxAdapter(
@@ -102,6 +107,7 @@ class _EventsScreenState extends State<EventsScreen>
             ),
         ],
       ),
+      )
     );
   }
 

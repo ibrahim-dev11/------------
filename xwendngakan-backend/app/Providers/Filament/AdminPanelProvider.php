@@ -45,10 +45,10 @@ class AdminPanelProvider extends PanelProvider
                 fn (): string => '<link rel="stylesheet" href="' . asset('css/filament-custom.css?v=7.0.0') . '">'
             )
             ->navigationGroups([
-                'بەڕێوەبردن',
-                'سیستەم',
+                'سەرەکی',
+                'داواکارییەکان',
+                'هەموو بابەتەکان',
             ])
-            ->sidebarCollapsibleOnDesktop()
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

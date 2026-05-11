@@ -9,9 +9,9 @@ class Institution extends Model
 {
     protected $fillable = [
         'user_id', 'nku', 'nen', 'nar', 'type', 'country', 'city',
-        'web', 'phone', 'email', 'addr', 'desc',
+        'web', 'phone', 'email', 'addr', 'desc', 'desc_en', 'desc_ar',
         'lat', 'lng',
-        'colleges', 'depts',
+        'colleges', 'depts', 'tuition_plans',
         'fee', 'meal', 'uniform', 'books', 'level',
         'kg_fee', 'kg_meal', 'kg_uniform', 'kg_age', 'kg_hours',
         'fb', 'ig', 'tg', 'wa', 'tk', 'yt',
@@ -21,7 +21,8 @@ class Institution extends Model
     ];
 
     protected $casts = [
-        'approved' => 'boolean',
+        'approved'       => 'boolean',
+        'tuition_plans'  => 'array',
         'lat' => 'double',
         'lng' => 'double',
         'founded_year' => 'integer',

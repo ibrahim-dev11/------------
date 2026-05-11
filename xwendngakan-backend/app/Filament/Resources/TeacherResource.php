@@ -25,7 +25,7 @@ class TeacherResource extends Resource
 
     protected static ?string $pluralModelLabel = 'مامۆستاکان';
 
-    protected static ?string $navigationGroup = 'بەڕێوەبردن';
+    protected static ?string $navigationGroup = 'هەموو بابەتەکان';
 
     protected static ?int $navigationSort = 3;
 

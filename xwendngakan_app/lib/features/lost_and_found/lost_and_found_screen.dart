@@ -141,8 +141,15 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
                         ],
                       ),
                     )
-                  : ListView.builder(
-                      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 100),
+                  : RefreshIndicator(
+                      onRefresh: () async {
+                        await Future.delayed(const Duration(seconds: 1));
+                        setState(() {});
+                      },
+                      color: AppColors.primary,
+                      child: ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 100),
                       itemCount: _filteredItems.length,
                       itemBuilder: (context, index) {
                         final item = _filteredItems[index];
@@ -247,6 +254,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
                     ),
             ),
           ),
+          )
         ],
       ),
     );

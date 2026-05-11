@@ -25,7 +25,7 @@ class CvResource extends Resource
 
     protected static ?string $pluralModelLabel = 'CVکان';
 
-    protected static ?string $navigationGroup = 'بەڕێوەبردن';
+    protected static ?string $navigationGroup = 'هەموو بابەتەکان';
 
     protected static ?int $navigationSort = 2;
 
@@ -215,20 +215,21 @@ class CvResource extends Resource
                     ]),
             ])
             ->actions([
+                Tables\Actions\Action::make('toggleReview')
+                    ->label(fn ($record) => $record->is_reviewed ? 'نەپشکنینکراو' : 'پشکنینکراو')
+                    ->icon(fn ($record) => $record->is_reviewed ? 'heroicon-m-x-circle' : 'heroicon-m-check-circle')
+                    ->color(fn ($record) => $record->is_reviewed ? 'danger' : 'success')
+                    ->button()
+                    ->action(function ($record) {
+                        $record->update(['is_reviewed' => !$record->is_reviewed]);
+                        Notification::make()
+                            ->title($record->is_reviewed ? 'وەک پشکنینکراو نیشانکرا' : 'وەک نەپشکنینکراو نیشانکرا')
+                            ->success()
+                            ->send();
+                    }),
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
-                    Tables\Actions\Action::make('toggleReview')
-                        ->label(fn ($record) => $record->is_reviewed ? 'نەپشکنینکراو' : 'پشکنینکراو')
-                        ->icon(fn ($record) => $record->is_reviewed ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle')
-                        ->color(fn ($record) => $record->is_reviewed ? 'danger' : 'success')
-                        ->action(function ($record) {
-                            $record->update(['is_reviewed' => !$record->is_reviewed]);
-                            Notification::make()
-                                ->title($record->is_reviewed ? 'وەک پشکنینکراو نیشانکرا' : 'وەک نەپشکنینکراو نیشانکرا')
-                                ->success()
-                                ->send();
-                        }),
                     Tables\Actions\DeleteAction::make(),
                 ]),
             ])

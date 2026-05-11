@@ -12,7 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->redirectGuestsTo(fn () => route('portal.login'));
+        $middleware->alias([
+            'approved' => \App\Http\Middleware\ApprovedUser::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -18,9 +18,9 @@ class TeacherRequestResource extends Resource
     protected static ?string $model = TeacherRequest::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
-    protected static ?string $navigationGroup = 'Users & Requests';
-    protected static ?string $modelLabel = 'Teacher Request';
-    protected static ?string $pluralModelLabel = 'Teacher Requests';
+    protected static ?string $navigationGroup = 'خزمەتگوزاری';
+    protected static ?string $modelLabel = 'داواکاری مامۆستا';
+    protected static ?string $pluralModelLabel = 'داواکارییەکانی مامۆستا';
 
     public static function form(Form $form): Form
     {

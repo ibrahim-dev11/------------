@@ -38,11 +38,15 @@ class InstitutionType extends Model
         'icon',
         'sort_order',
         'is_active',
+        'has_colleges',
+        'has_departments',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean',
-        'sort_order' => 'integer',
+        'is_active'       => 'boolean',
+        'sort_order'      => 'integer',
+        'has_colleges'    => 'boolean',
+        'has_departments' => 'boolean',
     ];
 
     public function scopeActive($query)

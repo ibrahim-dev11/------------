@@ -22,7 +22,7 @@ class InstitutionTypeResource extends Resource
 
     protected static ?string $pluralModelLabel = 'جۆرەکانی دامەزراوە';
 
-    protected static ?string $navigationGroup = 'بەڕێوەبردن';
+    protected static ?string $navigationGroup = 'هەموو بابەتەکان';
 
     protected static ?int $navigationSort = 3;
 
@@ -42,6 +42,16 @@ class InstitutionTypeResource extends Resource
                 Forms\Components\TextInput::make('name_ar')
                     ->label('عەرەبی')
                     ->maxLength(255),
+
+                Forms\Components\Toggle::make('has_colleges')
+                    ->label('کۆلێژ هەیە؟ (زانکۆ)')
+                    ->helperText('ئەگەر چالاک بێت، فیلدی ناوی کۆلێژەکان نیشان دەدرێت')
+                    ->default(false),
+
+                Forms\Components\Toggle::make('has_departments')
+                    ->label('بەش هەیە؟ (پەیمانگا / زانکۆ)')
+                    ->helperText('ئەگەر چالاک بێت، فیلدی ناوی بەشەکان نیشان دەدرێت')
+                    ->default(false),
             ]);
     }
 

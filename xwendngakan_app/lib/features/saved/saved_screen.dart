@@ -20,7 +20,14 @@ class SavedScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkBg : const Color(0xFFF8F7FF),
-      body: CustomScrollView(
+      body: RefreshIndicator(
+        onRefresh: () async =>
+            Provider.of<InstitutionsProvider>(context, listen: false)
+                .fetchInstitutions(refresh: true),
+        color: AppColors.primary,
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics()),
         slivers: [
           // ── AppBar ──────────────────────────────
           SliverAppBar(
@@ -85,6 +92,7 @@ class SavedScreen extends StatelessWidget {
           const SliverToBoxAdapter(child: SizedBox(height: 100)),
         ],
       ),
+      )  
     );
   }
 }

@@ -23,7 +23,6 @@ class _TeachersScreenState extends State<TeachersScreen> {
   String? _selectedType;
   String? _selectedCity;
 
-
   @override
   void initState() {
     super.initState();
@@ -57,10 +56,9 @@ class _TeachersScreenState extends State<TeachersScreen> {
     // Behance-Style Dynamic Filtering and Sorting
     var displayTeachers = prov.teachers;
 
-
-
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF111827) : const Color(0xFFF8FAFC),
+      backgroundColor:
+          isDark ? const Color(0xFF111827) : const Color(0xFFF8FAFC),
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: RefreshIndicator(
@@ -68,7 +66,8 @@ class _TeachersScreenState extends State<TeachersScreen> {
           color: AppColors.primary,
           child: CustomScrollView(
             controller: _scrollCtrl,
-            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+            physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics()),
             slivers: [
               // ── BEHANCE-LEVEL ARTISTIC APP BAR ──
               SliverToBoxAdapter(
@@ -127,7 +126,8 @@ class _TeachersScreenState extends State<TeachersScreen> {
                                   Container(
                                     padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.15),
+                                      color:
+                                          Colors.white.withValues(alpha: 0.15),
                                       borderRadius: BorderRadius.circular(16),
                                     ),
                                     child: const Icon(
@@ -138,10 +138,11 @@ class _TeachersScreenState extends State<TeachersScreen> {
                                   ),
                                   const SizedBox(width: 14),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        l.teachers, 
+                                        l.teachers,
                                         style: const TextStyle(
                                           fontSize: 22,
                                           fontWeight: FontWeight.w900,
@@ -151,7 +152,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
                                         ),
                                       ),
                                       const SizedBox(height: 2),
-                                       Text(
+                                      Text(
                                         l.teachersSubtitle,
                                         style: TextStyle(
                                           fontSize: 12,
@@ -169,13 +170,17 @@ class _TeachersScreenState extends State<TeachersScreen> {
                               // Floating pill search bar
                               Container(
                                 height: 54,
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
                                 decoration: BoxDecoration(
-                                  color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                                  color: isDark
+                                      ? const Color(0xFF1E1E1E)
+                                      : Colors.white,
                                   borderRadius: BorderRadius.circular(30),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
+                                      color: Colors.black.withValues(
+                                          alpha: isDark ? 0.2 : 0.05),
                                       blurRadius: 15,
                                       offset: const Offset(0, 5),
                                     ),
@@ -185,50 +190,61 @@ class _TeachersScreenState extends State<TeachersScreen> {
                                   children: [
                                     Icon(
                                       Icons.search_rounded,
-                                      color: isDark ? Colors.white54 : AppColors.primaryLight,
+                                      color: isDark
+                                          ? Colors.white54
+                                          : AppColors.primaryLight,
                                       size: 22,
                                     ),
                                     const SizedBox(width: 12),
-                                     Expanded(
-                                       child: TextField(
-                                         controller: _searchCtrl,
-                                         onChanged: (v) => prov.setSearch(v),
-                                         style: TextStyle(
-                                           fontSize: 14.5,
-                                           fontWeight: FontWeight.w600,
-                                           fontFamily: 'NotoSansArabic',
-                                           color: isDark ? Colors.white : const Color(0xFF1F2937),
-                                         ),
-                                         decoration: InputDecoration(
-                                           hintText: l.searchTeacherHint,
-                                           hintStyle: const TextStyle(
-                                             fontSize: 13.5,
-                                             fontWeight: FontWeight.w500,
-                                             fontFamily: 'NotoSansArabic',
-                                             color: Colors.grey,
-                                           ),
-                                           border: InputBorder.none,
-                                           focusedBorder: InputBorder.none,
-                                           enabledBorder: InputBorder.none,
-                                           errorBorder: InputBorder.none,
-                                           disabledBorder: InputBorder.none,
-                                           contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                                           isDense: true,
-                                         ),
-                                       ),
-                                     ),
+                                    Expanded(
+                                      child: TextField(
+                                        controller: _searchCtrl,
+                                        onChanged: (v) => prov.setSearch(v),
+                                        style: TextStyle(
+                                          fontSize: 14.5,
+                                          fontWeight: FontWeight.w600,
+                                          fontFamily: 'NotoSansArabic',
+                                          color: isDark
+                                              ? Colors.white
+                                              : const Color(0xFF1F2937),
+                                        ),
+                                        decoration: InputDecoration(
+                                          hintText: l.searchTeacherHint,
+                                          hintStyle: const TextStyle(
+                                            fontSize: 13.5,
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: 'NotoSansArabic',
+                                            color: Colors.grey,
+                                          ),
+                                          border: InputBorder.none,
+                                          focusedBorder: InputBorder.none,
+                                          enabledBorder: InputBorder.none,
+                                          errorBorder: InputBorder.none,
+                                          disabledBorder: InputBorder.none,
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 10),
+                                          isDense: true,
+                                        ),
+                                      ),
+                                    ),
                                     const SizedBox(width: 8),
                                     GestureDetector(
                                       onTap: () => _showCityFilter(context, l),
                                       child: Container(
                                         padding: const EdgeInsets.all(8),
                                         decoration: BoxDecoration(
-                                          color: isDark ? const Color(0xFF2C2C2C) : const Color(0xFFF1F5F9),
-                                          borderRadius: BorderRadius.circular(20),
+                                          color: isDark
+                                              ? const Color(0xFF2C2C2C)
+                                              : const Color(0xFFF1F5F9),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
                                         ),
                                         child: Icon(
                                           Icons.tune_rounded,
-                                          color: isDark ? Colors.white70 : AppColors.primary,
+                                          color: isDark
+                                              ? Colors.white70
+                                              : AppColors.primary,
                                           size: 18,
                                         ),
                                       ),
@@ -262,42 +278,63 @@ class _TeachersScreenState extends State<TeachersScreen> {
                             _buildPremiumChip(
                               l.allFilter,
                               _selectedType == null,
-                              () { setState(() { _selectedType = null; }); prov.setFilter(type: ''); },
+                              () {
+                                setState(() {
+                                  _selectedType = null;
+                                });
+                                prov.setFilter(type: '');
+                              },
                               isDark,
                               Icons.grid_view_rounded,
                             ),
                             _buildPremiumChip(
                               l.typeUniversity,
                               _selectedType == 'university',
-                              () { setState(() { _selectedType = 'university'; }); prov.setFilter(type: 'university'); },
+                              () {
+                                setState(() {
+                                  _selectedType = 'university';
+                                });
+                                prov.setFilter(type: 'university');
+                              },
                               isDark,
                               Icons.school_rounded,
                             ),
                             _buildPremiumChip(
                               l.typeSchool,
                               _selectedType == 'school',
-                              () { setState(() { _selectedType = 'school'; }); prov.setFilter(type: 'school'); },
+                              () {
+                                setState(() {
+                                  _selectedType = 'school';
+                                });
+                                prov.setFilter(type: 'school');
+                              },
                               isDark,
                               Icons.menu_book_rounded,
                             ),
                           ],
                         ),
                       ),
-                      
+
                       // Selected City Badge
                       if (_selectedCity != null) ...[
                         const SizedBox(height: 16),
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 8),
                               decoration: BoxDecoration(
-                                color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                                color: isDark
+                                    ? const Color(0xFF1E1E1E)
+                                    : Colors.white,
                                 borderRadius: BorderRadius.circular(14),
-                                border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+                                border: Border.all(
+                                    color: AppColors.primary
+                                        .withValues(alpha: 0.3)),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.primary.withValues(alpha: 0.04),
+                                    color: AppColors.primary
+                                        .withValues(alpha: 0.04),
                                     blurRadius: 8,
                                     offset: const Offset(0, 4),
                                   ),
@@ -306,12 +343,15 @@ class _TeachersScreenState extends State<TeachersScreen> {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.location_on_rounded, size: 16, color: AppColors.primary),
+                                  const Icon(Icons.location_on_rounded,
+                                      size: 16, color: AppColors.primary),
                                   const SizedBox(width: 8),
                                   Text(
                                     _selectedCity!,
                                     style: TextStyle(
-                                      color: isDark ? Colors.white : const Color(0xFF1F2937),
+                                      color: isDark
+                                          ? Colors.white
+                                          : const Color(0xFF1F2937),
                                       fontSize: 13,
                                       fontFamily: 'NotoSansArabic',
                                       fontWeight: FontWeight.w700,
@@ -327,10 +367,13 @@ class _TeachersScreenState extends State<TeachersScreen> {
                                     child: Container(
                                       padding: const EdgeInsets.all(3),
                                       decoration: BoxDecoration(
-                                        color: isDark ? const Color(0xFF2C2C2C) : const Color(0xFFF1F5F9),
+                                        color: isDark
+                                            ? const Color(0xFF2C2C2C)
+                                            : const Color(0xFFF1F5F9),
                                         shape: BoxShape.circle,
                                       ),
-                                      child: const Icon(Icons.close_rounded, size: 12, color: AppColors.textGrey),
+                                      child: const Icon(Icons.close_rounded,
+                                          size: 12, color: AppColors.textGrey),
                                     ),
                                   ),
                                 ],
@@ -352,7 +395,10 @@ class _TeachersScreenState extends State<TeachersScreen> {
                         delegate: SliverChildBuilderDelegate(
                           (_, __) => const Padding(
                             padding: EdgeInsets.only(bottom: 16),
-                            child: ShimmerBox(width: double.infinity, height: 140, borderRadius: 24),
+                            child: ShimmerBox(
+                                width: double.infinity,
+                                height: 140,
+                                borderRadius: 24),
                           ),
                           childCount: 6,
                         ),
@@ -373,16 +419,20 @@ class _TeachersScreenState extends State<TeachersScreen> {
                                 if (i >= displayTeachers.length) {
                                   return const Padding(
                                     padding: EdgeInsets.all(24),
-                                    child: Center(child: CircularProgressIndicator(color: AppColors.primary)),
+                                    child: Center(
+                                        child: CircularProgressIndicator(
+                                            color: AppColors.primary)),
                                   );
                                 }
                                 return TeacherCard(
                                   teacher: displayTeachers[i],
                                   lang: lang,
-                                  onTap: () => context.push('/teachers/${displayTeachers[i].id}'),
+                                  onTap: () => context.push(
+                                      '/teachers/${displayTeachers[i].id}'),
                                 );
                               },
-                              childCount: displayTeachers.length + (prov.hasMore ? 1 : 0),
+                              childCount: displayTeachers.length +
+                                  (prov.hasMore ? 1 : 0),
                             ),
                           ),
               ),
@@ -393,7 +443,8 @@ class _TeachersScreenState extends State<TeachersScreen> {
     );
   }
 
-  Widget _buildPremiumChip(String label, bool selected, VoidCallback onTap, bool isDark, IconData icon) {
+  Widget _buildPremiumChip(String label, bool selected, VoidCallback onTap,
+      bool isDark, IconData icon) {
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
@@ -406,7 +457,9 @@ class _TeachersScreenState extends State<TeachersScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
           gradient: selected ? AppColors.primaryGradient : null,
-          color: selected ? null : (isDark ? const Color(0xFF262626) : const Color(0xFFEDF2F7)),
+          color: selected
+              ? null
+              : (isDark ? const Color(0xFF262626) : const Color(0xFFEDF2F7)),
           borderRadius: BorderRadius.circular(16),
           boxShadow: selected
               ? [
@@ -424,13 +477,17 @@ class _TeachersScreenState extends State<TeachersScreen> {
             Icon(
               icon,
               size: 16,
-              color: selected ? Colors.white : (isDark ? Colors.white70 : const Color(0xFF4B5563)),
+              color: selected
+                  ? Colors.white
+                  : (isDark ? Colors.white70 : const Color(0xFF4B5563)),
             ),
             const SizedBox(width: 8),
             Text(
               label,
               style: TextStyle(
-                color: selected ? Colors.white : (isDark ? Colors.white70 : const Color(0xFF4B5563)),
+                color: selected
+                    ? Colors.white
+                    : (isDark ? Colors.white70 : const Color(0xFF4B5563)),
                 fontSize: 12.5,
                 fontWeight: selected ? FontWeight.w900 : FontWeight.w700,
                 fontFamily: 'NotoSansArabic',
@@ -483,16 +540,25 @@ class _TeachersScreenState extends State<TeachersScreen> {
                       Navigator.pop(context);
                     },
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 18, vertical: 10),
                       decoration: BoxDecoration(
                         gradient: sel ? AppColors.primaryGradient : null,
-                        color: sel ? null : (isDark ? const Color(0xFF2C2C2C) : const Color(0xFFF1F5F9)),
+                        color: sel
+                            ? null
+                            : (isDark
+                                ? const Color(0xFF2C2C2C)
+                                : const Color(0xFFF1F5F9)),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: Text(
                         city,
                         style: TextStyle(
-                          color: sel ? Colors.white : (isDark ? Colors.white70 : const Color(0xFF4B5563)),
+                          color: sel
+                              ? Colors.white
+                              : (isDark
+                                  ? Colors.white70
+                                  : const Color(0xFF4B5563)),
                           fontSize: 13,
                           fontWeight: FontWeight.w800,
                           fontFamily: 'NotoSansArabic',

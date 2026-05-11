@@ -362,7 +362,7 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
                     ),
                   ),
                 ),
-                const SliverToBoxAdapter(child: SizedBox(height: 100)),
+                const SizedBox(height: 100),
               ],
             ),
           ),

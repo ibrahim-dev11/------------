@@ -82,204 +82,218 @@ class _HomeScreenState extends State<HomeScreen> {
     final isDark = theme.isDark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBg : AppColors.lightBg,
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          // Enhanced App Bar Header
-          SliverToBoxAdapter(
-            child: _buildHeader(context, l, auth, theme, isDark),
-          ),
-
-          const SliverToBoxAdapter(child: SizedBox(height: 24)),
-
-          // Ads Carousel
-          SliverToBoxAdapter(
-            child: AdsCarousel(isDark: isDark),
-          ),
-
-          const SliverToBoxAdapter(child: SizedBox(height: 24)),
-
-          // Categories / Filters Header
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      l.educationTypes,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                        fontFamily: 'NotoSansArabic',
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () => context.go('/institutions'),
-                    child: Text(
-                      l.seeAllShort,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primary,
-                        fontFamily: 'NotoSansArabic',
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+        backgroundColor: isDark ? AppColors.darkBg : AppColors.lightBg,
+        body: RefreshIndicator(
+          onRefresh: () async {
+            await prov.fetchStats();
+            await prov.fetchAppData();
+            await prov.fetchInstitutions(refresh: true);
+          },
+          color: AppColors.primary,
+          backgroundColor: Colors.white,
+          child: CustomScrollView(
+            physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
             ),
-          ),
-
-          const SliverToBoxAdapter(child: SizedBox(height: 16)),
-
-          // Ministries Row (Top Row)
-          SliverToBoxAdapter(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: [
-                  _buildParentFilterItem(
-                    key: 'all',
-                    name: l.allFilter,
-                    icon: Icons.grid_view_rounded,
-                    isDark: isDark,
-                  ),
-                  _buildParentFilterItem(
-                    key: 'mhe',
-                    name: l.higherEducation,
-                    icon: Icons.account_balance_rounded,
-                    isDark: isDark,
-                  ),
-                  _buildParentFilterItem(
-                    key: 'moe',
-                    name: l.ministryOfEducation,
-                    icon: Icons.school_rounded,
-                    isDark: isDark,
-                  ),
-                  _buildParentFilterItem(
-                    key: 'others',
-                    name: l.otherInstitutions,
-                    icon: Icons.domain_rounded,
-                    isDark: isDark,
-                  ),
-                ],
+            slivers: [
+              // Enhanced App Bar Header
+              SliverToBoxAdapter(
+                child: _buildHeader(context, l, auth, theme, isDark),
               ),
-            ),
-          ),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 16)),
+              const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
-          // Sub Categories Row (Bottom Row)
-          if (_selectedParentFilter != 'all')
-            SliverToBoxAdapter(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: _getSubFilters(prov.institutionTypes).map((item) {
-                    return _buildSubFilterItem(
-                      item: item,
-                      isDark: isDark,
-                    );
-                  }).toList(),
-                ),
+              // Ads Carousel
+              SliverToBoxAdapter(
+                child: AdsCarousel(isDark: isDark),
               ),
-            ),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 32)),
+              const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
-          // Institutions Section Header
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                l.bestInstitutions,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  fontFamily: 'NotoSansArabic',
-                ),
-              ),
-            ),
-          ),
-
-          const SliverToBoxAdapter(child: SizedBox(height: 16)),
-
-          // Institutions List
-          if (prov.loading && prov.institutions.isEmpty)
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 0.76,
-                ),
-                delegate: SliverChildBuilderDelegate(
-                  (_, __) => const ShimmerBox(
-                    width: double.infinity,
-                    height: double.infinity,
-                    borderRadius: AppConstants.radiusLg,
-                  ),
-                  childCount: 4,
-                ),
-              ),
-            )
-          else if (prov.institutions.isEmpty)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(40),
-                child: Center(
+              // Categories / Filters Header
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    l.noInstitutionsFound,
-                    style: TextStyle(
-                      color: isDark ? AppColors.textGrey : AppColors.textMuted,
+                    l.educationTypes,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
                       fontFamily: 'NotoSansArabic',
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ),
-            )
-          else
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 0.76,
-                ),
-                delegate: SliverChildBuilderDelegate(
-                  (_, i) {
-                    final inst = prov.institutions[i];
-                    return InstitutionCard(
-                      institution: inst,
-                      lang: locale.locale.languageCode,
-                      isFavorite: prov.favorites.contains(inst.id),
-                      onFavorite: () => prov.toggleFavorite(inst.id),
-                      onTap: () => context.push('/institutions/${inst.id}'),
-                    );
-                  },
-                  childCount: prov.institutions.length,
+
+              const SliverToBoxAdapter(child: SizedBox(height: 16)),
+
+              // Ministries Row (Top Row)
+              SliverToBoxAdapter(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      _buildParentFilterItem(
+                        key: 'all',
+                        name: l.allFilter,
+                        icon: Icons.grid_view_rounded,
+                        isDark: isDark,
+                      ),
+                      _buildParentFilterItem(
+                        key: 'mhe',
+                        name: l.higherEducation,
+                        icon: Icons.account_balance_rounded,
+                        isDark: isDark,
+                      ),
+                      _buildParentFilterItem(
+                        key: 'moe',
+                        name: l.ministryOfEducation,
+                        icon: Icons.school_rounded,
+                        isDark: isDark,
+                      ),
+                      _buildParentFilterItem(
+                        key: 'others',
+                        name: l.otherInstitutions,
+                        icon: Icons.domain_rounded,
+                        isDark: isDark,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 100)),
-        ],
-      ),
-    );
+              const SliverToBoxAdapter(child: SizedBox(height: 16)),
+
+              // Sub Categories Row (Bottom Row)
+              if (_selectedParentFilter != 'all')
+                SliverToBoxAdapter(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children:
+                          _getSubFilters(prov.institutionTypes).map((item) {
+                        return _buildSubFilterItem(
+                          item: item,
+                          isDark: isDark,
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+
+              const SliverToBoxAdapter(child: SizedBox(height: 32)),
+
+              // Institutions Section Header
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          l.bestInstitutions,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            fontFamily: 'NotoSansArabic',
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => context.go('/institutions'),
+                        child: Text(
+                          l.seeAllShort,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.primary,
+                            fontFamily: 'NotoSansArabic',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SliverToBoxAdapter(child: SizedBox(height: 16)),
+
+              // Institutions List
+              if (prov.loading && prov.institutions.isEmpty)
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  sliver: SliverGrid(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                      childAspectRatio: 0.76,
+                    ),
+                    delegate: SliverChildBuilderDelegate(
+                      (_, __) => const ShimmerBox(
+                        width: double.infinity,
+                        height: double.infinity,
+                        borderRadius: AppConstants.radiusLg,
+                      ),
+                      childCount: 4,
+                    ),
+                  ),
+                )
+              else if (prov.institutions.isEmpty)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(40),
+                    child: Center(
+                      child: Text(
+                        l.noInstitutionsFound,
+                        style: TextStyle(
+                          color:
+                              isDark ? AppColors.textGrey : AppColors.textMuted,
+                          fontFamily: 'NotoSansArabic',
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              else
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  sliver: SliverGrid(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                      childAspectRatio: 0.76,
+                    ),
+                    delegate: SliverChildBuilderDelegate(
+                      (_, i) {
+                        final inst = prov.institutions[i];
+                        return InstitutionCard(
+                          institution: inst,
+                          lang: locale.locale.languageCode,
+                          isFavorite: prov.favorites.contains(inst.id),
+                          onFavorite: () => prov.toggleFavorite(inst.id),
+                          onTap: () => context.push('/institutions/${inst.id}'),
+                        );
+                      },
+                      childCount: prov.institutions.length,
+                    ),
+                  ),
+                ),
+
+              const SliverToBoxAdapter(child: SizedBox(height: 100)),
+            ],
+          ),
+        ));
   }
 
   Widget _buildHeader(BuildContext context, AppLocalizations l,
@@ -339,31 +353,34 @@ class _HomeScreenState extends State<HomeScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         // Logo
                         SizedBox(
-                          width: 80,
-                          height: 80,
+                          width: 90,
+                          height: 90,
                           child: Image.asset(
                             'assets/images/app_logo.png',
                             fit: BoxFit.contain,
+                            alignment: Alignment.centerRight,
                           ),
                         ),
-                
+                        const SizedBox(width: 4),
                         // Brand Name
-                        Expanded(
-                          child: Text(
-                            "Edu Book",
-                            style: TextStyle(
-                              fontSize: 26,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                              fontFamily: GoogleFonts.outfit().fontFamily,
-                              letterSpacing: -0.5,
-                            ),
+                        Text(
+                          "Edu Book",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                            fontFamily: GoogleFonts.outfit().fontFamily,
+                            letterSpacing: -0.5,
                           ),
                         ),
-                        // Action Buttons
+
+                        const Spacer(),
+
+                        // Action Buttons on the Right
                         Row(
                           children: [
                             _buildNotificationButton(context),

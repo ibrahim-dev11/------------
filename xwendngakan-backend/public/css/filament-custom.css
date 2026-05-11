@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════
-   خوێندنگاکانم — فیلامێنت کاستۆم CSS (Compact RTL)
+   خوێندنگاکانم — فیلامێنت کاستۆم CSS (Premium UI)
    ═══════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;500;600;700;800&display=swap');
@@ -13,27 +13,94 @@ html, body, .fi-body {
     direction: rtl !important;
     text-align: right !important;
     font-family: var(--font-family-main) !important;
+    background-color: #f8fafc !important;
 }
 
 * {
     font-family: var(--font-family-main) !important;
 }
 
-.fi-main-ctn {
-    padding: 0 !important;
+/* ── دیزاینی کارتەکان ── */
+.fi-wi-stats-overview-stat {
+    border-radius: 20px !important;
+    border: 1px solid rgba(0,0,0,0.05) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
 }
 
-.fi-main {
-    padding: 1.5rem !important;
+.fi-wi-stats-overview-stat:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08) !important;
 }
 
-/* ── Sidebar ── */
+/* ── سیدەبار (Sidebar) ── */
+.fi-sidebar {
+    background-color: #fff !important;
+    border-left: 1px solid #e2e8f0 !important;
+}
+
+.fi-sidebar-item-button {
+    border-radius: 12px !important;
+    margin-inline: 0.5rem !important;
+    padding-inline: 1rem !important;
+    transition: all 0.2s ease !important;
+}
+
+.fi-sidebar-group-label {
+    font-weight: 800 !important;
+    letter-spacing: 0 !important;
+    color: #64748b !important;
+    margin-top: 1.5rem !important;
+}
+
+/* ── خشتەکان (Tables) ── */
+.fi-ta-ctn {
+    border-radius: 20px !important;
+    border: 1px solid #e2e8f0 !important;
+    overflow: hidden !important;
+    background: #fff !important;
+}
+
+.fi-ta-header {
+    background-color: #f8fafc !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.fi-ta-header-cell {
+    font-weight: 700 !important;
+    color: #475569 !important;
+    text-transform: none !important;
+}
+
+/* ── فۆرمەکان ── */
+.fi-fo-field-wrp-label {
+    font-weight: 700 !important;
+    color: #334155 !important;
+}
+
+input, select, textarea {
+    border-radius: 12px !important;
+    border-color: #e2e8f0 !important;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--primary-600) !important;
+    ring-color: var(--primary-600) !important;
+}
+
+/* ── Topbar ── */
+.fi-topbar {
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(12px) !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+/* ── ئاراستەی سیدەبار لە RTL ── */
 @media (min-width: 1024px) {
     .fi-sidebar {
         right: 0 !important;
         left: auto !important;
         position: fixed !important;
-        height: 100vh !important;
     }
 
     .fi-main-ctn {
@@ -47,78 +114,19 @@ html, body, .fi-body {
     }
 }
 
-/* ── Topbar ── */
-.fi-topbar {
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 20 !important;
-}
-
-@media (min-width: 1024px) {
-    .fi-topbar {
-        right: var(--sidebar-width) !important;
-        left: 0 !important;
-        width: auto !important;
-    }
-
-    .fi-sidebar-collapsed .fi-topbar {
-        right: var(--collapsed-sidebar-width) !important;
-        left: 0 !important;
-    }
-}
-
-/* ── ناوەڕۆکی ناو Topbar ── */
-.fi-topbar-header {
-    display: flex !important;
-    flex-direction: row !important; /* وەک خۆی بێت چونکە direction: rtl هەیە */
-    justify-content: space-between !important;
-    padding-inline: 1rem !important;
-}
-
-/* پڕۆفایل و سێرچ */
-.fi-user-menu {
-    margin-right: 0 !important;
-    margin-left: 0 !important;
-}
-
-.fi-global-search {
-    margin-inline: 1rem !important;
-}
-
-/* ── ئایکۆنەکانی سیدەبار ── */
-.fi-sidebar-item-icon {
-    margin-left: 0.75rem !important;
-    margin-right: 0 !important;
-}
-
-/* ── خشتەکان (Tables) ── */
-.fi-ta-header-cell-label {
-    justify-content: flex-start !important;
-    text-align: right !important;
-}
-
-.fi-ta-cell {
-    text-align: right !important;
-}
-
-/* ── دوگمەکان و فۆرمەکان ── */
-.fi-fo-field-wrp-label {
-    margin-bottom: 0.25rem !important;
-}
-
-.fi-btn {
+/* ── چاککردنی ستوونی کردارەکان ── */
+.fi-ta-actions {
+    justify-content: flex-end !important;
     gap: 0.5rem !important;
 }
 
-/* ڕێگەگرتن لەوەی سیدەبار ناوەڕۆک بپۆشێت لە مۆبایل */
-@media (max-width: 1023px) {
-    .fi-sidebar {
-        right: 0 !important;
-        left: auto !important;
-        transform: translateX(100%) !important;
-    }
-    
-    .fi-sidebar-open .fi-sidebar {
-        transform: translateX(0) !important;
-    }
+.fi-btn {
+    border-radius: 10px !important;
+    font-weight: 700 !important;
 }
+
+/* ── دۆخی تاریک (Dark Mode) ── */
+.dark .fi-sidebar { background-color: #0f172a !important; border-left-color: #1e293b !important; }
+.dark .fi-ta-ctn { background-color: #0f172a !important; border-color: #1e293b !important; }
+.dark .fi-ta-header { background-color: #1e293b !important; }
+.dark .fi-topbar { background-color: rgba(15, 23, 42, 0.8) !important; border-bottom-color: #1e293b !important; }

@@ -44,8 +44,10 @@ class _NewsScreenState extends State<NewsScreen> {
 
   List<_FeedItem> _buildMixedItems(NewsProvider prov) {
     final list = <_FeedItem>[
-      ...prov.posts.map((p) => _FeedItem(post: p, isPost: true, createdAt: p.createdAt)),
-      ...prov.news.map((n) => _FeedItem(news: n, isPost: false, createdAt: n.createdAt)),
+      ...prov.posts
+          .map((p) => _FeedItem(post: p, isPost: true, createdAt: p.createdAt)),
+      ...prov.news.map(
+          (n) => _FeedItem(news: n, isPost: false, createdAt: n.createdAt)),
     ];
     list.sort((a, b) => (b.createdAt ?? '').compareTo(a.createdAt ?? ''));
     return list;
@@ -61,12 +63,14 @@ class _NewsScreenState extends State<NewsScreen> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
       child: Scaffold(
-        backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF8FAFC),
+        backgroundColor:
+            isDark ? const Color(0xFF121212) : const Color(0xFFF8FAFC),
         body: RefreshIndicator(
           onRefresh: () => prov.fetchAll(refresh: true),
           color: AppColors.primary,
           child: CustomScrollView(
-            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+            physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics()),
             slivers: [
               // ── BREATHTAKING GRADIENT APP BAR (Same style as Home Page Header) ──
               SliverToBoxAdapter(
@@ -152,7 +156,8 @@ class _NewsScreenState extends State<NewsScreen> {
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
-                                      color: Colors.white.withValues(alpha: 0.8),
+                                      color:
+                                          Colors.white.withValues(alpha: 0.8),
                                       fontFamily: 'NotoSansArabic',
                                     ),
                                   ),
@@ -211,7 +216,10 @@ class _NewsScreenState extends State<NewsScreen> {
                         delegate: SliverChildBuilderDelegate(
                           (_, __) => const Padding(
                             padding: EdgeInsets.only(bottom: 14),
-                            child: ShimmerBox(width: double.infinity, height: 180, borderRadius: 20),
+                            child: ShimmerBox(
+                                width: double.infinity,
+                                height: 180,
+                                borderRadius: 20),
                           ),
                           childCount: 4,
                         ),
@@ -244,7 +252,9 @@ class _NewsScreenState extends State<NewsScreen> {
                                           timeAgo: (s) => _timeAgo(s, l),
                                           officialNews: l.officialNews,
                                           newsTag: l.newsTag,
-                                          onTap: () => context.push('/news-detail', extra: item.news),
+                                          onTap: () => context.push(
+                                              '/news-detail',
+                                              extra: item.news),
                                         ),
                                 );
                               },
@@ -381,7 +391,9 @@ class _PostCard extends StatelessWidget {
             if (post.content.isNotEmpty)
               Padding(
                 padding: EdgeInsets.only(
-                    top: (post.title != null && post.title!.isNotEmpty) ? 6 : 10),
+                    top: (post.title != null && post.title!.isNotEmpty)
+                        ? 6
+                        : 10),
                 child: Text(
                   post.content,
                   maxLines: 2,
@@ -510,14 +522,18 @@ class _NewsCard extends StatelessWidget {
                         children: [
                           Icon(Icons.access_time_rounded,
                               size: 10,
-                              color: isDark ? AppColors.textGrey : AppColors.textMuted),
+                              color: isDark
+                                  ? AppColors.textGrey
+                                  : AppColors.textMuted),
                           const SizedBox(width: 4),
                           Text(
                             timeAgo(news.createdAt),
                             style: TextStyle(
                               fontSize: 11,
                               fontFamily: 'NotoSansArabic',
-                              color: isDark ? AppColors.textGrey : AppColors.textMuted,
+                              color: isDark
+                                  ? AppColors.textGrey
+                                  : AppColors.textMuted,
                             ),
                           ),
                         ],
@@ -526,7 +542,8 @@ class _NewsCard extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     color: AppColors.success.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),

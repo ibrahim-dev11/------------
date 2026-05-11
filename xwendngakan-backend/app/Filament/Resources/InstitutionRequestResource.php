@@ -17,7 +17,7 @@ class InstitutionRequestResource extends Resource
     protected static ?string $model = InstitutionRequest::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
-    protected static ?string $navigationGroup = 'بەڕێوەبردن';
+    protected static ?string $navigationGroup = 'دامەزراوەکان';
     protected static ?string $modelLabel = 'داواکاری دامەزراوە';
     protected static ?string $pluralModelLabel = 'داواکارییەکانی دامەزراوە';
 

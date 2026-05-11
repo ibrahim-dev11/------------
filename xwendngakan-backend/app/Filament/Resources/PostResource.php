@@ -25,7 +25,7 @@ class PostResource extends Resource
 
     protected static ?string $pluralModelLabel = 'پۆستەکان';
 
-    protected static ?string $navigationGroup = 'بەڕێوەبردن';
+    protected static ?string $navigationGroup = 'هەموو بابەتەکان';
 
     protected static ?int $navigationSort = 2;
 
@@ -134,20 +134,21 @@ class PostResource extends Resource
                     ->falseLabel('چاوەڕوان'),
             ])
             ->actions([
+                Tables\Actions\Action::make('toggleApproval')
+                    ->label(fn (Post $record) => $record->approved ? 'ڕەتکردنەوە' : 'پەسەندکردن')
+                    ->icon(fn (Post $record) => $record->approved ? 'heroicon-m-x-circle' : 'heroicon-m-check-circle')
+                    ->color(fn (Post $record) => $record->approved ? 'danger' : 'success')
+                    ->button()
+                    ->requiresConfirmation()
+                    ->action(function (Post $record) {
+                        $record->update(['approved' => !$record->approved]);
+                        \Filament\Notifications\Notification::make()
+                            ->title($record->approved ? 'پەسەندکرا' : 'ڕەتکرایەوە')
+                            ->success()
+                            ->send();
+                    }),
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\EditAction::make()->label('دەستکاری'),
-                    Tables\Actions\Action::make('toggleApproval')
-                        ->label(fn (Post $record) => $record->approved ? 'ڕەتکردنەوە' : 'پەسەندکردن')
-                        ->icon(fn (Post $record) => $record->approved ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle')
-                        ->color(fn (Post $record) => $record->approved ? 'danger' : 'success')
-                        ->requiresConfirmation()
-                        ->action(function (Post $record) {
-                            $record->update(['approved' => !$record->approved]);
-                            Notification::make()
-                                ->title($record->approved ? 'پەسەندکرا' : 'ڕەتکرایەوە')
-                                ->success()
-                                ->send();
-                        }),
                     Tables\Actions\DeleteAction::make()->label('سڕینەوە'),
                 ]),
             ])

@@ -24,7 +24,7 @@ class UserResource extends Resource
 
     protected static ?string $pluralModelLabel = 'بەکارهێنەران';
 
-    protected static ?string $navigationGroup = 'سیستەم';
+    protected static ?string $navigationGroup = 'سەرەکی';
 
     protected static ?int $navigationSort = 10;
 
@@ -32,12 +32,12 @@ class UserResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return (string) static::getModel()::count();
+        return (string) static::getModel()::where('is_approved', false)->where('is_admin', false)->count();
     }
 
     public static function getNavigationBadgeColor(): string|array|null
     {
-        return 'info';
+        return static::getModel()::where('is_approved', false)->where('is_admin', false)->count() > 0 ? 'warning' : 'info';
     }
 
     public static function form(Form $form): Form
@@ -67,6 +67,13 @@ class UserResource extends Resource
                             ->required(fn (string $operation): bool => $operation === 'create')
                             ->markAsRequired(false)
                             ->maxLength(255),
+                        Forms\Components\Toggle::make('is_approved')
+                            ->label('چالاککردنی هەژمار')
+                            ->default(false)
+                            ->onIcon('heroicon-m-check-badge')
+                            ->offIcon('heroicon-m-x-circle')
+                            ->onColor('success')
+                            ->offColor('danger'),
                     ])->columns(2),
             ]);
     }
@@ -87,6 +94,11 @@ class UserResource extends Resource
                     ->sortable()
                     ->copyable()
                     ->icon('heroicon-o-envelope'),
+                Tables\Columns\IconColumn::make('is_approved')
+                    ->label('پەسەندکراوە')
+                    ->boolean()
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('بەرواری تۆمارکردن')
                     ->dateTime('Y/m/d H:i')
@@ -96,45 +108,60 @@ class UserResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->filters([])
             ->actions([
-                Tables\Actions\Action::make('sendNotification')
-                    ->label('ناردنی نۆتیفیکەیشن')
-                    ->icon('heroicon-o-chat-bubble-left-ellipsis')
-                    ->color('success')
-                    ->form([
-                        Forms\Components\TextInput::make('title')
-                            ->label('ناونیشان')
-                            ->required()
-                            ->default('پەیامێک لە لایەن بەڕێوەبەر'),
-                        Forms\Components\Textarea::make('message')
-                            ->label('پەیام')
-                            ->required()
-                            ->rows(3),
-                    ])
-                    ->action(function (User $record, array $data): void {
-                        $firebase = app(FirebaseNotificationService::class);
-                        
-                        // Save to database
-                        $record->notify(new \App\Notifications\AdminMessage(
-                            $data['title'],
-                            $data['message']
-                        ));
-                        
-                        // Send via Firebase if user has FCM token
-                        if ($record->fcm_token && $record->notifications_enabled) {
-                            $firebase->sendToToken(
-                                $record->fcm_token,
-                                $data['title'],
-                                $data['message']
-                            );
-                        }
-                        
+                Tables\Actions\Action::make('toggleApproval')
+                    ->label(fn (User $record) => $record->is_approved ? 'ناچالاککردن' : 'چالاککردن')
+                    ->icon(fn (User $record) => $record->is_approved ? 'heroicon-m-x-circle' : 'heroicon-m-check-badge')
+                    ->color(fn (User $record) => $record->is_approved ? 'danger' : 'success')
+                    ->button()
+                    ->requiresConfirmation()
+                    ->action(function (User $record) {
+                        $record->update(['is_approved' => !$record->is_approved]);
                         \Filament\Notifications\Notification::make()
-                            ->title('نۆتیفیکەیشن بە سەرکەوتوویی نێردرا')
+                            ->title($record->is_approved ? 'هەژمار چالاککرا' : 'هەژمار ناچالاککرا')
                             ->success()
                             ->send();
                     }),
-                Tables\Actions\EditAction::make()->label('دەستکاری'),
-                Tables\Actions\DeleteAction::make()->label('سڕینەوە'),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('sendNotification')
+                        ->label('ناردنی نۆتیفیکەیشن')
+                        ->icon('heroicon-o-chat-bubble-left-ellipsis')
+                        ->color('success')
+                        ->form([
+                            Forms\Components\TextInput::make('title')
+                                ->label('ناونیشان')
+                                ->required()
+                                ->default('پەیامێک لە لایەن بەڕێوەبەر'),
+                            Forms\Components\Textarea::make('message')
+                                ->label('پەیام')
+                                ->required()
+                                ->rows(3),
+                        ])
+                        ->action(function (User $record, array $data): void {
+                            $firebase = app(\App\Services\FirebaseNotificationService::class);
+                            
+                            // Save to database
+                            $record->notify(new \App\Notifications\AdminMessage(
+                                $data['title'],
+                                $data['message']
+                            ));
+                            
+                            // Send via Firebase if user has FCM token
+                            if ($record->fcm_token && $record->notifications_enabled) {
+                                $firebase->sendToToken(
+                                    $record->fcm_token,
+                                    $data['title'],
+                                    $data['message']
+                                );
+                            }
+                            
+                            \Filament\Notifications\Notification::make()
+                                ->title('نۆتیفیکەیشن بە سەرکەوتوویی نێردرا')
+                                ->success()
+                                ->send();
+                        }),
+                    Tables\Actions\EditAction::make()->label('دەستکاری'),
+                    Tables\Actions\DeleteAction::make()->label('سڕینەوە'),
+                ]),
             ])
             ->bulkActions([])
             ->striped();
