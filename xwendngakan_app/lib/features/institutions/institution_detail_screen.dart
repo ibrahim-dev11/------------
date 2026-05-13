@@ -167,7 +167,7 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
                   color: Colors.white,
                   fontSize: 17,
                   fontWeight: FontWeight.w900,
-                  fontFamily: 'NotoSansArabic',
+                  fontFamily: 'Rabar',
                 ),
               ),
             ),
@@ -178,34 +178,27 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    // Gradient Background
+                    // Cover image background
+                    if (inst.imgUrl.isNotEmpty)
+                      CachedNetworkImage(
+                        imageUrl: inst.imgUrl,
+                        fit: BoxFit.cover,
+                        placeholder: (_, __) => Container(color: typeColor),
+                        errorWidget: (_, __, ___) => Container(color: typeColor),
+                      )
+                    else
+                      Container(color: typeColor),
+                    // Dark gradient overlay for legibility
                     Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            typeColor,
-                            typeColor.withValues(alpha: 0.8),
+                            Colors.black.withValues(alpha: 0.25),
+                            typeColor.withValues(alpha: 0.90),
                           ],
                         ),
-                      ),
-                    ),
-                    // Abstract Shapes
-                    Positioned(
-                      top: -40,
-                      right: -40,
-                      child: CircleAvatar(
-                        radius: 100,
-                        backgroundColor: Colors.white.withValues(alpha: 0.08),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 40,
-                      left: -20,
-                      child: CircleAvatar(
-                        radius: 60,
-                        backgroundColor: Colors.white.withValues(alpha: 0.05),
                       ),
                     ),
                     // Logo Circle
@@ -266,34 +259,50 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w900,
-                          fontFamily: 'NotoSansArabic',
+                          fontFamily: 'Rabar',
                           letterSpacing: -0.5,
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: typeColor.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(20),
+                      // Secondary language names
+                      if (lang != 'en' && inst.nen != null && inst.nen!.isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          inst.nen!,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white54 : AppColors.textDark.withValues(alpha: 0.5),
+                          ),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.location_on_rounded, color: typeColor, size: 14),
-                            const SizedBox(width: 6),
-                            Text(
-                              inst.city ?? '',
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: typeColor,
-                                fontWeight: FontWeight.w800,
-                                fontFamily: 'NotoSansArabic',
-                              ),
-                            ),
-                          ],
+                      ],
+                      if (lang == 'en' && inst.nku != null && inst.nku!.isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          inst.nku!,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Rabar',
+                            color: isDark ? Colors.white54 : AppColors.textDark.withValues(alpha: 0.5),
+                          ),
                         ),
+                      ],
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        alignment: WrapAlignment.center,
+                        children: [
+                          if (inst.city != null && inst.city!.isNotEmpty)
+                            _InfoChip(icon: Icons.location_city_rounded, label: inst.city!, color: typeColor),
+                          if (inst.country != null && inst.country!.isNotEmpty)
+                            _InfoChip(icon: Icons.flag_rounded, label: inst.country!, color: const Color(0xFF6366F1)),
+                          if (inst.type != null && inst.type!.isNotEmpty)
+                            _InfoChip(icon: Icons.school_rounded, label: inst.type!, color: const Color(0xFFF59E0B)),
+                        ],
                       ),
                     ],
                   ),
@@ -398,7 +407,7 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
           style: const TextStyle(
             fontSize: 11,
             fontWeight: FontWeight.w800,
-            fontFamily: 'NotoSansArabic',
+            fontFamily: 'Rabar',
           ),
         ),
       ],
@@ -432,7 +441,7 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
             style: TextStyle(
               fontSize: 13,
               fontWeight: isActive ? FontWeight.w900 : FontWeight.w700,
-              fontFamily: 'NotoSansArabic',
+              fontFamily: 'Rabar',
               color: isActive
                   ? Colors.white
                   : (isDark ? Colors.white60 : AppColors.textDark.withValues(alpha: 0.6)),
@@ -449,38 +458,31 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Stats
+            _StatsRow(isDark: isDark, inst: inst),
+            const SizedBox(height: 28),
+
+            // Description
             if (inst.desc != null && inst.desc!.isNotEmpty) ...[
-              Row(
-                children: [
-                  Container(
-                    width: 4,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
+              _AcademicSection(
+                icon: Icons.info_outline_rounded,
+                title: l.about,
+                accentColor: AppColors.typeColor(inst.type),
+                isDark: isDark,
+                child: Text(
+                  inst.desc!,
+                  style: TextStyle(
+                    fontSize: 15,
+                    height: 1.9,
+                    fontFamily: 'Rabar',
+                    color: isDark ? Colors.white70 : AppColors.textDark.withValues(alpha: 0.8),
                   ),
-                  const SizedBox(width: 10),
-                  Text(
-                    l.about,
-                    style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w900, fontFamily: 'NotoSansArabic'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Text(
-                inst.desc!,
-                style: TextStyle(
-                  fontSize: 15,
-                  height: 1.8,
-                  color: isDark ? Colors.white70 : AppColors.textDark.withValues(alpha: 0.8),
-                  fontFamily: 'NotoSansArabic',
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 20),
             ],
-            _StatsRow(isDark: isDark, inst: inst),
-            const SizedBox(height: 32),
+
+            // Video
             if (inst.video != null && inst.video!.isNotEmpty) ...[
               _VideoCard(
                 videoUrl: inst.video!,
@@ -488,32 +490,23 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
                 typeColor: AppColors.typeColor(inst.type),
                 onTap: () => _launch(inst.video!),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 20),
             ],
-            Row(
-              children: [
-                Container(
-                  width: 4,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  l.contact,
-                  style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w900, fontFamily: 'NotoSansArabic'),
-                ),
-              ],
+
+            // Contact & Social
+            _AcademicSection(
+              icon: Icons.contact_page_rounded,
+              title: l.contact,
+              accentColor: AppColors.typeColor(inst.type),
+              isDark: isDark,
+              child: _ContactCard(inst: inst, isDark: isDark, onLaunch: _launch),
             ),
-            const SizedBox(height: 16),
-            _ContactCard(inst: inst, isDark: isDark, onLaunch: _launch),
           ],
         );
-      case 1: // Colleges
-        final list = _parseColleges(inst.colleges);
-        if (list.isEmpty && (inst.colleges == null || inst.colleges!.isEmpty)) {
+      case 1: // Colleges & Departments
+        final colleges = _parseColleges(inst.colleges);
+        final depts = _parseDepts(inst.depts);
+        if (colleges.isEmpty && depts.isEmpty) {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 60),
             child: EmptyState(
@@ -522,7 +515,51 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
             ),
           );
         }
-        return _CollegesCard(colleges: list, isDark: isDark, l: l);
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (colleges.isNotEmpty)
+              _CollegesCard(colleges: colleges, isDark: isDark, l: l),
+            if (depts.isNotEmpty) ...[
+              if (colleges.isNotEmpty) const SizedBox(height: 20),
+              _AcademicSection(
+                icon: Icons.menu_book_rounded,
+                title: l.departments,
+                accentColor: AppColors.typeColor(inst.type),
+                isDark: isDark,
+                child: Column(
+                  children: depts.map((dept) => Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: AppColors.typeColor(inst.type),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            dept,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: 'Rabar',
+                              color: isDark ? Colors.white70 : AppColors.textDark,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )).toList(),
+                ),
+              ),
+            ],
+          ],
+        );
       case 2: // Posts
         if (inst.posts.isEmpty) {
           return Padding(
@@ -561,6 +598,18 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
         .where((s) => s.trim().isNotEmpty)
         .map((s) => {'name': s.trim(), 'departments': []})
         .toList();
+  }
+
+  List<String> _parseDepts(String? raw) {
+    if (raw == null || raw.isEmpty) return [];
+    final trimmed = raw.trim();
+    if (trimmed.startsWith('[')) {
+      try {
+        final List<dynamic> decoded = jsonDecode(trimmed);
+        return decoded.map((e) => e.toString()).toList();
+      } catch (_) {}
+    }
+    return trimmed.split(',').where((s) => s.trim().isNotEmpty).map((s) => s.trim()).toList();
   }
 
   Widget _buildShimmerLoading(BuildContext context, bool isDark) {
@@ -604,6 +653,132 @@ class _InstitutionDetailScreenState extends State<InstitutionDetailScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ─── Academic Section Card ────────────────────────────────────────────────────
+
+class _AcademicSection extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final Color accentColor;
+  final bool isDark;
+  final Widget child;
+  const _AcademicSection({
+    required this.icon,
+    required this.title,
+    required this.accentColor,
+    required this.isDark,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkCard : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Section header with left accent bar
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.05),
+                ),
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 4,
+                  height: 22,
+                  decoration: BoxDecoration(
+                    color: accentColor,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(icon, color: accentColor, size: 16),
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
+                    fontFamily: 'Rabar',
+                    color: isDark ? Colors.white : const Color(0xFF1E293B),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Content
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: child,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Info Chip ────────────────────────────────────────────────────────────────
+
+class _InfoChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  const _InfoChip({required this.icon, required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 13),
+          const SizedBox(width: 5),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              fontFamily: 'Rabar',
+              color: color,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -696,14 +871,14 @@ class _StatItem extends StatelessWidget {
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
                   color: color,
-                  fontFamily: 'NotoSansArabic')),
+                  fontFamily: 'Rabar')),
           const SizedBox(height: 4),
           Text(label,
               style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   color: AppColors.textGrey.withValues(alpha: 0.8),
-                  fontFamily: 'NotoSansArabic')),
+                  fontFamily: 'Rabar')),
         ]),
       );
 }
@@ -778,7 +953,7 @@ class _VideoCard extends StatelessWidget {
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w900,
-                            fontFamily: 'NotoSansArabic',
+                            fontFamily: 'Rabar',
                             fontSize: 16,
                           ),
                         ),
@@ -806,83 +981,38 @@ class _ContactCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if (inst.addr != null)
-          _ContactTile(
-            icon: Icons.location_on_rounded,
-            label: inst.addr!,
-            color: const Color(0xFFF43F5E),
-            isDark: isDark,
-            onTap: () {},
-          ),
-        const SizedBox(height: 12),
-        if (inst.phone != null)
-          _ContactTile(
-            icon: Icons.phone_rounded,
-            label: inst.phone!,
-            color: const Color(0xFF10B981),
-            isDark: isDark,
-            onTap: () => onLaunch('tel:${inst.phone}'),
-          ),
-        const SizedBox(height: 12),
-        if (inst.email != null)
-          _ContactTile(
-            icon: Icons.email_rounded,
-            label: inst.email!,
-            color: const Color(0xFF3B82F6),
-            isDark: isDark,
-            onTap: () => onLaunch('mailto:${inst.email}'),
-          ),
-        const SizedBox(height: 12),
-        if (inst.web != null)
-          _ContactTile(
-            icon: Icons.language_rounded,
-            label: inst.web!,
-            color: const Color(0xFF6366F1),
-            isDark: isDark,
-            onTap: () => onLaunch(inst.web!),
-          ),
-        if (inst.fb != null || inst.ig != null || inst.tg != null || inst.wa != null) ...[
-          const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (inst.fb != null) _SocialIcon(icon: Icons.facebook, color: const Color(0xFF1877F2), onTap: () => onLaunch(inst.fb!)),
-              if (inst.ig != null) _SocialIcon(icon: Icons.camera_alt_rounded, color: const Color(0xFFE4405F), onTap: () => onLaunch(inst.ig!)),
-              if (inst.tg != null) _SocialIcon(icon: Icons.telegram_rounded, color: const Color(0xFF229ED9), onTap: () => onLaunch(inst.tg!)),
-              if (inst.wa != null) _SocialIcon(icon: Icons.chat_bubble_outline_rounded, color: const Color(0xFF25D366), onTap: () => onLaunch('https://wa.me/${inst.wa}')),
-            ],
-          ),
-        ],
-      ],
-    );
-  }
-}
+    final items = <Widget>[];
 
-class _SocialIcon extends StatelessWidget {
-  final IconData icon;
-  final Color color;
-  final VoidCallback onTap;
-  const _SocialIcon({required this.icon, required this.color, required this.onTap});
+    void add(IconData icon, String label, Color color, String? url) {
+      if (items.isNotEmpty) items.add(const SizedBox(height: 10));
+      items.add(_ContactTile(
+        icon: icon,
+        label: label,
+        color: color,
+        isDark: isDark,
+        onTap: url != null ? () => onLaunch(url) : () {},
+      ));
+    }
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, color: color, size: 24),
-        ),
-      ),
-    );
+    if (inst.addr != null && inst.addr!.isNotEmpty)
+      add(Icons.location_on_rounded, inst.addr!, const Color(0xFFF43F5E), null);
+    if (inst.phone != null && inst.phone!.isNotEmpty)
+      add(Icons.phone_rounded, inst.phone!, const Color(0xFF10B981), 'tel:${inst.phone}');
+    if (inst.email != null && inst.email!.isNotEmpty)
+      add(Icons.email_rounded, inst.email!, const Color(0xFF3B82F6), 'mailto:${inst.email}');
+    if (inst.web != null && inst.web!.isNotEmpty)
+      add(Icons.language_rounded, inst.web!, const Color(0xFF6366F1), inst.web);
+    if (inst.fb != null && inst.fb!.isNotEmpty)
+      add(Icons.facebook, 'Facebook', const Color(0xFF1877F2), inst.fb);
+    if (inst.ig != null && inst.ig!.isNotEmpty)
+      add(Icons.camera_alt_rounded, 'Instagram', const Color(0xFFE4405F), inst.ig);
+    if (inst.tg != null && inst.tg!.isNotEmpty)
+      add(Icons.telegram_rounded, 'Telegram', const Color(0xFF229ED9), inst.tg);
+    if (inst.wa != null && inst.wa!.isNotEmpty)
+      add(Icons.chat_bubble_outline_rounded, 'WhatsApp', const Color(0xFF25D366), 'https://wa.me/${inst.wa}');
+
+    if (items.isEmpty) return const SizedBox.shrink();
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: items);
   }
 }
 
@@ -994,7 +1124,7 @@ class _CollegesCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w900,
-                fontFamily: 'NotoSansArabic',
+                fontFamily: 'Rabar',
                 color: isDark ? Colors.white : const Color(0xFF1E293B),
               ),
             ),
@@ -1015,7 +1145,7 @@ class _CollegesCard extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700,
-                                fontFamily: 'NotoSansArabic',
+                                fontFamily: 'Rabar',
                                 color: isDark ? Colors.white70 : AppColors.textDark.withValues(alpha: 0.8),
                               ),
                             ),
@@ -1081,7 +1211,7 @@ class _PostCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
-                    fontFamily: 'NotoSansArabic',
+                    fontFamily: 'Rabar',
                     color: isDark ? Colors.white : const Color(0xFF1E293B),
                   ),
                 ),
@@ -1094,7 +1224,7 @@ class _PostCard extends StatelessWidget {
                     fontSize: 14,
                     height: 1.6,
                     color: isDark ? Colors.white70 : AppColors.textDark.withValues(alpha: 0.7),
-                    fontFamily: 'NotoSansArabic',
+                    fontFamily: 'Rabar',
                   ),
                 ),
               ],

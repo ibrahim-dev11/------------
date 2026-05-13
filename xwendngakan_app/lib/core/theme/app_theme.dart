@@ -8,11 +8,11 @@ class AppTheme {
   AppTheme._();
 
   // === SHARED ===
-  static const _fontFamily = 'NotoSansArabic';
+  static const _fontFamily = 'Rabar';
 
   static TextTheme _buildTextTheme(bool isDark) {
-    final baseColor = isDark ? AppColors.textWhite : AppColors.textDark;
-    final mutedColor = isDark ? AppColors.textGrey : AppColors.textMuted;
+    final baseColor  = isDark ? AppColors.textWhite : AppColors.textDark;
+    final mutedColor = isDark ? AppColors.textGrey  : AppColors.textMutedLight;
 
     return TextTheme(
       // Display
@@ -137,11 +137,11 @@ class AppTheme {
       colorScheme: const ColorScheme.dark(
         primary: AppColors.primary,
         secondary: AppColors.secondary,
-        tertiary: AppColors.purple,
+        tertiary: AppColors.primaryLight,
         surface: AppColors.darkSurface,
         error: AppColors.error,
-        onPrimary: Colors.white,
-        onSecondary: Colors.white,
+        onPrimary: Color(0xFF0F1624),
+        onSecondary: Color(0xFF0F1624),
         onSurface: AppColors.textWhite,
         onError: Colors.white,
       ),
@@ -290,29 +290,29 @@ class AppTheme {
       colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
         secondary: AppColors.secondary,
-        tertiary: AppColors.purple,
+        tertiary: AppColors.primaryLight,
         surface: AppColors.lightSurface,
         error: AppColors.error,
-        onPrimary: Colors.white,
-        onSecondary: Colors.white,
+        onPrimary: Color(0xFF0F1624),
+        onSecondary: Color(0xFF0F1624),
         onSurface: AppColors.textDark,
         onError: Colors.white,
       ),
       scaffoldBackgroundColor: AppColors.lightBg,
       textTheme: _buildTextTheme(false),
 
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.lightBg,
         elevation: 0,
         centerTitle: true,
-        iconTheme: const IconThemeData(color: AppColors.textDark),
-        titleTextStyle: const TextStyle(
+        iconTheme: IconThemeData(color: AppColors.textDark),
+        titleTextStyle: TextStyle(
           fontFamily: _fontFamily,
           fontSize: 18,
           fontWeight: FontWeight.w600,
           color: AppColors.textDark,
         ),
-        systemOverlayStyle: const SystemUiOverlayStyle(
+        systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
           statusBarIconBrightness: Brightness.dark,
         ),

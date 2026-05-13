@@ -13,6 +13,7 @@ class AppConstants {
   static const String tokenKey = 'auth_token';
   static const String userKey = 'user_data';
   static const String langKey = 'app_language';
+  static const String langSelectedKey = 'lang_selected';
   static const String themeKey = 'app_theme';
   static const String onboardingKey = 'onboarding_done';
   static const String favoritesKey = 'favorites';
@@ -27,7 +28,6 @@ class AppConstants {
     'kbd': {'name': 'کوردی (بادینی)', 'flag': '❤️☀️💚', 'dir': 'rtl'},
     'ar': {'name': 'العربية', 'flag': '🇮🇶', 'dir': 'rtl'},
     'en': {'name': 'English', 'flag': '🇬🇧', 'dir': 'ltr'},
-    'tr': {'name': 'Türkçe', 'flag': '🇹🇷', 'dir': 'ltr'},
   };
 
   // === ANIMATION DURATIONS ===
@@ -90,6 +90,16 @@ class AppConstants {
       'emoji': '💬',
     },
   };
+
+  // === FILTER CITIES (display-name → DB value map) ===
+  // DB stores Kurdish names; these are the exact values used in WHERE clause
+  static const List<String> filterCityApiValues = [
+    'هەولێر',
+    'سلێمانی',
+    'دهۆک',
+    'هەڵەبجە',
+    'کەرکوک',
+  ];
 
   // === CITIES ===
   static const List<String> iraqiCities = [

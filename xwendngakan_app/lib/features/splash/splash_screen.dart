@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math' as math;
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/localization/app_localizations.dart';
 import '../../data/services/api_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -110,8 +112,15 @@ class _SplashScreenState extends State<SplashScreen>
 
     if (!mounted) return;
     final prefs = await SharedPreferences.getInstance();
-    final onboardingDone = prefs.getBool(AppConstants.onboardingKey) ?? false;
 
+    // First launch: show language selection before anything else
+    final langSelected = prefs.getBool(AppConstants.langSelectedKey) ?? false;
+    if (!langSelected) {
+      context.go('/language-select');
+      return;
+    }
+
+    final onboardingDone = prefs.getBool(AppConstants.onboardingKey) ?? false;
     if (!mounted) return;
     if (onboardingDone) {
       context.go('/role-selection');
@@ -121,18 +130,19 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _showUpdateDialog(Map<String, dynamic> data, {required bool force}) async {
+    final l = AppLocalizations.of(context);
     return showDialog(
       context: context,
       barrierDismissible: !force,
-      builder: (context) => AlertDialog(
+      builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(force ? 'پێویستە ئەپەکە نوێ بکەیتەوە' : 'وەشانێکی نوێ بەردەستە'),
-        content: Text(data['release_notes'] ?? 'تکایە دوایین وەشانی ئەپەکە دابەزێنە بۆ ئەوەی باشترین ئەزموونت هەبێت.'),
+        title: Text(force ? l.forceUpdateTitle : l.updateAvailable),
+        content: Text(data['release_notes'] ?? l.updateDesc),
         actions: [
           if (!force)
             TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('پاشان'),
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(l.later),
             ),
           ElevatedButton(
             onPressed: () {
@@ -142,7 +152,7 @@ class _SplashScreenState extends State<SplashScreen>
               backgroundColor: AppColors.primary,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
-            child: const Text('نوێکردنەوە', style: TextStyle(color: Colors.white)),
+            child: Text(l.update, style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -163,34 +173,58 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(gradient: AppColors.splashGradient),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFFFFFDF8),
+              Color(0xFFF8F4EC),
+              Color(0xFFF2EBE0),
+            ],
+          ),
+        ),
         child: Stack(
           children: [
-          // Decorative blobs
+            // Gold glow — top right
             Positioned(
-              top: -60,
-              left: -60,
+              top: -80,
+              right: -80,
               child: AnimatedBuilder(
                 animation: _glowAnim,
                 builder: (_, __) => Container(
-                  width: 220,
-                  height: 220,
+                  width: 280,
+                  height: 280,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.06 * _glowAnim.value),
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFC49A3C).withOpacity(0.10 * _glowAnim.value),
+                        Colors.transparent,
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
+            // Gold glow — bottom left
             Positioned(
-              bottom: 80,
-              right: -80,
-              child: Container(
-                width: 260,
-                height: 260,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.04),
+              bottom: 60,
+              left: -100,
+              child: AnimatedBuilder(
+                animation: _glowAnim,
+                builder: (_, __) => Container(
+                  width: 300,
+                  height: 300,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFC49A3C).withOpacity(0.06 * _glowAnim.value),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -214,31 +248,32 @@ class _SplashScreenState extends State<SplashScreen>
                               width: 110,
                               height: 110,
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.22),
-                                borderRadius: BorderRadius.circular(30),
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(32),
                                 border: Border.all(
-                                  color: Colors.white.withOpacity(0.35 + ((_glowAnim.value - 0.4) * 0.2)),
+                                  color: const Color(0xFFC49A3C).withOpacity(
+                                      0.35 + (_glowAnim.value - 0.4) * 0.25),
                                   width: 1.5,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.white.withOpacity(0.1 + ((_glowAnim.value - 0.4) * 0.2)),
-                                    blurRadius: 20 + ((_glowAnim.value - 0.4) * 20),
-                                    spreadRadius: (_glowAnim.value - 0.4) * 10,
-                                    offset: const Offset(0, 0),
+                                    color: const Color(0xFFC49A3C).withOpacity(
+                                        0.18 + (_glowAnim.value - 0.4) * 0.18),
+                                    blurRadius: 28 + (_glowAnim.value - 0.4) * 28,
+                                    spreadRadius: (_glowAnim.value - 0.4) * 6,
                                   ),
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.18),
-                                    blurRadius: 30,
-                                    offset: const Offset(0, 12),
+                                    color: Colors.black.withOpacity(0.07),
+                                    blurRadius: 16,
+                                    offset: const Offset(0, 6),
                                   ),
                                 ],
                               ),
-                              child: const Center(
-                                child: Icon(
-                                  Icons.menu_book_rounded,
-                                  color: Colors.white,
-                                  size: 52,
+                              child: Padding(
+                                padding: const EdgeInsets.all(14),
+                                child: SvgPicture.asset(
+                                  'assets/images/logo.svg',
+                                  fit: BoxFit.contain,
                                 ),
                               ),
                             ),
@@ -254,22 +289,39 @@ class _SplashScreenState extends State<SplashScreen>
                         offset: Offset(0, _textSlide.value),
                         child: Column(
                           children: [
-                            Text(
-                              'EduBook',
-                              style: TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
-                                letterSpacing: 1.0,
-                                shadows: [
-                                  Shadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    blurRadius: 12,
-                                  ),
+                            ShaderMask(
+                              shaderCallback: (bounds) =>
+                                  const LinearGradient(
+                                colors: [
+                                  Color(0xFFB8820A),
+                                  Color(0xFF8A6010),
                                 ],
+                              ).createShader(bounds),
+                              child: const Text(
+                                'EduBook',
+                                style: TextStyle(
+                                  fontSize: 34,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                  letterSpacing: 1.2,
+                                ),
                               ),
                             ),
-                            
+                            const SizedBox(height: 8),
+                            Builder(
+                              builder: (ctx) {
+                                final l = AppLocalizations.of(ctx);
+                                return Text(
+                                  l.appTagline,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: const Color(0xFF5E6E82).withOpacity(0.85),
+                                    letterSpacing: 0.5,
+                                    fontFamily: 'Rabar',
+                                  ),
+                                );
+                              },
+                            ),
                           ],
                         ),
                       ),
@@ -301,12 +353,13 @@ class _SplashScreenState extends State<SplashScreen>
                               double closeness = (sineValue + 1) / 2; // 0 to 1
                               
                               return Container(
-                                width: 8 + (14 * closeness),
-                                height: 8,
-                                margin: const EdgeInsets.symmetric(horizontal: 4),
+                                width: 6 + (10 * closeness),
+                                height: 6,
+                                margin: const EdgeInsets.symmetric(horizontal: 3),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.35 + (0.65 * closeness)),
-                                  borderRadius: BorderRadius.circular(4),
+                                  color: const Color(0xFFC49A3C).withOpacity(
+                                      0.25 + (0.75 * closeness)),
+                                  borderRadius: BorderRadius.circular(3),
                                 ),
                               );
                             }),
@@ -314,10 +367,10 @@ class _SplashScreenState extends State<SplashScreen>
                         },
                       ),
                       const SizedBox(height: 18),
-                      const Text(
+                      Text(
                         'v1.0.0',
                         style: TextStyle(
-                          color: Colors.white38,
+                          color: const Color(0xFF8A9BB0).withOpacity(0.55),
                           fontSize: 11,
                           letterSpacing: 1.2,
                         ),

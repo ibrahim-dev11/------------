@@ -29,7 +29,7 @@ class _MapScreenState extends State<MapScreen> {
       appBar: AppBar(
         title: Text(l10n.institutionMap,
             style: const TextStyle(
-                fontFamily: 'NotoSansArabic', fontWeight: FontWeight.w800)),
+                fontFamily: 'Rabar', fontWeight: FontWeight.w800)),
         centerTitle: true,
         backgroundColor: isDark ? AppColors.darkBg : Colors.white,
         elevation: 0,
@@ -146,7 +146,7 @@ class _MapScreenState extends State<MapScreen> {
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          fontFamily: 'NotoSansArabic',
+                          fontFamily: 'Rabar',
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -155,7 +155,7 @@ class _MapScreenState extends State<MapScreen> {
                         inst.city ?? '',
                         style: const TextStyle(
                           color: AppColors.textGrey,
-                          fontFamily: 'NotoSansArabic',
+                          fontFamily: 'Rabar',
                         ),
                       ),
                     ],

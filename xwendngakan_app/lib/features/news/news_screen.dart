@@ -146,7 +146,7 @@ class _NewsScreenState extends State<NewsScreen> {
                                       fontSize: 22,
                                       fontWeight: FontWeight.w900,
                                       color: Colors.white,
-                                      fontFamily: 'NotoSansArabic',
+                                      fontFamily: 'Rabar',
                                       letterSpacing: -0.5,
                                     ),
                                   ),
@@ -158,7 +158,7 @@ class _NewsScreenState extends State<NewsScreen> {
                                       fontWeight: FontWeight.w600,
                                       color:
                                           Colors.white.withValues(alpha: 0.8),
-                                      fontFamily: 'NotoSansArabic',
+                                      fontFamily: 'Rabar',
                                     ),
                                   ),
                                 ],
@@ -336,7 +336,7 @@ class _PostCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 13.5,
                           fontWeight: FontWeight.w800,
-                          fontFamily: 'NotoSansArabic',
+                          fontFamily: 'Rabar',
                           color: isDark ? Colors.white : AppColors.textDark,
                         ),
                       ),
@@ -353,7 +353,7 @@ class _PostCard extends StatelessWidget {
                             timeAgo(post.createdAt),
                             style: TextStyle(
                               fontSize: 11,
-                              fontFamily: 'NotoSansArabic',
+                              fontFamily: 'Rabar',
                               color: isDark
                                   ? AppColors.textGrey
                                   : AppColors.textMuted,
@@ -381,7 +381,7 @@ class _PostCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14.5,
                     fontWeight: FontWeight.w800,
-                    fontFamily: 'NotoSansArabic',
+                    fontFamily: 'Rabar',
                     color: isDark ? Colors.white : AppColors.textDark,
                   ),
                 ),
@@ -401,7 +401,7 @@ class _PostCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 13,
                     height: 1.6,
-                    fontFamily: 'NotoSansArabic',
+                    fontFamily: 'Rabar',
                     color: isDark
                         ? Colors.white70
                         : AppColors.textDark.withValues(alpha: 0.8),
@@ -513,7 +513,7 @@ class _NewsCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 13.5,
                           fontWeight: FontWeight.w800,
-                          fontFamily: 'NotoSansArabic',
+                          fontFamily: 'Rabar',
                           color: isDark ? Colors.white : AppColors.textDark,
                         ),
                       ),
@@ -530,7 +530,7 @@ class _NewsCard extends StatelessWidget {
                             timeAgo(news.createdAt),
                             style: TextStyle(
                               fontSize: 11,
-                              fontFamily: 'NotoSansArabic',
+                              fontFamily: 'Rabar',
                               color: isDark
                                   ? AppColors.textGrey
                                   : AppColors.textMuted,
@@ -554,7 +554,7 @@ class _NewsCard extends StatelessWidget {
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
                       color: AppColors.success,
-                      fontFamily: 'NotoSansArabic',
+                      fontFamily: 'Rabar',
                     ),
                   ),
                 ),
@@ -569,7 +569,7 @@ class _NewsCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14.5,
                   fontWeight: FontWeight.w800,
-                  fontFamily: 'NotoSansArabic',
+                  fontFamily: 'Rabar',
                   color: isDark ? Colors.white : AppColors.textDark,
                 ),
               ),
@@ -585,7 +585,7 @@ class _NewsCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 13,
                   height: 1.6,
-                  fontFamily: 'NotoSansArabic',
+                  fontFamily: 'Rabar',
                   color: isDark
                       ? Colors.white70
                       : AppColors.textDark.withValues(alpha: 0.8),
@@ -688,7 +688,7 @@ class _InstitutionAvatar extends StatelessWidget {
             fontSize: size * 0.38,
             fontWeight: FontWeight.w900,
             color: _typeColor,
-            fontFamily: 'NotoSansArabic',
+            fontFamily: 'Rabar',
           ),
         ),
       );

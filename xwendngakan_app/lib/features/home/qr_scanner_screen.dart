@@ -29,7 +29,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
       appBar: AppBar(
         title: Text(l10n.scanQr,
             style: const TextStyle(
-                fontFamily: 'NotoSansArabic',
+                fontFamily: 'Rabar',
                 fontWeight: FontWeight.bold,
                 color: Colors.white)),
         backgroundColor: Colors.transparent,
@@ -99,7 +99,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontFamily: 'NotoSansArabic',
+                    fontFamily: 'Rabar',
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                   ),
@@ -115,7 +115,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
                     l10n.viewInstitutionInfo,
                     style: const TextStyle(
                       color: Colors.white70,
-                      fontFamily: 'NotoSansArabic',
+                      fontFamily: 'Rabar',
                       fontSize: 13,
                     ),
                   ),

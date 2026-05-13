@@ -29,10 +29,12 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen>
 
   final _nameCtrl = TextEditingController();
   final _phoneCtrl = TextEditingController();
+  final _subjectCtrl = TextEditingController();
   final _expCtrl = TextEditingController();
   final _rateCtrl = TextEditingController();
   final _aboutCtrl = TextEditingController();
   final _videoCtrl = TextEditingController();
+  final _facebookCtrl = TextEditingController();
 
   String? _city;
   String? _type;
@@ -61,10 +63,12 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen>
     _anim.dispose();
     _nameCtrl.dispose();
     _phoneCtrl.dispose();
+    _subjectCtrl.dispose();
     _expCtrl.dispose();
     _rateCtrl.dispose();
     _aboutCtrl.dispose();
     _videoCtrl.dispose();
+    _facebookCtrl.dispose();
     super.dispose();
   }
 
@@ -84,12 +88,14 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen>
     final r = await _api.registerTeacher({
       'name': _nameCtrl.text.trim(),
       'phone': _phoneCtrl.text.trim(),
+      'subject': _subjectCtrl.text.trim(),
       'city': _city!,
       'type': _type!,
       'experience_years': _expCtrl.text.trim(),
       'hourly_rate': _rateCtrl.text.trim(),
       'about': _aboutCtrl.text.trim(),
       'video_url': _videoCtrl.text.trim(),
+      'facebook_url': _facebookCtrl.text.trim(),
     });
     setState(() => _loading = false);
     if (!mounted) return;
@@ -119,7 +125,7 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen>
             children: [
               const Icon(Icons.error_outline_rounded, color: Colors.white, size: 22),
               const SizedBox(width: 12),
-              Expanded(child: Text(msg, style: const TextStyle(color: Colors.white, fontSize: 14, fontFamily: 'NotoSansArabic'))),
+              Expanded(child: Text(msg, style: const TextStyle(color: Colors.white, fontSize: 14, fontFamily: 'Rabar'))),
             ],
           ),
         ),
@@ -131,7 +137,7 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen>
       labelText: label,
       hintText: hint,
       prefixIcon: Icon(icon, color: _kGold1),
-      labelStyle: const TextStyle(fontFamily: 'NotoSansArabic', fontSize: 14),
+      labelStyle: const TextStyle(fontFamily: 'Rabar', fontSize: 14),
       filled: true,
       fillColor: Colors.transparent,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -201,7 +207,7 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen>
                     'داواکاریەکەت نێردرا!',
                     style: TextStyle(
                       fontSize: 26, fontWeight: FontWeight.bold,
-                      color: Colors.white, fontFamily: 'NotoSansArabic',
+                      color: Colors.white, fontFamily: 'Rabar',
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -211,7 +217,7 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen>
                     child: Text(
                       'چاوەڕوانی تەسدیقی ئەدمین بە\nدوای پەسەندکردن دەردەکەوییتە لیستی مامۆستاکان',
                       style: TextStyle(
-                        fontSize: 13, fontFamily: 'NotoSansArabic',
+                        fontSize: 13, fontFamily: 'Rabar',
                         color: Colors.white.withOpacity(0.88), height: 1.75,
                       ),
                       textAlign: TextAlign.center,
@@ -265,7 +271,7 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen>
                           icon: const Icon(Icons.home_rounded, color: Colors.white, size: 20),
                           label: const Text(
                             'بەرگەی سەرەکی',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'NotoSansArabic'),
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Rabar'),
                           ),
                         ),
                       ),
@@ -349,13 +355,13 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen>
                               l.registerAsTeacher,
                               style: const TextStyle(
                                 fontSize: 26, fontWeight: FontWeight.bold,
-                                color: Colors.white, fontFamily: 'NotoSansArabic',
+                                color: Colors.white, fontFamily: 'Rabar',
                               ),
                             ),
                             const SizedBox(height: 6),
                             Text(
                               'پرۆفایلەکەت پڕبکەرەوە',
-                              style: TextStyle(fontSize: 14, color: Colors.white.withOpacity(0.88), fontFamily: 'NotoSansArabic'),
+                              style: TextStyle(fontSize: 14, color: Colors.white.withOpacity(0.88), fontFamily: 'Rabar'),
                             ),
                           ],
                         ),
@@ -429,10 +435,20 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen>
                                 decoration: _inputDeco(l.teacherType, Icons.category_outlined),
                                 borderRadius: BorderRadius.circular(20),
                                 items: [
-                                  DropdownMenuItem(value: 'university', child: Text('🎓 ${l.university}', style: const TextStyle(fontFamily: 'NotoSansArabic'))),
-                                  DropdownMenuItem(value: 'school', child: Text('🏫 ${l.school}', style: const TextStyle(fontFamily: 'NotoSansArabic'))),
+                                  DropdownMenuItem(value: 'university', child: Text('🎓 ${l.university}', style: const TextStyle(fontFamily: 'Rabar'))),
+                                  DropdownMenuItem(value: 'school', child: Text('🏫 ${l.school}', style: const TextStyle(fontFamily: 'Rabar'))),
                                 ],
                                 onChanged: (v) => setState(() => _type = v),
+                              ),
+                              const SizedBox(height: 14),
+                              // Subject / Specialty
+                              TextFormField(
+                                controller: _subjectCtrl,
+                                textInputAction: TextInputAction.next,
+                                autovalidateMode: AutovalidateMode.onUserInteraction,
+                                decoration: _inputDeco(l.subject, Icons.menu_book_rounded,
+                                    hint: l.specializationFallback),
+                                validator: (v) => (v == null || v.trim().isEmpty) ? l.required : null,
                               ),
                               const SizedBox(height: 14),
                               // City
@@ -442,7 +458,7 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen>
                                 borderRadius: BorderRadius.circular(20),
                                 items: AppConstants.iraqiCities.map((c) => DropdownMenuItem(
                                   value: c,
-                                  child: Text(c, style: const TextStyle(fontFamily: 'NotoSansArabic')),
+                                  child: Text(c, style: const TextStyle(fontFamily: 'Rabar')),
                                 )).toList(),
                                 onChanged: (v) => setState(() => _city = v),
                               ),
@@ -499,6 +515,26 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen>
                                   return null;
                                 },
                               ),
+                              const SizedBox(height: 14),
+                              // Facebook URL
+                              TextFormField(
+                                controller: _facebookCtrl,
+                                keyboardType: TextInputType.url,
+                                textInputAction: TextInputAction.done,
+                                decoration: _inputDeco(
+                                  'لینکی فەیسبوک',
+                                  Icons.facebook_rounded,
+                                  hint: 'https://facebook.com/...',
+                                ),
+                                validator: (v) {
+                                  if (v == null || v.isEmpty) return null;
+                                  final uri = Uri.tryParse(v);
+                                  if (uri == null || !uri.hasAbsolutePath || (!v.startsWith('http://') && !v.startsWith('https://'))) {
+                                    return 'لینکی نادروستە';
+                                  }
+                                  return null;
+                                },
+                              ),
                               const SizedBox(height: 28),
                               // Submit
                               SizedBox(
@@ -520,7 +556,7 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen>
                                         : const Icon(Icons.send_rounded, color: Colors.white, size: 20),
                                     label: Text(
                                       l.submit,
-                                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'NotoSansArabic'),
+                                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Rabar'),
                                     ),
                                   ),
                                 ),
@@ -589,7 +625,7 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen>
                 title,
                 style: TextStyle(
                   fontWeight: FontWeight.bold, fontSize: 14,
-                  fontFamily: 'NotoSansArabic',
+                  fontFamily: 'Rabar',
                   color: isDark ? Colors.white : Colors.black87,
                 ),
               ),
@@ -597,7 +633,7 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen>
               Text(
                 sub,
                 style: TextStyle(
-                  fontSize: 12, fontFamily: 'NotoSansArabic',
+                  fontSize: 12, fontFamily: 'Rabar',
                   color: isDark ? Colors.white54 : Colors.black45,
                 ),
               ),
@@ -650,7 +686,7 @@ class _PhotoPicker extends StatelessWidget {
                   const SizedBox(height: 6),
                   Icon(Icons.add_circle_rounded, size: 18, color: accentColor.withOpacity(0.7)),
                   const SizedBox(height: 4),
-                  Text(label, style: TextStyle(fontSize: 11, color: accentColor, fontFamily: 'NotoSansArabic', fontWeight: FontWeight.w500), textAlign: TextAlign.center),
+                  Text(label, style: TextStyle(fontSize: 11, color: accentColor, fontFamily: 'Rabar', fontWeight: FontWeight.w500), textAlign: TextAlign.center),
                 ],
               )
             : Stack(

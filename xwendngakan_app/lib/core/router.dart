@@ -33,6 +33,7 @@ import '../data/models/post_model.dart';
 import '../features/pathfinder/path_finder_screen.dart';
 import '../features/lost_and_found/lost_and_found_screen.dart';
 import '../features/lost_and_found/add_item_screen.dart';
+import '../features/language/language_selection_screen.dart';
  
 
 GoRouter createRouter(BuildContext context) {
@@ -47,7 +48,7 @@ GoRouter createRouter(BuildContext context) {
 
       if (isInitial) return null;
 
-      final publicRoutes = ['/splash', '/onboarding', '/login', '/register', '/forgot-password', '/role-selection', '/teacher-register', '/cv-form'];
+      final publicRoutes = ['/splash', '/language-select', '/onboarding', '/login', '/register', '/forgot-password', '/role-selection', '/teacher-register', '/cv-form'];
       final isPublic = publicRoutes.any((r) => loc.startsWith(r));
 
       if (!isAuth && !isPublic) return '/login';
@@ -61,6 +62,15 @@ GoRouter createRouter(BuildContext context) {
       GoRoute(
         path: '/splash',
         builder: (context, state) => const SplashScreen(),
+      ),
+
+      // Language selection (shown once at first launch, or from settings)
+      GoRoute(
+        path: '/language-select',
+        builder: (context, state) {
+          final fromSettings = state.uri.queryParameters['from'] == 'settings';
+          return LanguageSelectionScreen(fromSettings: fromSettings);
+        },
       ),
 
       // Onboarding

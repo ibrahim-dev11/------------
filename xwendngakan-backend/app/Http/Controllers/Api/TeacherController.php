@@ -56,12 +56,14 @@ class TeacherController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
+            'subject' => 'nullable|string|max:200',
             'type' => 'required|in:university,school',
             'city' => 'required|string|max:100',
             'experience_years' => 'nullable|integer|min:0|max:60',
             'hourly_rate' => 'nullable|integer|min:0',
             'about' => 'nullable|string|max:2000',
             'video_url' => 'nullable|url|max:500',
+            'facebook_url' => 'nullable|url|max:500',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'subject_photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);

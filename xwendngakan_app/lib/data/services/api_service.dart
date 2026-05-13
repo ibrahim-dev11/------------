@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xwendngakan_app/data/models/post_model.dart';
+import '../models/banner_model.dart';
 import '../models/institution_model.dart';
 import '../models/teacher_model.dart';
 import '../models/cv_model.dart';
@@ -538,6 +539,16 @@ class ApiService {
     }
   }
 
+  Future<void> markAllNotificationsRead() async {
+    try {
+      final headers = await _authHeaders();
+      await http.post(
+        Uri.parse('$_base/notifications/mark-read'),
+        headers: headers,
+      ).timeout(AppConstants.connectTimeout);
+    } catch (_) {}
+  }
+
   Future<ApiResult<bool>> updateFcmToken(String token) async {
     try {
       final headers = await _authHeaders();
@@ -558,6 +569,25 @@ class ApiService {
   // ==================
   // NEWS
   // ==================
+
+  Future<ApiResult<List<BannerModel>>> getBanners() async {
+    try {
+      final res = await http
+          .get(Uri.parse('$_base/banners'), headers: _headers())
+          .timeout(AppConstants.receiveTimeout);
+
+      final body = jsonDecode(res.body) as Map<String, dynamic>;
+      if (res.statusCode == 200) {
+        final list = (body['data'] as List)
+            .map((e) => BannerModel.fromJson(e as Map<String, dynamic>))
+            .toList();
+        return ApiResult.success(list);
+      }
+      return ApiResult.failure('Failed');
+    } catch (e) {
+      return ApiResult.failure('$e');
+    }
+  }
 
   Future<ApiResult<List<dynamic>>> getNews({int page = 1}) async {
     try {

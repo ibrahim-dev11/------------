@@ -16,6 +16,7 @@ class Teacher extends Model
         'subject',
         'about',
         'video_url',
+        'facebook_url',
         'photo',
         'subject_photo',
         'is_approved',

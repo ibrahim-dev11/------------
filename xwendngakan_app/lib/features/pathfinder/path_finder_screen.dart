@@ -40,7 +40,7 @@ class _PathFinderScreenState extends State<PathFinderScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkBg : const Color(0xFFF8F9FD),
       appBar: AppBar(
-        title: Text(l.pathFinder, style: const TextStyle(fontFamily: 'NotoSansArabic', fontWeight: FontWeight.bold)),
+        title: Text(l.pathFinder, style: const TextStyle(fontFamily: 'Rabar', fontWeight: FontWeight.bold)),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -88,7 +88,7 @@ class _PathFinderScreenState extends State<PathFinderScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       ),
-                      child: Text(l.previous, style: const TextStyle(fontFamily: 'NotoSansArabic')),
+                      child: Text(l.previous, style: const TextStyle(fontFamily: 'Rabar')),
                     ),
                   ),
                 if (_currentStep > 0) const SizedBox(width: 16),
@@ -131,7 +131,7 @@ class _PathFinderScreenState extends State<PathFinderScreen> {
         const SizedBox(height: 24),
         Text(
           l.whatIsYourGrade,
-          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, fontFamily: 'NotoSansArabic'),
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, fontFamily: 'Rabar'),
         ),
         const SizedBox(height: 40),
         Text(
@@ -158,7 +158,7 @@ class _PathFinderScreenState extends State<PathFinderScreen> {
         children: [
           Text(
             l.whichFieldDoYouLike,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, fontFamily: 'NotoSansArabic'),
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, fontFamily: 'Rabar'),
           ),
           const SizedBox(height: 24),
           GridView.builder(
@@ -194,7 +194,7 @@ class _PathFinderScreenState extends State<PathFinderScreen> {
                         item['name'] as String,
                         style: TextStyle(
                           color: isSelected ? Colors.white : (isDark ? Colors.white : AppColors.textDark),
-                          fontFamily: 'NotoSansArabic',
+                          fontFamily: 'Rabar',
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -218,7 +218,7 @@ class _PathFinderScreenState extends State<PathFinderScreen> {
         children: [
           Text(
             l.whichCity,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, fontFamily: 'NotoSansArabic'),
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, fontFamily: 'Rabar'),
           ),
           const SizedBox(height: 24),
           Expanded(
@@ -246,7 +246,7 @@ class _PathFinderScreenState extends State<PathFinderScreen> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                            fontFamily: 'NotoSansArabic',
+                            fontFamily: 'Rabar',
                             color: isSelected ? AppColors.primary : (isDark ? Colors.white : AppColors.textDark),
                           ),
                         ),
@@ -277,7 +277,7 @@ class _PathFinderScreenState extends State<PathFinderScreen> {
         children: [
           Text(
             l.institutionTypeQuestion,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, fontFamily: 'NotoSansArabic'),
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, fontFamily: 'Rabar'),
           ),
           const SizedBox(height: 24),
           ...types.map((type) {
@@ -301,7 +301,7 @@ class _PathFinderScreenState extends State<PathFinderScreen> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        fontFamily: 'NotoSansArabic',
+                        fontFamily: 'Rabar',
                         color: isSelected ? AppColors.primary : (isDark ? Colors.white : AppColors.textDark),
                       ),
                     ),

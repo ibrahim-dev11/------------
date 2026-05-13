@@ -116,7 +116,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                     style: const TextStyle(
                       color: Color(0xFFB5B3CF),
                       fontSize: 13,
-                      fontFamily: 'NotoSansArabic',
+                      fontFamily: 'Rabar',
                     ),
                   ),
                   if (!isLast)
@@ -127,7 +127,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         style: TextStyle(
                           color: Color(0xFFB5B3CF),
                           fontSize: 14,
-                          fontFamily: 'NotoSansArabic',
+                          fontFamily: 'Rabar',
                         ),
                       ),
                     ),
@@ -201,7 +201,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
-                            fontFamily: 'NotoSansArabic',
+                            fontFamily: 'Rabar',
                           ),
                         ),
                       ),
@@ -215,7 +215,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       style: TextStyle(
                         color: Color(0xFFB5B3CF),
                         fontSize: 13,
-                        fontFamily: 'NotoSansArabic',
+                        fontFamily: 'Rabar',
                       ),
                     ),
                   ),
@@ -254,7 +254,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF1a1a1a),
-                  fontFamily: 'NotoSansArabic',
+                  fontFamily: 'Rabar',
                   height: 1.35,
                 ),
                 textAlign: TextAlign.center,
@@ -265,7 +265,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 style: const TextStyle(
                   fontSize: 14,
                   color: Color(0xFF8E8BAD),
-                  fontFamily: 'NotoSansArabic',
+                  fontFamily: 'Rabar',
                   height: 1.7,
                 ),
                 textAlign: TextAlign.center,

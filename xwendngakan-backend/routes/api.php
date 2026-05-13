@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\NewsController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\AppDataController;
 use App\Http\Controllers\Api\UserRequestController;
+use App\Http\Controllers\Api\BannerController;
 use App\Models\InstitutionType;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +36,9 @@ Route::post('/check-update', [AppVersionController::class, 'check']);
 // Public News
 Route::get('/news', [NewsController::class, 'index']);
 Route::get('/news/{id}', [NewsController::class, 'show']);
+
+// Banners (public)
+Route::get('/banners', [BannerController::class, 'index']);
 
 // Public Events
 Route::get('/events', [EventController::class, 'index']);

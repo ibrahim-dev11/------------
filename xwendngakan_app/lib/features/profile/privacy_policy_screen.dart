@@ -11,7 +11,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkBg : const Color(0xFFF8F9FA),
       appBar: AppBar(
-        title: const Text('سیاسەتی تایبەتمەندی', style: TextStyle(fontFamily: 'NotoSansArabic', fontWeight: FontWeight.bold)),
+        title: const Text('سیاسەتی تایبەتمەندی', style: TextStyle(fontFamily: 'Rabar', fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -48,7 +48,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
                 style: TextStyle(
                   color: isDark ? Colors.white30 : Colors.black26,
                   fontSize: 12,
-                  fontFamily: 'NotoSansArabic',
+                  fontFamily: 'Rabar',
                 ),
               ),
             ),
@@ -70,7 +70,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: AppColors.primary,
-              fontFamily: 'NotoSansArabic',
+              fontFamily: 'Rabar',
             ),
           ),
           const SizedBox(height: 8),
@@ -80,7 +80,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
               fontSize: 14,
               height: 1.6,
               color: isDark ? Colors.white70 : Colors.black87,
-              fontFamily: 'NotoSansArabic',
+              fontFamily: 'Rabar',
             ),
           ),
         ],

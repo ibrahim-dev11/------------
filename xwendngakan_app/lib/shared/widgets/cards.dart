@@ -124,7 +124,7 @@ class InstitutionCard extends StatelessWidget {
                             fontSize: 9,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
-                            fontFamily: 'NotoSansArabic',
+                            fontFamily: 'Rabar',
                           ),
                         ),
                       ),
@@ -172,7 +172,7 @@ class InstitutionCard extends StatelessWidget {
                           fontSize: 12.5,
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
-                          fontFamily: 'NotoSansArabic',
+                          fontFamily: 'Rabar',
                           height: 1.3,
                           shadows: [
                             Shadow(blurRadius: 8, color: Colors.black87),
@@ -208,7 +208,7 @@ class InstitutionCard extends StatelessWidget {
                               fontSize: 11,
                               color:
                                   isDark ? Colors.white60 : AppColors.textGrey,
-                              fontFamily: 'NotoSansArabic',
+                              fontFamily: 'Rabar',
                               fontWeight: FontWeight.w500,
                             ),
                             maxLines: 1,
@@ -269,7 +269,7 @@ class InstitutionCard extends StatelessWidget {
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
                               color: Colors.white,
-                              fontFamily: 'NotoSansArabic',
+                              fontFamily: 'Rabar',
                             ),
                           ),
                           SizedBox(width: 4),
@@ -401,7 +401,7 @@ class FeaturedInstitutionCard extends StatelessWidget {
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
-                      fontFamily: 'NotoSansArabic',
+                      fontFamily: 'Rabar',
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -417,7 +417,7 @@ class FeaturedInstitutionCard extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 12,
                             color: Colors.white70,
-                            fontFamily: 'NotoSansArabic',
+                            fontFamily: 'Rabar',
                           ),
                         ),
                       ],
@@ -552,7 +552,7 @@ class TeacherCard extends StatelessWidget {
                               color: isDark
                                   ? Colors.white
                                   : const Color(0xFF1A202C),
-                              fontFamily: 'NotoSansArabic',
+                              fontFamily: 'Rabar',
                               height: 1.25,
                             ),
                             maxLines: 1,
@@ -581,7 +581,7 @@ class TeacherCard extends StatelessWidget {
                                         fontSize: 10.5,
                                         fontWeight: FontWeight.w800,
                                         color: typeColor,
-                                        fontFamily: 'NotoSansArabic',
+                                        fontFamily: 'Rabar',
                                       ),
                                     ),
                                   ],
@@ -616,7 +616,7 @@ class TeacherCard extends StatelessWidget {
                                           color: isDark
                                               ? Colors.white70
                                               : const Color(0xFF64748B),
-                                          fontFamily: 'NotoSansArabic',
+                                          fontFamily: 'Rabar',
                                         ),
                                       ),
                                     ],
@@ -644,7 +644,7 @@ class TeacherCard extends StatelessWidget {
                                         color: isDark
                                             ? Colors.white60
                                             : const Color(0xFF4A5568),
-                                        fontFamily: 'NotoSansArabic',
+                                        fontFamily: 'Rabar',
                                       ),
                                     ),
                                   ],
@@ -664,7 +664,7 @@ class TeacherCard extends StatelessWidget {
                                       color: isDark
                                           ? Colors.white60
                                           : const Color(0xFF4A5568),
-                                      fontFamily: 'NotoSansArabic',
+                                      fontFamily: 'Rabar',
                                     ),
                                   ),
                                 ],
@@ -717,7 +717,7 @@ class TeacherCard extends StatelessWidget {
             fontSize: 22,
             fontWeight: FontWeight.w900,
             color: Colors.white,
-            fontFamily: 'NotoSansArabic',
+            fontFamily: 'Rabar',
           ),
         ),
       ),
@@ -805,7 +805,7 @@ class CvCard extends StatelessWidget {
                       fontSize: 16,
                       fontWeight: FontWeight.w900,
                       color: isDark ? Colors.white : const Color(0xFF1A202C),
-                      fontFamily: 'NotoSansArabic',
+                      fontFamily: 'Rabar',
                       height: 1.2,
                     ),
                     maxLines: 1,
@@ -819,7 +819,7 @@ class CvCard extends StatelessWidget {
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: AppColors.primary,
-                        fontFamily: 'NotoSansArabic',
+                        fontFamily: 'Rabar',
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -878,7 +878,7 @@ class CvCard extends StatelessWidget {
           fontSize: 24,
           fontWeight: FontWeight.w900,
           color: AppColors.primary,
-          fontFamily: 'NotoSansArabic',
+          fontFamily: 'Rabar',
         ),
       ),
     );
@@ -918,7 +918,7 @@ class _CvSmallBadge extends StatelessWidget {
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
                 color: isDark ? Colors.white70 : color,
-                fontFamily: 'NotoSansArabic',
+                fontFamily: 'Rabar',
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

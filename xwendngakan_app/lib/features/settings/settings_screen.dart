@@ -47,19 +47,12 @@ class SettingsScreen extends StatelessWidget {
             // Language
             _SectionLabel(label: '🌍 ${l.language}'),
             const SizedBox(height: 10),
-            ...AppConstants.languages.entries.map((e) => _SettingTile(
-              icon: Icons.language_outlined,
-              label: '${e.value['flag']} ${e.value['name']}',
-              trailing: locale.locale.languageCode == e.key
-                  ? Container(
-                      width: 24, height: 24,
-                      decoration: const BoxDecoration(
-                          color: AppColors.primary, shape: BoxShape.circle),
-                      child: const Icon(Icons.check_rounded, color: Colors.white, size: 14),
-                    )
-                  : null,
-              onTap: () => locale.setLocale(e.key),
-            )),
+            _SettingTile(
+              icon: Icons.translate_rounded,
+              label: l.selectLanguage,
+              subtitle: AppConstants.languages[locale.locale.languageCode]?['name'] ?? '',
+              onTap: () => context.push('/language-select?from=settings'),
+            ),
 
             const SizedBox(height: 20),
             // About
@@ -137,9 +130,9 @@ class _SettingTile extends StatelessWidget {
           ),
           child: Icon(icon, color: AppColors.primary, size: 20),
         ),
-        title: Text(label, style: const TextStyle(fontFamily: 'NotoSansArabic', fontSize: 14)),
+        title: Text(label, style: const TextStyle(fontFamily: 'Rabar', fontSize: 14)),
         subtitle: subtitle != null
-            ? Text(subtitle!, style: const TextStyle(fontSize: 12, fontFamily: 'NotoSansArabic')) : null,
+            ? Text(subtitle!, style: const TextStyle(fontSize: 12, fontFamily: 'Rabar')) : null,
         trailing: trailing ?? (onTap != null ? const Icon(Icons.chevron_right_rounded, size: 20) : null),
         onTap: onTap,
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),

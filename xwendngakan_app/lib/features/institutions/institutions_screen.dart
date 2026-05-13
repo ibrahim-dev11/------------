@@ -67,7 +67,7 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
         onPressed: () => context.push('/map'),
         backgroundColor: AppColors.primary,
         icon: const Icon(Icons.map_rounded, color: Colors.white),
-        label: Text(l.map, style: const TextStyle(color: Colors.white, fontFamily: 'NotoSansArabic', fontWeight: FontWeight.bold)),
+        label: Text(l.map, style: const TextStyle(color: Colors.white, fontFamily: 'Rabar', fontWeight: FontWeight.bold)),
       ),
       body: SafeArea(
         child: Column(
@@ -212,7 +212,7 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
                       l.advancedFilter,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w800,
-                            fontFamily: 'NotoSansArabic',
+                            fontFamily: 'Rabar',
                           ),
                     ),
                     TextButton(
@@ -225,7 +225,7 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
                       child: Text(l.clear,
                           style: const TextStyle(
                               color: Colors.redAccent,
-                              fontFamily: 'NotoSansArabic')),
+                              fontFamily: 'Rabar')),
                     ),
                   ],
                 ),
@@ -233,7 +233,7 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
                 Text(l.cities,
                     style: const TextStyle(
                         fontWeight: FontWeight.w700,
-                        fontFamily: 'NotoSansArabic')),
+                        fontFamily: 'Rabar')),
                 const SizedBox(height: 12),
                 Wrap(
                   spacing: 8,
@@ -247,7 +247,7 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
                             style: TextStyle(
                                 color: isSelected ? Colors.white : null,
                                 fontSize: 12,
-                                fontFamily: 'NotoSansArabic')),
+                                fontFamily: 'Rabar')),
                         backgroundColor: isSelected ? AppColors.primary : null,
                         side: BorderSide(
                             color: isSelected
@@ -261,7 +261,7 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
                 Text(l.institutionType,
                     style: const TextStyle(
                         fontWeight: FontWeight.w700,
-                        fontFamily: 'NotoSansArabic')),
+                        fontFamily: 'Rabar')),
                 const SizedBox(height: 12),
                 SizedBox(
                   height: 40,
@@ -279,7 +279,7 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
                                 style: TextStyle(
                                     color: isSelected ? Colors.white : null,
                                     fontSize: 12,
-                                    fontFamily: 'NotoSansArabic')),
+                                    fontFamily: 'Rabar')),
                             selected: isSelected,
                             onSelected: (v) =>
                                 setModalState(() => tempType = v ? type.key : ''),
@@ -361,7 +361,7 @@ class _FilterChip extends StatelessWidget {
             color: isSelected
                 ? Colors.white
                 : (Theme.of(context).brightness == Brightness.dark ? AppColors.textWhite : AppColors.textDark),
-            fontFamily: 'NotoSansArabic',
+            fontFamily: 'Rabar',
           ),
         ),
       ),

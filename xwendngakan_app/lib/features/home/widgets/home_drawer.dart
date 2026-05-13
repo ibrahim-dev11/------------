@@ -52,7 +52,7 @@ class HomeDrawer extends StatelessWidget {
                     children: [
                       Text(
                         auth.user?.name ?? l.drawerStudent,
-                        style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'NotoSansArabic'),
+                        style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Rabar'),
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -185,7 +185,7 @@ class HomeDrawer extends StatelessWidget {
           fontSize: 14,
           fontWeight: FontWeight.w900,
           color: isDark ? Colors.white54 : Colors.black54,
-          fontFamily: 'NotoSansArabic',
+          fontFamily: 'Rabar',
         ),
       ),
     );
@@ -216,7 +216,7 @@ class HomeDrawer extends StatelessWidget {
           fontSize: 15,
           fontWeight: FontWeight.bold,
           color: isDark ? Colors.white : AppColors.textDark,
-          fontFamily: 'NotoSansArabic',
+          fontFamily: 'Rabar',
         ),
       ),
       subtitle: subtitle != null
@@ -225,7 +225,7 @@ class HomeDrawer extends StatelessWidget {
               style: TextStyle(
                 fontSize: 11,
                 color: isDark ? Colors.white54 : Colors.black54,
-                fontFamily: 'NotoSansArabic',
+                fontFamily: 'Rabar',
               ),
             )
           : null,

@@ -16,6 +16,7 @@ class TeacherModel {
   final String? typeLabel;
   final String? createdAt;
   final String? videoUrl;
+  final String? facebookUrl;
 
   TeacherModel({
     required this.id,
@@ -33,6 +34,7 @@ class TeacherModel {
     this.typeLabel,
     this.createdAt,
     this.videoUrl,
+    this.facebookUrl,
   });
 
   String get photoUrl {
@@ -78,6 +80,7 @@ class TeacherModel {
       typeLabel: json['type_label'],
       createdAt: json['created_at'],
       videoUrl: json['video_url'],
+      facebookUrl: json['facebook_url'],
     );
   }
 
@@ -95,5 +98,6 @@ class TeacherModel {
     'subject_photo': subjectPhoto,
     'is_approved': isApproved,
     'video_url': videoUrl,
+    'facebook_url': facebookUrl,
   };
 }

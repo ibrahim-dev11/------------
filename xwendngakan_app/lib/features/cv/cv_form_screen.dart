@@ -143,7 +143,7 @@ class _CvFormScreenState extends State<CvFormScreen>
   
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(message, style: const TextStyle(fontFamily: 'NotoSansArabic')),
+      content: Text(message, style: const TextStyle(fontFamily: 'Rabar')),
       backgroundColor: AppColors.error,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -283,11 +283,11 @@ class _CvFormScreenState extends State<CvFormScreen>
                                       DropdownMenuItem(
                                           value: 'male',
                                           child: Text('♂ نێر',
-                                              style: TextStyle(fontFamily: 'NotoSansArabic'))),
+                                              style: TextStyle(fontFamily: 'Rabar'))),
                                       DropdownMenuItem(
                                           value: 'female',
                                           child: Text('♀ مێ',
-                                              style: TextStyle(fontFamily: 'NotoSansArabic'))),
+                                              style: TextStyle(fontFamily: 'Rabar'))),
                                     ],
                                     onChanged: (v) =>
                                         setState(() => _gender = v),
@@ -326,7 +326,7 @@ class _CvFormScreenState extends State<CvFormScreen>
                                               value: e,
                                               child: Text(e,
                                                   style: const TextStyle(
-                                                      fontFamily: 'NotoSansArabic',
+                                                      fontFamily: 'Rabar',
                                                       fontSize: 13))))
                                           .toList(),
                                       onChanged: (v) =>
@@ -382,18 +382,18 @@ class _CvFormScreenState extends State<CvFormScreen>
                                       const Row(children: [
                                         Icon(Icons.star_outline, color: AppColors.primary, size: 20),
                                         SizedBox(width: 8),
-                                        Text('تواناکان / شارەزاییەکان', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'NotoSansArabic')),
+                                        Text('تواناکان / شارەزاییەکان', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Rabar')),
                                       ]),
                                       TextButton.icon(
                                         onPressed: () => setState(() => _selectedSkills.add('')),
                                         icon: const Icon(Icons.add_circle_outline, size: 18),
-                                        label: const Text('زیادکردن', style: TextStyle(fontFamily: 'NotoSansArabic')),
+                                        label: const Text('زیادکردن', style: TextStyle(fontFamily: 'Rabar')),
                                       ),
                                     ],
                                   ),
                                   const SizedBox(height: 8),
                                   if (_selectedSkills.isEmpty)
-                                    Center(child: Text('هیچ توانایەک زیاد نەکراوە', style: TextStyle(fontSize: 12, color: isDark ? Colors.white38 : Colors.black38, fontFamily: 'NotoSansArabic'))),
+                                    Center(child: Text('هیچ توانایەک زیاد نەکراوە', style: TextStyle(fontSize: 12, color: isDark ? Colors.white38 : Colors.black38, fontFamily: 'Rabar'))),
                                   ..._selectedSkills.asMap().entries.map((entry) {
                                     int idx = entry.key;
                                     return Padding(
@@ -407,7 +407,7 @@ class _CvFormScreenState extends State<CvFormScreen>
                                               decoration: InputDecoration(
                                                 hintText: 'وەک: گرافیک دیزاین، مایکرۆسۆفت وۆرد...',
                                                 isDense: true,
-                                                hintStyle: const TextStyle(fontSize: 12, fontFamily: 'NotoSansArabic'),
+                                                hintStyle: const TextStyle(fontSize: 12, fontFamily: 'Rabar'),
                                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                                               ),
                                             ),
@@ -429,18 +429,18 @@ class _CvFormScreenState extends State<CvFormScreen>
                                       const Row(children: [
                                         Icon(Icons.language_outlined, color: AppColors.primary, size: 20),
                                         SizedBox(width: 8),
-                                        Text('زمانەکان', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'NotoSansArabic')),
+                                        Text('زمانەکان', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Rabar')),
                                       ]),
                                       TextButton.icon(
                                         onPressed: () => setState(() => _selectedLangs.add({'name': '', 'level': 'مامناوەند'})),
                                         icon: const Icon(Icons.add_circle_outline, size: 18),
-                                        label: const Text('زیادکردن', style: TextStyle(fontFamily: 'NotoSansArabic')),
+                                        label: const Text('زیادکردن', style: TextStyle(fontFamily: 'Rabar')),
                                       ),
                                     ],
                                   ),
                                   const SizedBox(height: 8),
                                   if (_selectedLangs.isEmpty)
-                                    Center(child: Text('هیچ زمانێک زیاد نەکراوە', style: TextStyle(fontSize: 12, color: isDark ? Colors.white38 : Colors.black38, fontFamily: 'NotoSansArabic'))),
+                                    Center(child: Text('هیچ زمانێک زیاد نەکراوە', style: TextStyle(fontSize: 12, color: isDark ? Colors.white38 : Colors.black38, fontFamily: 'Rabar'))),
                                   ..._selectedLangs.asMap().entries.map((entry) {
                                     int idx = entry.key;
                                     return Padding(
@@ -455,7 +455,7 @@ class _CvFormScreenState extends State<CvFormScreen>
                                               decoration: InputDecoration(
                                                 hintText: 'ناوی زمان',
                                                 isDense: true,
-                                                hintStyle: const TextStyle(fontSize: 12, fontFamily: 'NotoSansArabic'),
+                                                hintStyle: const TextStyle(fontSize: 12, fontFamily: 'Rabar'),
                                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                                               ),
                                             ),
@@ -466,7 +466,7 @@ class _CvFormScreenState extends State<CvFormScreen>
                                             child: DropdownButtonFormField<String>(
                                               value: entry.value['level'],
                                               isExpanded: true,
-                                              items: _langLevels.map((l) => DropdownMenuItem(value: l, child: Text(l, style: const TextStyle(fontSize: 12, fontFamily: 'NotoSansArabic')))).toList(),
+                                              items: _langLevels.map((l) => DropdownMenuItem(value: l, child: Text(l, style: const TextStyle(fontSize: 12, fontFamily: 'Rabar')))).toList(),
                                               onChanged: (v) => setState(() => _selectedLangs[idx]['level'] = v!),
                                               decoration: InputDecoration(
                                                 isDense: true,
@@ -537,12 +537,12 @@ class _CvFormScreenState extends State<CvFormScreen>
                         fontSize: 22,
                         fontWeight: FontWeight.w900,
                         color: isDark ? Colors.white : const Color(0xFF1E293B),
-                        fontFamily: 'NotoSansArabic')),
+                        fontFamily: 'Rabar')),
                 Text(l.cvBankSubtitle,
                     style: TextStyle(
                         fontSize: 12,
                         color: isDark ? Colors.white54 : Colors.black45,
-                        fontFamily: 'NotoSansArabic'),
+                        fontFamily: 'Rabar'),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis),
               ],
@@ -608,7 +608,7 @@ class _CvFormScreenState extends State<CvFormScreen>
                         Text('وێنەی کەسی',
                             style: TextStyle(
                                 fontSize: 11,
-                                fontFamily: 'NotoSansArabic',
+                                fontFamily: 'Rabar',
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.w700)),
                       ],
@@ -684,7 +684,7 @@ class _CvFormScreenState extends State<CvFormScreen>
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
                         color: color,
-                        fontFamily: 'NotoSansArabic')),
+                        fontFamily: 'Rabar')),
               ]),
               const SizedBox(height: 18),
               ...children,
@@ -728,7 +728,7 @@ class _CvFormScreenState extends State<CvFormScreen>
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
                         color: Colors.white,
-                        fontFamily: 'NotoSansArabic')),
+                        fontFamily: 'Rabar')),
                 SizedBox(width: 10),
                 Icon(Icons.send_rounded, color: Colors.white, size: 20),
               ]),
@@ -767,7 +767,7 @@ class _PremiumField extends StatelessWidget {
       maxLines: maxLines,
       validator: validator,
       style: TextStyle(
-          fontFamily: 'NotoSansArabic',
+          fontFamily: 'Rabar',
           color: isDark ? Colors.white : const Color(0xFF1E293B),
           fontSize: 14),
       decoration: InputDecoration(
@@ -775,11 +775,11 @@ class _PremiumField extends StatelessWidget {
         hintText: hint,
         prefixIcon: Icon(icon, color: AppColors.primary, size: 20),
         labelStyle: TextStyle(
-            fontFamily: 'NotoSansArabic',
+            fontFamily: 'Rabar',
             color: isDark ? Colors.white54 : Colors.black45,
             fontSize: 13),
         hintStyle: TextStyle(
-            fontFamily: 'NotoSansArabic',
+            fontFamily: 'Rabar',
             color: isDark ? Colors.white30 : Colors.black26,
             fontSize: 12),
         filled: true,
@@ -856,11 +856,11 @@ class _CityAutocompleteState extends State<_CityAutocomplete> {
         suffixIcon:
             const Icon(Icons.arrow_drop_down_rounded, color: AppColors.primary),
         labelStyle: TextStyle(
-            fontFamily: 'NotoSansArabic',
+            fontFamily: 'Rabar',
             color: isDark ? Colors.white54 : Colors.black45,
             fontSize: 13),
         hintStyle: TextStyle(
-            fontFamily: 'NotoSansArabic',
+            fontFamily: 'Rabar',
             color: isDark ? Colors.white30 : Colors.black26,
             fontSize: 12),
         filled: true,
@@ -906,7 +906,7 @@ class _CityAutocompleteState extends State<_CityAutocomplete> {
           onFieldSubmitted: (_) => onSubmit(),
           onChanged: widget.onChanged, // Update typed values even without selection
           style: TextStyle(
-              fontFamily: 'NotoSansArabic',
+              fontFamily: 'Rabar',
               color: isDark ? Colors.white : const Color(0xFF1E293B),
               fontSize: 14),
           decoration: _decoration(widget.label, isDark),
@@ -944,7 +944,7 @@ class _CityAutocompleteState extends State<_CityAutocomplete> {
                         const SizedBox(width: 10),
                         Text(city,
                             style: TextStyle(
-                                fontFamily: 'NotoSansArabic',
+                                fontFamily: 'Rabar',
                                 fontSize: 14,
                                 color: isDark
                                     ? Colors.white
@@ -990,14 +990,14 @@ class _PremiumDropdown<T> extends StatelessWidget {
       onChanged: onChanged,
       dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
       style: TextStyle(
-          fontFamily: 'NotoSansArabic',
+          fontFamily: 'Rabar',
           color: isDark ? Colors.white : const Color(0xFF1E293B),
           fontSize: 14),
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, color: AppColors.primary, size: 20),
         labelStyle: TextStyle(
-            fontFamily: 'NotoSansArabic',
+            fontFamily: 'Rabar',
             color: isDark ? Colors.white54 : Colors.black45,
             fontSize: 13),
         filled: true,
@@ -1135,14 +1135,14 @@ class _SuccessScreenState extends State<_SuccessScreen>
                           fontSize: 24,
                           fontWeight: FontWeight.w900,
                           color: isDark ? Colors.white : const Color(0xFF1E293B),
-                          fontFamily: 'NotoSansArabic')),
+                          fontFamily: 'Rabar')),
                   const SizedBox(height: 16),
                   Text(
                       'زانیارییەکانت بە سەرکەوتوویی نێردران. چاوەروان بە تا بڵاو دەکرێتەوە',
                       style: TextStyle(
                           fontSize: 15,
                           color: isDark ? Colors.white60 : Colors.black54,
-                          fontFamily: 'NotoSansArabic',
+                          fontFamily: 'Rabar',
                           height: 1.6),
                       textAlign: TextAlign.center),
                   const SizedBox(height: 40),
@@ -1170,7 +1170,7 @@ class _SuccessScreenState extends State<_SuccessScreen>
                               fontSize: 17,
                               fontWeight: FontWeight.w800,
                               color: Colors.white,
-                              fontFamily: 'NotoSansArabic')),
+                              fontFamily: 'Rabar')),
                     ),
                   ),
                 ])),

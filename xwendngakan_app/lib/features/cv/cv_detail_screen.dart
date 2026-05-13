@@ -78,7 +78,7 @@ class _CvDetailScreenState extends State<CvDetailScreen> {
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white : Colors.black87,
-                    fontFamily: 'NotoSansArabic')),
+                    fontFamily: 'Rabar')),
             const SizedBox(height: 24),
             _buildContactOption(
                 Icons.phone_rounded, l.contactPhone, const Color(0xFF3B82F6),
@@ -122,7 +122,7 @@ class _CvDetailScreenState extends State<CvDetailScreen> {
                     fontSize: 15,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.white : Colors.black87,
-                    fontFamily: 'NotoSansArabic')),
+                    fontFamily: 'Rabar')),
             const Spacer(),
             Icon(Icons.arrow_forward_ios_rounded,
                 size: 14, color: color.withValues(alpha: 0.5)),
@@ -221,7 +221,7 @@ class _CvDetailScreenState extends State<CvDetailScreen> {
                                       color: Colors.white,
                                       fontSize: 18,
                                       fontWeight: FontWeight.w900,
-                                      fontFamily: 'NotoSansArabic')),
+                                      fontFamily: 'Rabar')),
                               _buildCircleAction(Icons.ios_share_rounded,
                                   () => _shareCv(cv, l)),
                             ],
@@ -274,14 +274,14 @@ class _CvDetailScreenState extends State<CvDetailScreen> {
                                 fontSize: 24,
                                 fontWeight: FontWeight.w900,
                                 color: isDark ? Colors.white : Colors.black87,
-                                fontFamily: 'NotoSansArabic')),
+                                fontFamily: 'Rabar')),
                         const SizedBox(height: 4),
                         Text(cv.field ?? '',
                             style: TextStyle(
                                 fontSize: 15,
                                 color: accentColor,
                                 fontWeight: FontWeight.w700,
-                                fontFamily: 'NotoSansArabic')),
+                                fontFamily: 'Rabar')),
                         const SizedBox(height: 28),
                         Row(
                           children: [
@@ -340,7 +340,7 @@ class _CvDetailScreenState extends State<CvDetailScreen> {
                                           color: isDark
                                               ? Colors.white
                                               : Colors.black87,
-                                          fontFamily: 'NotoSansArabic')),
+                                          fontFamily: 'Rabar')),
                                   if (cv.graduationYear != null)
                                     Padding(
                                       padding: const EdgeInsets.only(top: 4),
@@ -352,7 +352,7 @@ class _CvDetailScreenState extends State<CvDetailScreen> {
                                                   ? Colors.white54
                                                   : Colors.black54,
                                               fontWeight: FontWeight.w600,
-                                              fontFamily: 'NotoSansArabic')),
+                                              fontFamily: 'Rabar')),
                                     ),
                                 ],
                               ),
@@ -463,7 +463,7 @@ class _CvDetailScreenState extends State<CvDetailScreen> {
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   color: isDark ? Colors.white38 : Colors.black45,
-                  fontFamily: 'NotoSansArabic')),
+                  fontFamily: 'Rabar')),
           const SizedBox(height: 2),
           Text(value,
               textAlign: TextAlign.center,
@@ -473,7 +473,7 @@ class _CvDetailScreenState extends State<CvDetailScreen> {
                   fontSize: 13,
                   fontWeight: FontWeight.w900,
                   color: isDark ? Colors.white : Colors.black87,
-                  fontFamily: 'NotoSansArabic')),
+                  fontFamily: 'Rabar')),
         ],
       ),
     );
@@ -507,7 +507,7 @@ class _CvDetailScreenState extends State<CvDetailScreen> {
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1,
                       color: isDark ? Colors.white38 : Colors.black45,
-                      fontFamily: 'NotoSansArabic')),
+                      fontFamily: 'Rabar')),
             ],
           ),
           const SizedBox(height: 20),
@@ -526,7 +526,7 @@ class _CvDetailScreenState extends State<CvDetailScreen> {
               fontSize: 15,
               height: 1.8,
               color: isDark ? Colors.white70 : Colors.black87,
-              fontFamily: 'NotoSansArabic'));
+              fontFamily: 'Rabar'));
     }
     return GestureDetector(
       onTap: () {
@@ -540,7 +540,7 @@ class _CvDetailScreenState extends State<CvDetailScreen> {
               color: accent,
               decoration: TextDecoration.underline,
               fontWeight: FontWeight.w600,
-              fontFamily: 'NotoSansArabic')),
+              fontFamily: 'Rabar')),
     );
   }
 
@@ -555,7 +555,7 @@ class _CvDetailScreenState extends State<CvDetailScreen> {
               fontSize: 13,
               fontWeight: FontWeight.w700,
               color: isDark ? Colors.white70 : Colors.black87,
-              fontFamily: 'NotoSansArabic')),
+              fontFamily: 'Rabar')),
     );
   }
 
@@ -577,7 +577,7 @@ class _CvDetailScreenState extends State<CvDetailScreen> {
                   fontSize: 15,
                   fontWeight: FontWeight.w900,
                   color: isDark ? Colors.white : Colors.black87,
-                  fontFamily: 'NotoSansArabic')),
+                  fontFamily: 'Rabar')),
           if (level != null)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -589,7 +589,7 @@ class _CvDetailScreenState extends State<CvDetailScreen> {
                       fontSize: 12,
                       fontWeight: FontWeight.w800,
                       color: accent,
-                      fontFamily: 'NotoSansArabic')),
+                      fontFamily: 'Rabar')),
             ),
         ],
       ),
@@ -631,7 +631,7 @@ class _CvDetailScreenState extends State<CvDetailScreen> {
                         fontSize: 14,
                         fontWeight: FontWeight.w900,
                         color: accent,
-                        fontFamily: 'NotoSansArabic'))),
+                        fontFamily: 'Rabar'))),
             Icon(Icons.chevron_right_rounded,
                 size: 18, color: accent.withValues(alpha: 0.4)),
           ],
@@ -673,7 +673,7 @@ class _CvDetailScreenState extends State<CvDetailScreen> {
                         color: Colors.white,
                         fontWeight: FontWeight.w900,
                         fontSize: 16,
-                        fontFamily: 'NotoSansArabic')),
+                        fontFamily: 'Rabar')),
               ],
             ),
           ),

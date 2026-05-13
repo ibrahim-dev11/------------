@@ -205,7 +205,7 @@ class NewsDetailScreen extends StatelessWidget {
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w900,
-                                          fontFamily: 'NotoSansArabic',
+                                          fontFamily: 'Rabar',
                                           color: isDark ? Colors.white : AppColors.textDark,
                                         ),
                                       ),
@@ -228,7 +228,7 @@ class NewsDetailScreen extends StatelessWidget {
                                         _timeAgo(createdAt, l),
                                         style: TextStyle(
                                           fontSize: 11,
-                                          fontFamily: 'NotoSansArabic',
+                                          fontFamily: 'Rabar',
                                           color: isDark ? Colors.white38 : Colors.black38,
                                         ),
                                       ),
@@ -245,7 +245,7 @@ class NewsDetailScreen extends StatelessWidget {
                                             fontSize: 10,
                                             fontWeight: FontWeight.w800,
                                             color: typeColor,
-                                            fontFamily: 'NotoSansArabic',
+                                            fontFamily: 'Rabar',
                                           ),
                                         ),
                                       ),
@@ -265,7 +265,7 @@ class NewsDetailScreen extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.w900,
-                              fontFamily: 'NotoSansArabic',
+                              fontFamily: 'Rabar',
                               color: isDark ? Colors.white : AppColors.textDark,
                               height: 1.4,
                               letterSpacing: -0.2,
@@ -311,7 +311,7 @@ class NewsDetailScreen extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 15,
                                   height: 2.0,
-                                  fontFamily: 'NotoSansArabic',
+                                  fontFamily: 'Rabar',
                                   color: isDark
                                       ? Colors.white.withValues(alpha: 0.9)
                                       : AppColors.textDark.withValues(alpha: 0.95),
@@ -434,7 +434,7 @@ class _Avatar extends StatelessWidget {
             fontSize: size * 0.38,
             fontWeight: FontWeight.w900,
             color: _typeColor,
-            fontFamily: 'NotoSansArabic',
+            fontFamily: 'Rabar',
           ),
         ),
       );

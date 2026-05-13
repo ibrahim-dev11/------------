@@ -150,7 +150,7 @@ class MainShell extends StatelessWidget {
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
                                 color: AppColors.primary,
-                                fontFamily: 'NotoSansArabic',
+                                fontFamily: 'Rabar',
                               ),
                             ),
                           ],

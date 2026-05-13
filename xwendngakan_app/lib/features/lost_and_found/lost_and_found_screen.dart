@@ -91,7 +91,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkBg : const Color(0xFFF5F6FA),
       appBar: AppBar(
-        title: Text(l.lostAndFound, style: const TextStyle(fontFamily: 'NotoSansArabic', fontWeight: FontWeight.bold)),
+        title: Text(l.lostAndFound, style: const TextStyle(fontFamily: 'Rabar', fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -101,7 +101,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
           indicatorColor: AppColors.primary,
           labelColor: AppColors.primary,
           unselectedLabelColor: isDark ? Colors.white54 : Colors.black54,
-          labelStyle: const TextStyle(fontFamily: 'NotoSansArabic', fontWeight: FontWeight.bold),
+          labelStyle: const TextStyle(fontFamily: 'Rabar', fontWeight: FontWeight.bold),
           tabs: [
             Tab(text: l.all),
             Tab(text: l.losts),
@@ -113,7 +113,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
         onPressed: () => context.push('/lost-and-found/add'),
         backgroundColor: AppColors.primary,
         icon: const Icon(Icons.add_rounded, color: Colors.white),
-        label: Text(l.publish, style: const TextStyle(fontFamily: 'NotoSansArabic', fontWeight: FontWeight.bold, color: Colors.white)),
+        label: Text(l.publish, style: const TextStyle(fontFamily: 'Rabar', fontWeight: FontWeight.bold, color: Colors.white)),
       ),
       body: Column(
         children: [
@@ -136,7 +136,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
                           const SizedBox(height: 16),
                           Text(
                             l.noItemsFound,
-                            style: TextStyle(fontFamily: 'NotoSansArabic', color: isDark ? Colors.white54 : Colors.black54),
+                            style: TextStyle(fontFamily: 'Rabar', color: isDark ? Colors.white54 : Colors.black54),
                           )
                         ],
                       ),
@@ -210,20 +210,20 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
                                                   color: isLost ? const Color(0xFFFF4757) : const Color(0xFF2ED573),
                                                   fontSize: 10,
                                                   fontWeight: FontWeight.bold,
-                                                  fontFamily: 'NotoSansArabic',
+                                                  fontFamily: 'Rabar',
                                                 ),
                                               ),
                                             ),
                                             Text(
                                               item['date'],
-                                              style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black54, fontFamily: 'NotoSansArabic'),
+                                              style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black54, fontFamily: 'Rabar'),
                                             ),
                                           ],
                                         ),
                                         const SizedBox(height: 8),
                                         Text(
                                           item['title'],
-                                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, fontFamily: 'NotoSansArabic'),
+                                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, fontFamily: 'Rabar'),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -235,7 +235,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
                                             Expanded(
                                               child: Text(
                                                 item['location'],
-                                                style: TextStyle(fontSize: 11, color: isDark ? Colors.white54 : Colors.black54, fontFamily: 'NotoSansArabic'),
+                                                style: TextStyle(fontSize: 11, color: isDark ? Colors.white54 : Colors.black54, fontFamily: 'Rabar'),
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
@@ -324,14 +324,14 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
                             color: isLost ? const Color(0xFFFF4757) : const Color(0xFF2ED573),
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            fontFamily: 'NotoSansArabic',
+                            fontFamily: 'Rabar',
                           ),
                         ),
                       ),
                       const Spacer(),
                       Text(
                         item['date'],
-                        style: TextStyle(fontSize: 13, color: isDark ? Colors.white54 : Colors.black54, fontFamily: 'NotoSansArabic'),
+                        style: TextStyle(fontSize: 13, color: isDark ? Colors.white54 : Colors.black54, fontFamily: 'Rabar'),
                       ),
                     ],
                   ),
@@ -340,7 +340,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
                   // Title
                   Text(
                     item['title'],
-                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, fontFamily: 'NotoSansArabic'),
+                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, fontFamily: 'Rabar'),
                   ),
                   const SizedBox(height: 16),
                   
@@ -357,8 +357,8 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(l.location, style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : Colors.black54, fontFamily: 'NotoSansArabic')),
-                            Text(item['location'], style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, fontFamily: 'NotoSansArabic')),
+                            Text(l.location, style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : Colors.black54, fontFamily: 'Rabar')),
+                            Text(item['location'], style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, fontFamily: 'Rabar')),
                           ],
                         ),
                       ),
@@ -367,11 +367,11 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
                   const SizedBox(height: 24),
                   
                   // Description
-                  Text(l.moreInfo, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'NotoSansArabic')),
+                  Text(l.moreInfo, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Rabar')),
                   const SizedBox(height: 8),
                   Text(
                     item['description'],
-                    style: TextStyle(fontSize: 14, color: isDark ? Colors.white70 : Colors.black87, fontFamily: 'NotoSansArabic', height: 1.6),
+                    style: TextStyle(fontSize: 14, color: isDark ? Colors.white70 : Colors.black87, fontFamily: 'Rabar', height: 1.6),
                   ),
                   const SizedBox(height: 32),
                   
@@ -393,8 +393,8 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(l.publisher, style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : Colors.black54, fontFamily: 'NotoSansArabic')),
-                              Text(item['user'], style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, fontFamily: 'NotoSansArabic')),
+                              Text(l.publisher, style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : Colors.black54, fontFamily: 'Rabar')),
+                              Text(item['user'], style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, fontFamily: 'Rabar')),
                             ],
                           ),
                         ),
@@ -409,7 +409,7 @@ class _LostAndFoundScreenState extends State<LostAndFoundScreen> with SingleTick
                     onPressed: () {
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l.messageSent, style: const TextStyle(fontFamily: 'NotoSansArabic'))),
+                        SnackBar(content: Text(l.messageSent, style: const TextStyle(fontFamily: 'Rabar'))),
                       );
                     },
                   ),

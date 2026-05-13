@@ -172,7 +172,7 @@ class _CvScreenState extends State<CvScreen> with SingleTickerProviderStateMixin
                                                 fontSize: 22,
                                                 fontWeight: FontWeight.w900,
                                                 color: Colors.white,
-                                                fontFamily: 'NotoSansArabic',
+                                                fontFamily: 'Rabar',
                                                 letterSpacing: -0.5,
                                               ),
                                             ),
@@ -183,7 +183,7 @@ class _CvScreenState extends State<CvScreen> with SingleTickerProviderStateMixin
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w600,
                                                 color: Colors.white70,
-                                                fontFamily: 'NotoSansArabic',
+                                                fontFamily: 'Rabar',
                                               ),
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
@@ -340,7 +340,7 @@ class _CvScreenState extends State<CvScreen> with SingleTickerProviderStateMixin
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
-                fontFamily: 'NotoSansArabic',
+                fontFamily: 'Rabar',
                 color: isDark ? Colors.white : const Color(0xFF0F172A),
               ),
               decoration: InputDecoration(
@@ -348,7 +348,7 @@ class _CvScreenState extends State<CvScreen> with SingleTickerProviderStateMixin
                 hintStyle: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  fontFamily: 'NotoSansArabic',
+                  fontFamily: 'Rabar',
                   color: isDark ? Colors.white24 : Colors.black26,
                 ),
                 border: InputBorder.none,
@@ -396,7 +396,7 @@ class _CvScreenState extends State<CvScreen> with SingleTickerProviderStateMixin
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w900,
-            fontFamily: 'NotoSansArabic',
+            fontFamily: 'Rabar',
             fontSize: 14,
             letterSpacing: 0.5,
           ),
@@ -425,7 +425,7 @@ class _CvScreenState extends State<CvScreen> with SingleTickerProviderStateMixin
               style: const TextStyle(
                 color: AppColors.primary,
                 fontSize: 12,
-                fontFamily: 'NotoSansArabic',
+                fontFamily: 'Rabar',
                 fontWeight: FontWeight.w800,
               ),
               maxLines: 1,
@@ -501,7 +501,7 @@ class _AdvancedFilterSheetState extends State<_AdvancedFilterSheet> {
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+          padding: EdgeInsets.fromLTRB(24, 16, 24, 32 + 94 + MediaQuery.of(context).padding.bottom),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -521,7 +521,7 @@ class _AdvancedFilterSheetState extends State<_AdvancedFilterSheet> {
                 'فلتەری پێشکەوتوو',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w800,
-                      fontFamily: 'NotoSansArabic',
+                      fontFamily: 'Rabar',
                     ),
               ),
               const SizedBox(height: 24),
@@ -532,7 +532,7 @@ class _AdvancedFilterSheetState extends State<_AdvancedFilterSheet> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  fontFamily: 'NotoSansArabic',
+                  fontFamily: 'Rabar',
                   color: isDark ? Colors.white70 : Colors.black87,
                 ),
               ),
@@ -550,16 +550,16 @@ class _AdvancedFilterSheetState extends State<_AdvancedFilterSheet> {
                 ),
                 dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
                 icon: const Icon(Icons.keyboard_arrow_down_rounded),
-                hint: Text('هەموو شارەکان', style: TextStyle(fontFamily: 'NotoSansArabic', color: isDark ? Colors.white38 : Colors.black38)),
+                hint: Text('هەموو شارەکان', style: TextStyle(fontFamily: 'Rabar', color: isDark ? Colors.white38 : Colors.black38)),
                 items: [
                   const DropdownMenuItem<String>(
                     value: null,
-                    child: Text('هەموو شارەکان', style: TextStyle(fontFamily: 'NotoSansArabic')),
+                    child: Text('هەموو شارەکان', style: TextStyle(fontFamily: 'Rabar')),
                   ),
                   ...AppConstants.iraqiCities.map((city) {
                     return DropdownMenuItem(
                       value: city,
-                      child: Text(city, style: const TextStyle(fontFamily: 'NotoSansArabic')),
+                      child: Text(city, style: const TextStyle(fontFamily: 'Rabar')),
                     );
                   })
                 ],
@@ -574,7 +574,7 @@ class _AdvancedFilterSheetState extends State<_AdvancedFilterSheet> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  fontFamily: 'NotoSansArabic',
+                  fontFamily: 'Rabar',
                   color: isDark ? Colors.white70 : Colors.black87,
                 ),
               ),
@@ -599,7 +599,7 @@ class _AdvancedFilterSheetState extends State<_AdvancedFilterSheet> {
                       child: Text(
                         edu,
                         style: TextStyle(
-                          fontFamily: 'NotoSansArabic',
+                          fontFamily: 'Rabar',
                           fontSize: 13,
                           fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                           color: isSelected ? AppColors.primary : (isDark ? Colors.white : Colors.black87),
@@ -631,7 +631,7 @@ class _AdvancedFilterSheetState extends State<_AdvancedFilterSheet> {
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w800,
-                      fontFamily: 'NotoSansArabic',
+                      fontFamily: 'Rabar',
                       color: Colors.white,
                     ),
                   ),

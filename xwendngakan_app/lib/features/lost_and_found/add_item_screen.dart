@@ -33,7 +33,7 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkBg : const Color(0xFFF5F6FA),
       appBar: AppBar(
-        title: Text(l.publishNew, style: const TextStyle(fontFamily: 'NotoSansArabic', fontWeight: FontWeight.bold)),
+        title: Text(l.publishNew, style: const TextStyle(fontFamily: 'Rabar', fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -60,7 +60,7 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
                         child: Text(
                           '${l.lost} 🔴',
                           style: TextStyle(
-                            fontFamily: 'NotoSansArabic',
+                            fontFamily: 'Rabar',
                             fontWeight: FontWeight.bold,
                             color: _type == 'lost' ? Colors.white : (isDark ? Colors.white70 : AppColors.textDark),
                           ),
@@ -84,7 +84,7 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
                         child: Text(
                           '${l.found} 🟢',
                           style: TextStyle(
-                            fontFamily: 'NotoSansArabic',
+                            fontFamily: 'Rabar',
                             fontWeight: FontWeight.bold,
                             color: _type == 'found' ? Colors.white : (isDark ? Colors.white70 : AppColors.textDark),
                           ),
@@ -111,14 +111,14 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
                 children: [
                   Icon(Icons.add_a_photo_rounded, size: 40, color: AppColors.primary.withOpacity(0.7)),
                   const SizedBox(height: 8),
-                  Text(l.addPhoto, style: const TextStyle(fontFamily: 'NotoSansArabic', fontWeight: FontWeight.bold)),
+                  Text(l.addPhoto, style: const TextStyle(fontFamily: 'Rabar', fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
             const SizedBox(height: 32),
             
             // Form Fields
-            Text(l.itemName, style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'NotoSansArabic', color: isDark ? Colors.white : AppColors.textDark)),
+            Text(l.itemName, style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Rabar', color: isDark ? Colors.white : AppColors.textDark)),
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
@@ -137,7 +137,7 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
             ),
             const SizedBox(height: 24),
             
-            Text(l.where, style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'NotoSansArabic', color: isDark ? Colors.white : AppColors.textDark)),
+            Text(l.where, style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Rabar', color: isDark ? Colors.white : AppColors.textDark)),
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
@@ -156,7 +156,7 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
             ),
             const SizedBox(height: 24),
             
-            Text(l.moreInfo, style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'NotoSansArabic', color: isDark ? Colors.white : AppColors.textDark)),
+            Text(l.moreInfo, style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Rabar', color: isDark ? Colors.white : AppColors.textDark)),
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
@@ -181,14 +181,14 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
               onPressed: () {
                 if (_titleController.text.isEmpty || _locationController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l.fillAllInfo, style: const TextStyle(fontFamily: 'NotoSansArabic'))),
+                    SnackBar(content: Text(l.fillAllInfo, style: const TextStyle(fontFamily: 'Rabar'))),
                   );
                   return;
                 }
                 
                 context.pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l.publishedSuccess, style: const TextStyle(fontFamily: 'NotoSansArabic'))),
+                  SnackBar(content: Text(l.publishedSuccess, style: const TextStyle(fontFamily: 'Rabar'))),
                 );
               },
             ),

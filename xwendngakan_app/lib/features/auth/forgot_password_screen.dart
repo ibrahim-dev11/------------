@@ -127,7 +127,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         Text(l.forgotPassword.replaceAll('?', ''),
                             style: const TextStyle(fontSize: 20,
                                 fontWeight: FontWeight.w700, color: Colors.white,
-                                fontFamily: 'NotoSansArabic')),
+                                fontFamily: 'Rabar')),
                       ],
                     ),
                   ),

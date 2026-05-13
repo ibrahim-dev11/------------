@@ -68,7 +68,7 @@ class _EventsScreenState extends State<EventsScreen>
                 labelStyle: const TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
-                  fontFamily: 'NotoSansArabic',
+                  fontFamily: 'Rabar',
                 ),
                 tabs: const [
                   Tab(text: 'ڕۆژنامێری'),
@@ -143,7 +143,7 @@ class _EventsScreenState extends State<EventsScreen>
                       fontWeight: FontWeight.w900,
                       fontSize: 30,
                       letterSpacing: -0.5,
-                      fontFamily: 'NotoSansArabic',
+                      fontFamily: 'Rabar',
                       color: isDark ? Colors.white : const Color(0xFF111827),
                     ),
                   ),
@@ -160,7 +160,7 @@ class _EventsScreenState extends State<EventsScreen>
                       style: const TextStyle(
                         fontSize: 13,
                         color: Color(0xFFFF6B35),
-                        fontFamily: 'NotoSansArabic',
+                        fontFamily: 'Rabar',
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -299,7 +299,7 @@ class _EventsScreenState extends State<EventsScreen>
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
-                  fontFamily: 'NotoSansArabic',
+                  fontFamily: 'Rabar',
                   color: isDark ? Colors.white : AppColors.textDark,
                 ),
               ),
@@ -322,7 +322,7 @@ class _EventsScreenState extends State<EventsScreen>
                       Text(
                         'هیچ ڕووداوێک نییە بۆ ئەم ڕۆژە',
                         style: TextStyle(
-                          fontFamily: 'NotoSansArabic',
+                          fontFamily: 'Rabar',
                           color: isDark ? Colors.white38 : Colors.black38,
                         ),
                       ),
@@ -446,7 +446,7 @@ class _EventCard extends StatelessWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 15,
-                      fontFamily: 'NotoSansArabic',
+                      fontFamily: 'Rabar',
                       color: isDark ? Colors.white : AppColors.textDark,
                     ),
                   ),
@@ -465,7 +465,7 @@ class _EventCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 12,
-                              fontFamily: 'NotoSansArabic',
+                              fontFamily: 'Rabar',
                               color: isDark ? Colors.white60 : Colors.black45,
                             ),
                           ),
@@ -507,7 +507,7 @@ class _EventCard extends StatelessWidget {
                           fontSize: 11,
                           color: Color(0xFFFF6B35),
                           fontWeight: FontWeight.w700,
-                          fontFamily: 'NotoSansArabic',
+                          fontFamily: 'Rabar',
                         ),
                       ),
                     ),

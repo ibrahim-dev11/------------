@@ -147,7 +147,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
                                           fontSize: 22,
                                           fontWeight: FontWeight.w900,
                                           color: Colors.white,
-                                          fontFamily: 'NotoSansArabic',
+                                          fontFamily: 'Rabar',
                                           letterSpacing: -0.5,
                                         ),
                                       ),
@@ -158,7 +158,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
                                           fontSize: 12,
                                           fontWeight: FontWeight.w600,
                                           color: Colors.white70,
-                                          fontFamily: 'NotoSansArabic',
+                                          fontFamily: 'Rabar',
                                         ),
                                       ),
                                     ],
@@ -203,7 +203,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
                                         style: TextStyle(
                                           fontSize: 14.5,
                                           fontWeight: FontWeight.w600,
-                                          fontFamily: 'NotoSansArabic',
+                                          fontFamily: 'Rabar',
                                           color: isDark
                                               ? Colors.white
                                               : const Color(0xFF1F2937),
@@ -213,7 +213,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
                                           hintStyle: const TextStyle(
                                             fontSize: 13.5,
                                             fontWeight: FontWeight.w500,
-                                            fontFamily: 'NotoSansArabic',
+                                            fontFamily: 'Rabar',
                                             color: Colors.grey,
                                           ),
                                           border: InputBorder.none,
@@ -353,7 +353,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
                                           ? Colors.white
                                           : const Color(0xFF1F2937),
                                       fontSize: 13,
-                                      fontFamily: 'NotoSansArabic',
+                                      fontFamily: 'Rabar',
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
@@ -490,7 +490,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
                     : (isDark ? Colors.white70 : const Color(0xFF4B5563)),
                 fontSize: 12.5,
                 fontWeight: selected ? FontWeight.w900 : FontWeight.w700,
-                fontFamily: 'NotoSansArabic',
+                fontFamily: 'Rabar',
               ),
             ),
           ],
@@ -522,7 +522,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
-                  fontFamily: 'NotoSansArabic',
+                  fontFamily: 'Rabar',
                   color: isDark ? Colors.white : const Color(0xFF111827),
                 ),
               ),
@@ -561,7 +561,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
                                   : const Color(0xFF4B5563)),
                           fontSize: 13,
                           fontWeight: FontWeight.w800,
-                          fontFamily: 'NotoSansArabic',
+                          fontFamily: 'Rabar',
                         ),
                       ),
                     ),

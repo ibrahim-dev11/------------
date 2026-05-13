@@ -28,7 +28,7 @@ class AppLocalizations {
   // APP GENERAL
   // =====================
   String get appName => _t({'ku': 'edu book', 'kbd': 'edu book', 'ar': 'edu book', 'en': 'edu book', 'tr': 'edu book'});
-  String get appTagline => _t({'ku': 'پلاتفۆرمی پەروەردەی مۆدێرن', 'kbd': 'پلاتفۆڕما پەروەردەیا مۆدێرن', 'ar': 'منصة التعليم الحديثة', 'en': 'Modern Educational Platform', 'tr': 'Modern Eğitim Platformu'});
+  String get appTagline => _t({'ku': ' پلاتفۆرمی پەروەردەیی', 'kbd': 'پلاتفۆرمێ پەروەردەیا ', 'ar': 'منصة التعليم الحديثة', 'en': 'Modern Educational Platform', 'tr': 'Modern Eğitim Platformu'});
   String get loading => _t({'ku': 'چاوەڕوان بە...', 'kbd': 'ل هیڤیێ بە...', 'ar': 'جاري التحميل...', 'en': 'Loading...', 'tr': 'Yükleniyor...'});
   String get error => _t({'ku': 'هەڵە', 'kbd': 'شاشی', 'ar': 'خطأ', 'en': 'Error', 'tr': 'Hata'});
   String get retry => _t({'ku': 'دووبارە هەوڵ بدەرەوە', 'kbd': 'دووبارە هەول بدە', 'ar': 'أعد المحاولة', 'en': 'Retry', 'tr': 'Yeniden dene'});
@@ -147,7 +147,7 @@ class AppLocalizations {
   String get schoolTeacher => _t({'ku': 'مامۆستای قوتابخانە', 'kbd': 'مامۆستەیێ قوتابخانێ', 'ar': 'معلم مدرسة', 'en': 'School Teacher', 'tr': 'Okul Öğretmeni'});
   String get experience => _t({'ku': 'ئەزموون', 'kbd': 'ئەزموون', 'ar': 'الخبرة', 'en': 'Experience', 'tr': 'Deneyim'});
   String get experienceYears => _t({'ku': 'ساڵی ئەزموون', 'kbd': 'سالێن ئەزموونێ', 'ar': 'سنوات الخبرة', 'en': 'Years of Experience', 'tr': 'Deneyim Yılı'});
-  String get hourlyRate => _t({'ku': 'کرێی هەر کاتژمێر', 'kbd': 'بهایێ هەر دەمژمێرەکێ', 'ar': 'الأجر في الساعة', 'en': 'Hourly Rate', 'tr': 'Saatlik Ücret'});
+  String get hourlyRate => _t({'ku': 'نرخی وانە', 'kbd': 'نرخێ وانەکێ', 'ar': 'سعر الدرس', 'en': 'Lesson Price', 'tr': 'Ders Ücreti'});
   String get about => _t({'ku': 'دەربارەی', 'kbd': 'دەربارەی', 'ar': 'عن', 'en': 'About', 'tr': 'Hakkında'});
   String get subject => _t({'ku': 'بابەت', 'kbd': 'بابەت', 'ar': 'المادة', 'en': 'Subject', 'tr': 'Ders'});
   String get rating => _t({'ku': 'هەڵسەنگاندن', 'kbd': 'هەلسەنگاندن', 'ar': 'التقييم', 'en': 'Rating', 'tr': 'Değerlendirme'});
@@ -253,6 +253,10 @@ class AppLocalizations {
   String get qrCode => _t({'ku': 'کۆدی QR', 'kbd': 'کۆدا QR', 'ar': 'رمز QR', 'en': 'QR Code', 'tr': 'QR Kodu'});
   String get watchVideo => _t({'ku': 'بینینی ڤیدیۆ', 'kbd': 'دیتنا ڤیدیۆیێ', 'ar': 'مشاهدة الفيديو', 'en': 'Watch Video', 'tr': 'Videoyu İzle'});
   String get update => _t({'ku': 'نوێکردنەوە', 'kbd': 'نویکرنەڤە', 'ar': 'تحديث', 'en': 'Update', 'tr': 'Güncelle'});
+  String get updateAvailable => _t({'ku': 'وەشانێکی نوێ بەردەستە', 'kbd': 'وەشانێکی نوێ بەردەستە', 'ar': 'يوجد إصدار جديد', 'en': 'New Version Available', 'tr': 'Yeni Sürüm Mevcut'});
+  String get forceUpdateTitle => _t({'ku': 'پێویستە ئەپەکە نوێ بکەیتەوە', 'kbd': 'پێویستە ئەپ نوێ بکەیتەوە', 'ar': 'يجب تحديث التطبيق', 'en': 'Update Required', 'tr': 'Güncelleme Gerekiyor'});
+  String get updateDesc => _t({'ku': 'تکایە دوایین وەشانی ئەپەکە دابەزێنە بۆ ئەوەی باشترین ئەزموونت هەبێت.', 'kbd': 'تکایە دوایین وەشانی ئەپ دابەزێنە.', 'ar': 'يرجى تنزيل أحدث إصدار للحصول على أفضل تجربة.', 'en': 'Please download the latest version for the best experience.', 'tr': 'En iyi deneyim için lütfen son sürümü indirin.'});
+  String get later => _t({'ku': 'پاشان', 'kbd': 'پاشان', 'ar': 'لاحقاً', 'en': 'Later', 'tr': 'Sonra'});
   String get publishNew => _t({'ku': 'بڵاوکردنەوەی نوێ', 'kbd': 'بەلاڤکرنا نوێ', 'ar': 'نشر جديد', 'en': 'Publish New', 'tr': 'Yeni Yayınla'});
   String get addPhoto => _t({'ku': 'وێنەیەک بۆ شتەکە دابنێ', 'kbd': 'وێنەیەکێ بۆ تشتێ خوە دابنێ', 'ar': 'أضف صورة للشيء', 'en': 'Add photo for item', 'tr': 'Öğe için fotoğraf ekle'});
   String get itemName => _t({'ku': 'ناوی شتەکە', 'kbd': 'ناڤێ تشتێ تە', 'ar': 'اسم الشيء', 'en': 'Item Name', 'tr': 'Öğe Adı'});

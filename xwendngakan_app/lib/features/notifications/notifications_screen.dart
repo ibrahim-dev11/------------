@@ -39,6 +39,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         Provider.of<NotificationsProvider>(context, listen: false).markAllRead();
       }
     });
+    _api.markAllNotificationsRead();
     final r = await _api.getNotifications();
     if (!mounted) return;
     if (r.success && r.data != null) {
@@ -116,12 +117,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: isRead ? FontWeight.w400 : FontWeight.w600,
-                                  fontFamily: 'NotoSansArabic',
+                                  fontFamily: 'Rabar',
                                 ),
                               ),
-                              subtitle: data['message'] != null
-                                  ? Text(data['message'],
-                                      style: const TextStyle(fontSize: 12, fontFamily: 'NotoSansArabic'),
+                              subtitle: (data['body'] ?? data['message']) != null
+                                  ? Text(data['body'] ?? data['message'],
+                                      style: const TextStyle(fontSize: 12, fontFamily: 'Rabar'),
                                       maxLines: 2)
                                   : null,
                               trailing: !isRead

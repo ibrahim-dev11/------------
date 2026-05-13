@@ -41,7 +41,7 @@ class SavedScreen extends StatelessWidget {
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: isDark ? Colors.white : const Color(0xFF1a1a1a),
-                fontFamily: 'NotoSansArabic',
+                fontFamily: 'Rabar',
               ),
             ),
           ),
