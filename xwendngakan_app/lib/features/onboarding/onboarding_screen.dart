@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/localization/app_localizations.dart';
 import '../../shared/widgets/app_3d_icons.dart';
@@ -22,18 +23,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   late Animation<Offset> _slideAnim;
 
   static const _pages = [
-    _OBPage(
-      gradient: [Color(0xFF534AB7), Color(0xFF7F77DD)],
-      iconType: _IconType.institution,
-    ),
-    _OBPage(
-      gradient: [Color(0xFF1D9E75), Color(0xFF25C28F)],
-      iconType: _IconType.cv,
-    ),
-    _OBPage(
-      gradient: [Color(0xFFD4A017), Color(0xFFE8B84B)],
-      iconType: _IconType.teacher,
-    ),
+    _OBPage(iconType: _IconType.institution),
+    _OBPage(iconType: _IconType.teacher),
+    _OBPage(iconType: _IconType.cv),
   ];
 
   @override
@@ -47,7 +39,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       CurvedAnimation(parent: _animController, curve: Curves.easeIn),
     );
     _slideAnim =
-        Tween<Offset>(begin: const Offset(0, 0.25), end: Offset.zero).animate(
+        Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero).animate(
       CurvedAnimation(parent: _animController, curve: Curves.easeOut),
     );
   }
@@ -86,8 +78,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isLast = _currentPage == _pages.length - 1;
-    final page = _pages[_currentPage];
 
     final titles = [
       l.onboardingTitle1,
@@ -101,129 +93,194 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     ];
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Top bar with skip + counter
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '${_currentPage + 1} / ${_pages.length}',
-                    style: const TextStyle(
-                      color: Color(0xFFB5B3CF),
-                      fontSize: 13,
-                      fontFamily: 'Rabar',
-                    ),
+      backgroundColor:
+          isDark ? AppColors.darkBg : AppColors.lightBg,
+      body: Stack(
+        children: [
+          // ── Background Blobs ──
+          RepaintBoundary(
+            child: Stack(
+              children: [
+                Positioned(
+                  top: -120,
+                  right: -60,
+                  child: _Blob(
+                    size: 320,
+                    color: AppColors.primary
+                        .withValues(alpha: isDark ? 0.12 : 0.08),
                   ),
-                  if (!isLast)
-                    TextButton(
-                      onPressed: _finish,
-                      child: const Text(
-                        'بپارێزن',
-                        style: TextStyle(
-                          color: Color(0xFFB5B3CF),
-                          fontSize: 14,
-                          fontFamily: 'Rabar',
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-
-            // PageView
-            Expanded(
-              child: PageView.builder(
-                controller: _pageController,
-                onPageChanged: _onPageChanged,
-                itemCount: _pages.length,
-                itemBuilder: (context, index) => _buildPage(
-                  page: _pages[index],
-                  title: titles[index],
-                  desc: descs[index],
                 ),
-              ),
+                Positioned(
+                  bottom: -80,
+                  left: -60,
+                  child: _Blob(
+                    size: 260,
+                    color: AppColors.primaryLight
+                        .withValues(alpha: isDark ? 0.08 : 0.05),
+                  ),
+                ),
+              ],
             ),
+          ),
 
-            // Bottom controls
-            Padding(
-              padding: const EdgeInsets.fromLTRB(28, 0, 28, 44),
-              child: Column(
-                children: [
-                  SmoothPageIndicator(
+          SafeArea(
+            child: Column(
+              children: [
+                // ── Top bar ──
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Dot-step indicator (small)
+                      Row(
+                        children: List.generate(_pages.length, (i) {
+                          final active = i == _currentPage;
+                          return AnimatedContainer(
+                            duration: AppConstants.fast,
+                            margin: const EdgeInsets.only(right: 5),
+                            width: active ? 20 : 7,
+                            height: 7,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              color: active
+                                  ? AppColors.primary
+                                  : (isDark
+                                      ? AppColors.darkBorder2
+                                      : AppColors.lightBorder),
+                            ),
+                          );
+                        }),
+                      ),
+                      if (!isLast)
+                        GestureDetector(
+                          onTap: _finish,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 7),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color:
+                                    AppColors.primary.withValues(alpha: 0.2),
+                              ),
+                            ),
+                            child: Text(
+                              l.skip,
+                              style: const TextStyle(
+                                color: AppColors.primary,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'Rabar',
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+
+                // ── PageView ──
+                Expanded(
+                  child: PageView.builder(
                     controller: _pageController,
-                    count: _pages.length,
-                    effect: ExpandingDotsEffect(
-                      dotWidth: 8,
-                      dotHeight: 8,
-                      expansionFactor: 3,
-                      spacing: 6,
-                      dotColor: const Color(0xFFDDDBF0),
-                      activeDotColor: page.gradient[0],
+                    onPageChanged: _onPageChanged,
+                    itemCount: _pages.length,
+                    itemBuilder: (context, index) => _buildPage(
+                      page: _pages[index],
+                      title: titles[index],
+                      desc: descs[index],
+                      isDark: isDark,
                     ),
                   ),
-                  const SizedBox(height: 28),
-                  // CTA button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: page.gradient,
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
+                ),
+
+                // ── Bottom controls ──
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(28, 0, 28, 40),
+                  child: Column(
+                    children: [
+                      SmoothPageIndicator(
+                        controller: _pageController,
+                        count: _pages.length,
+                        effect: ExpandingDotsEffect(
+                          dotWidth: 8,
+                          dotHeight: 8,
+                          expansionFactor: 3,
+                          spacing: 6,
+                          dotColor: isDark
+                              ? AppColors.darkBorder2
+                              : AppColors.lightBorder,
+                          activeDotColor: AppColors.primary,
                         ),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: page.gradient.last.withOpacity(0.38),
-                            blurRadius: 18,
-                            offset: const Offset(0, 8),
+                      ),
+                      const SizedBox(height: 24),
+                      // CTA button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 56,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [
+                                AppColors.primaryDark,
+                                AppColors.primaryLight,
+                              ],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color:
+                                    AppColors.primary.withValues(alpha: 0.35),
+                                blurRadius: 18,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      child: ElevatedButton(
-                        onPressed: _next,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16)),
-                        ),
-                        child: Text(
-                          isLast ? l.getStarted : l.next,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                            fontFamily: 'Rabar',
+                          child: ElevatedButton(
+                            onPressed: _next,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16)),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  isLast ? l.getStarted : l.next,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                    fontFamily: 'Rabar',
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Icon(
+                                  isLast
+                                      ? Icons.rocket_launch_rounded
+                                      : Icons.arrow_forward_rounded,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  GestureDetector(
-                    onTap: () => context.go('/role-selection'),
-                    child: const Text(
-                      'بەردەوامبە • چوونەژوورەوەمە',
-                      style: TextStyle(
-                        color: Color(0xFFB5B3CF),
-                        fontSize: 13,
-                        fontFamily: 'Rabar',
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -232,7 +289,10 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     required _OBPage page,
     required String title,
     required String desc,
+    required bool isDark,
   }) {
+    final blobColors = [AppColors.primary, AppColors.primaryLight];
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 28),
       child: FadeTransition(
@@ -242,31 +302,54 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // 3D icon with decorative blobs
+              // Icon with decorative blobs
               OnboardingIcon(
-                blobColors: page.gradient,
+                blobColors: blobColors,
                 icon: _buildIcon(page.iconType),
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 44),
+              // Feature badge
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                      color: AppColors.primary.withValues(alpha: 0.2)),
+                ),
+                child: Text(
+                  _badgeLabel(page.iconType),
+                  style: const TextStyle(
+                    color: AppColors.primary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: 'Rabar',
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF1a1a1a),
+                  fontWeight: FontWeight.w800,
+                  color: isDark ? AppColors.textWhite : AppColors.textDark,
                   fontFamily: 'Rabar',
                   height: 1.35,
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 12),
               Text(
                 desc,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
-                  color: Color(0xFF8E8BAD),
+                  color: isDark
+                      ? AppColors.textGrey
+                      : AppColors.textMutedLight,
                   fontFamily: 'Rabar',
-                  height: 1.7,
+                  height: 1.75,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -287,13 +370,38 @@ class _OnboardingScreenState extends State<OnboardingScreen>
         return const TeacherIcon(size: 110);
     }
   }
+
+  String _badgeLabel(_IconType type) {
+    switch (type) {
+      case _IconType.institution:
+        return '🎓  خوێندنگا';
+      case _IconType.teacher:
+        return '👨‍🏫  مامۆستا';
+      case _IconType.cv:
+        return '📄  CV';
+    }
+  }
 }
 
 enum _IconType { institution, cv, teacher }
 
 class _OBPage {
-  final List<Color> gradient;
   final _IconType iconType;
+  const _OBPage({required this.iconType});
+}
 
-  const _OBPage({required this.gradient, required this.iconType});
+// ── Simple circular blob ──────────────────────────────────────────────────────
+class _Blob extends StatelessWidget {
+  final double size;
+  final Color color;
+  const _Blob({required this.size, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+    );
+  }
 }

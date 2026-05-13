@@ -48,12 +48,12 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
     ),
     _LangOption(
       code: 'en',
-      name: 'English',
-      subtitle: 'ئینگلیزی · الإنجليزية',
+      name: 'ئینگلیزی',
+      subtitle: 'English',
       flagType: _FlagType.emoji,
       flag: '🇬🇧',
       iconColor: Color(0xFF3B82F6),
-      isRTL: false,
+      isRTL: true,
     ),
   ];
 
@@ -122,33 +122,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                   ),
                   const SizedBox(height: 16),
                   // App name badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: AppColors.primary.withValues(alpha: 0.25),
-                      ),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.menu_book_rounded, color: AppColors.primary, size: 16),
-                        SizedBox(width: 6),
-                        Text(
-                          'Edu',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w900,
-                            color: AppColors.primary,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
+                 
                   Text(
                     l.selectLanguage,
                     style: TextStyle(

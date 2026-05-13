@@ -49,12 +49,6 @@ class SendNotifications extends Page implements HasForms
                                             ->rows(4)
                                             ->columnSpanFull(),
 
-                                        Forms\Components\Textarea::make('broadcast_data')
-                                            ->label('زانیاری زیاتر (JSON)')
-                                            ->placeholder('{"link": "/path", "type": "announcement"}')
-                                            ->columnSpanFull()
-                                            ->helperText('بۆچوون: ناتێبەی'),
-
                                         Forms\Components\Actions::make([
                                             Forms\Components\Actions\Action::make('sendBroadcast')
                                                 ->label('بلاوکردنەوە')
@@ -128,11 +122,6 @@ class SendNotifications extends Page implements HasForms
                                             ->rows(4)
                                             ->columnSpanFull(),
 
-                                        Forms\Components\Textarea::make('single_data')
-                                            ->label('زانیاری زیاتر (JSON)')
-                                            ->columnSpanFull()
-                                            ->helperText('بۆچوون: ناتێبەی'),
-
                                         Forms\Components\Actions::make([
                                             Forms\Components\Actions\Action::make('sendSingle')
                                                 ->label('ناردن')
@@ -196,103 +185,6 @@ class SendNotifications extends Page implements HasForms
                                     ]),
                             ]),
 
-                        Forms\Components\Tabs\Tab::make('بۆ گرووپی بەکارهێنەر')
-                            ->icon('heroicon-o-users')
-                            ->schema([
-                                Forms\Components\Section::make()
-                                    ->schema([
-                                        Forms\Components\MultiSelect::make('group_user_ids')
-                                            ->label('بەکارهێنەران')
-                                            ->options(User::query()->pluck('name', 'id'))
-                                            ->searchable()
-                                            ->preload()
-                                            ->columnSpanFull(),
-
-                                        Forms\Components\TextInput::make('group_title')
-                                            ->label('ناونیشان')
-                                            ->columnSpanFull(),
-
-                                        Forms\Components\Textarea::make('group_body')
-                                            ->label('پەیام')
-                                            ->rows(4)
-                                            ->columnSpanFull(),
-
-                                        Forms\Components\Textarea::make('group_data')
-                                            ->label('زانیاری زیاتر (JSON)')
-                                            ->columnSpanFull()
-                                            ->helperText('بۆچوون: ناتێبەی'),
-
-                                        Forms\Components\Actions::make([
-                                            Forms\Components\Actions\Action::make('sendGroup')
-                                                ->label('ناردن')
-                                                ->icon('heroicon-o-paper-airplane')
-                                                ->color('success')
-                                                ->action(function (): void {
-                                                    $data = $this->form->getState();
-
-                                                    if (empty($data['group_user_ids'])) {
-                                                        Notification::make()
-                                                            ->title('بەکارهێنەری دیای هەبیت')
-                                                            ->danger()
-                                                            ->send();
-                                                        return;
-                                                    }
-
-                                                    if (empty($data['group_title']) || empty($data['group_body'])) {
-                                                        Notification::make()
-                                                            ->title('ناونیشان و پەیام پێویست دەکەن')
-                                                            ->danger()
-                                                            ->send();
-                                                        return;
-                                                    }
-
-                                                    $users = User::whereIn('id', $data['group_user_ids'])
-                                                        ->where('notifications_enabled', true)
-                                                        ->get();
-
-                                                    if ($users->isEmpty()) {
-                                                        Notification::make()
-                                                            ->title('هیچ بەکارهێنەرێک نەدۆزرایەوە')
-                                                            ->danger()
-                                                            ->send();
-                                                        return;
-                                                    }
-
-                                                    $customData = [];
-                                                    if (!empty($data['group_data'])) {
-                                                        try {
-                                                            $customData = json_decode($data['group_data'], true) ?? [];
-                                                        } catch (\Exception $e) {
-                                                            Notification::make()
-                                                                ->title('فۆرمایتی JSON غەلەیە')
-                                                                ->danger()
-                                                                ->send();
-                                                            return;
-                                                        }
-                                                    }
-
-                                                    $count = 0;
-                                                    foreach ($users as $user) {
-                                                        $user->notify(new AdminMessage(
-                                                            $data['group_title'],
-                                                            $data['group_body'],
-                                                            $customData
-                                                        ));
-                                                        $count++;
-                                                    }
-
-                                                    Notification::make()
-                                                        ->title('ناردنی سەرکەوتوو')
-                                                        ->body("ناردرا بۆ {$count} بەکارهێنەر")
-                                                        ->success()
-                                                        ->send();
-                                                }),
-                                        ])
-                                            ->columnSpanFull()
-                                            ->alignment('center'),
-                                    ]),
-                            ]),
-
                         Forms\Components\Tabs\Tab::make('بۆ بابەت')
                             ->icon('heroicon-o-tag')
                             ->schema([
@@ -311,11 +203,6 @@ class SendNotifications extends Page implements HasForms
                                             ->label('پەیام')
                                             ->rows(4)
                                             ->columnSpanFull(),
-
-                                        Forms\Components\Textarea::make('topic_data')
-                                            ->label('زانیاری زیاتر (JSON)')
-                                            ->columnSpanFull()
-                                            ->helperText('بۆچوون: ناتێبەی'),
 
                                         Forms\Components\Actions::make([
                                             Forms\Components\Actions\Action::make('sendTopic')

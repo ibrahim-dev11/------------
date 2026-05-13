@@ -344,3 +344,128 @@ aside.fi-sidebar,
     .dark .fi-ta-cell { font-size: .8rem !important; }
     .dark .fi-btn { font-size: .8rem !important; }
 }
+
+/* ════════════════════════════════════
+   MOBILE RESPONSIVENESS — ریسپۆنسیڤی مۆبایل
+   ════════════════════════════════════ */
+
+/* ── نەوشتی لۆگۆ لە مۆبایل ── */
+@media (max-width: 640px) {
+    .fi-brand-name,
+    [class*="fi-brand"] span { font-size: .85rem !important; }
+}
+
+/* ── تۆپبار ── */
+@media (max-width: 640px) {
+    .fi-topbar { padding-inline: .5rem !important; }
+    .fi-topbar-item { gap: .25rem !important; }
+    /* نیشانەی گەڕان بچووکتر */
+    .fi-global-search-field { max-width: 140px !important; font-size: .8rem !important; }
+    /* ناوی بۆتنەکان */
+    .fi-topbar-nav { gap: .15rem !important; }
+    .fi-nav-group-item-label { font-size: .75rem !important; }
+}
+
+/* ── ناوچەی سەرەکی لاپەڕە ── */
+@media (max-width: 640px) {
+    .fi-page { padding: .75rem !important; }
+    .fi-page-header { padding: .75rem !important; }
+    .fi-page-header-heading { font-size: 1rem !important; }
+    .fi-page-header-subheading { font-size: .75rem !important; }
+    /* دوگمەی زیادکردن */
+    .fi-page-header-actions { flex-wrap: wrap !important; gap: .5rem !important; }
+    .fi-page-header-actions .fi-btn { font-size: .8rem !important; padding: .45rem .85rem !important; }
+}
+
+/* ── ئامارەکان (Stats) ── */
+@media (max-width: 640px) {
+    .fi-wi-stats-overview { grid-template-columns: repeat(2, 1fr) !important; gap: .6rem !important; }
+    .fi-wi-stats-overview-stat-value { font-size: 1.3rem !important; }
+    .fi-wi-stats-overview-stat-label { font-size: .7rem !important; }
+    .fi-wi-stats-overview-stat { padding: .85rem !important; }
+}
+@media (max-width: 380px) {
+    .fi-wi-stats-overview { grid-template-columns: 1fr !important; }
+}
+
+/* ── خشتەکان (Tables) ── */
+@media (max-width: 768px) {
+    .fi-ta-ctn { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; }
+    .fi-ta-table { min-width: 600px !important; }
+    .fi-ta-cell, td { font-size: .78rem !important; padding: .55rem .6rem !important; }
+    .fi-ta-header-cell, th { font-size: .75rem !important; padding: .55rem .6rem !important; }
+    /* دوگمەی کردارەکان */
+    .fi-ta-row-actions { gap: .2rem !important; }
+    .fi-ta-row-action { padding: .3rem !important; }
+}
+
+/* ── فۆرمەکان ── */
+@media (max-width: 640px) {
+    .fi-fo-component-ctn { gap: .75rem !important; }
+    .fi-fo-field-wrp { gap: .3rem !important; }
+    input, select, textarea, .fi-input {
+        font-size: .9rem !important;
+        padding: .55rem .75rem !important;
+    }
+    .fi-btn { font-size: .85rem !important; padding: .55rem 1rem !important; }
+    /* گرید دووستونی → یەک ستون */
+    .fi-fo-grid { grid-template-columns: 1fr !important; }
+    .fi-fo-grid-col { grid-column: span 1 !important; }
+}
+
+/* ── سێکشن و کارتەکان ── */
+@media (max-width: 640px) {
+    .fi-section { border-radius: 12px !important; margin-bottom: .75rem !important; }
+    .fi-section-header { padding: .75rem 1rem !important; }
+    .fi-section-content { padding: .75rem 1rem !important; }
+    .fi-card { border-radius: 12px !important; }
+}
+
+/* ── مۆداڵ ── */
+@media (max-width: 640px) {
+    .fi-modal-window {
+        width: 95vw !important;
+        max-width: 95vw !important;
+        margin: auto !important;
+        border-radius: 14px !important;
+    }
+    .fi-modal-header { padding: 1rem !important; }
+    .fi-modal-content { padding: 1rem !important; }
+    .fi-modal-footer { padding: .75rem 1rem !important; flex-wrap: wrap !important; gap: .5rem !important; }
+    .fi-modal-footer .fi-btn { flex: 1 1 auto !important; justify-content: center !important; }
+}
+
+/* ── دراپداون ── */
+@media (max-width: 640px) {
+    .fi-dropdown-panel { min-width: 180px !important; max-width: 90vw !important; }
+    .fi-dropdown-list-item { padding: .6rem .9rem !important; font-size: .83rem !important; }
+}
+
+/* ── پاگینیشن ── */
+@media (max-width: 640px) {
+    .fi-pagination { flex-wrap: wrap !important; gap: .4rem !important; font-size: .78rem !important; }
+    .fi-pagination-item button { min-width: 32px !important; height: 32px !important; font-size: .78rem !important; }
+}
+
+/* ── تابەکان ── */
+@media (max-width: 640px) {
+    .fi-tabs { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; }
+    .fi-tabs-tab { font-size: .8rem !important; padding: .5rem .75rem !important; white-space: nowrap !important; }
+}
+
+/* ── ناوچەی داشبۆرد ── */
+@media (max-width: 640px) {
+    .fi-dashboard-widgets { gap: .6rem !important; }
+}
+
+/* ── پشتگیری سپی (Light mode) مۆبایل ── */
+@media (max-width: 640px) {
+    .fi-wi-stats-overview-stat-value { font-size: 1.3rem !important; }
+}
+
+/* ── ئایکۆنی ناڤبار بچووکتر ── */
+@media (max-width: 640px) {
+    .fi-nav-group-item svg,
+    .fi-topbar-nav svg { width: 1rem !important; height: 1rem !important; }
+}
+

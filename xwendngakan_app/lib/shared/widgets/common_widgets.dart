@@ -290,7 +290,7 @@ class SectionHeader extends StatelessWidget {
               onTap: onSeeAll,
               child: Text(
                 seeAllLabel ?? 'هەموو ببینە',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 13,
                   color: AppColors.primary,
                   fontWeight: FontWeight.w600,
